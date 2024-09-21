@@ -1,0 +1,43 @@
+@tailwind base;
+
+.bg-anneaux-1 {
+    transform-origin: 197.676px 227.675px;
+    /* animation: spin 10s linear infinite; */
+}
+
+#bg-anneaux-1-1 {
+    animation: spin 20s linear infinite;
+}
+
+#bg-anneaux-1-2 {
+    animation: spin 40s linear infinite;
+}
+
+.bg-anneaux-2 {
+    transform-origin: 1700.05px 834.05px;
+    /* animation: spin 10s linear infinite reverse; */
+}
+
+#bg-anneaux-2-1 {
+    animation: spin 20s linear infinite reverse;
+}
+
+#bg-anneaux-2-2 {
+    animation: spin 40s linear infinite reverse;
+}
+
+#bg-anneaux-2-3 {
+    animation: spin 60s linear infinite reverse;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@tailwind components;
+@tailwind utilities;
