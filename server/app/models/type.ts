@@ -8,6 +8,9 @@ export default class Type extends BaseModel {
   @column({ columnName: 'name' })
   declare name: string
 
+  @column({ columnName: 'is_active' })
+  declare isActive: boolean
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 

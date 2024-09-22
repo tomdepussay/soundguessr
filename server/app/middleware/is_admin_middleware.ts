@@ -4,7 +4,6 @@ import AuthController from '#controllers/auth_controller'
 
 export default class IsAdminMiddleware {
   async handle({ request, response }: HttpContext, next: NextFn) {
-    console.log("is admin middleware")
     const uuid = request.cookie('uuid')
     const isAdmin = await AuthController.isAdmin(uuid)
 

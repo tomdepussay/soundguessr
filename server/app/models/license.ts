@@ -11,6 +11,9 @@ export default class License extends BaseModel {
   @column({ columnName: 'path' })
   declare path: string
 
+  @column()
+  declare picture: string
+
   @column({ columnName: 'top100' })
   declare top100: boolean
 

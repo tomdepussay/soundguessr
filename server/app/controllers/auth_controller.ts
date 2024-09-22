@@ -16,7 +16,7 @@ export default class AuthController {
             throw new Error("Votre compte est désactivé")
         }
 
-        const hasSessions = await Session.query().where("user_id", user.id).where("is_revoked", false).where("expiresAt", ">", DateTime.now().toJSDate()).exec();
+        const hasSessions = await Session.query().where("user_id", user.id).where("is_revoked", false).where("expires_at", ">", DateTime.now().toJSDate()).exec();
 
         let session = null
         if(hasSessions.length > 0){
