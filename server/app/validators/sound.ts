@@ -13,8 +13,8 @@ const soundValidator = vine.compile(
     vine.object({
         title: vine.string(),
         url: vine.string(),
-        before: vine.number().optional(),
-        after: vine.number().optional(),
+        before: vine.number().min(0).optional(),
+        after: vine.number().min(0).optional(),
         order: vine.number(),
         isActive: vine.boolean(),
         licenseId: vine.number(),
