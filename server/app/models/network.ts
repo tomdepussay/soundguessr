@@ -14,6 +14,9 @@ export default class Network extends BaseModel {
   @column({ columnName: "path" })
   declare path: string
 
+  @column()
+  declare logo: string
+
   @column({ columnName: "is_active" })
   declare isActive: boolean
 

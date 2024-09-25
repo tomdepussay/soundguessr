@@ -15,6 +15,8 @@ import CategoriesController from '#controllers/categories_controller'
 import TypesController from '#controllers/types_controller'
 import LicensesController from '#controllers/licenses_controller'
 import SoundsController from '#controllers/sounds_controller'
+import NetworksController from '#controllers/networks_controller'
+import QuestionsController from '#controllers/questions_controller'
 
 // Utiliser le middleware IsConnected :
 // .use(
@@ -35,48 +37,62 @@ router
 
 router
   .group(() => {
-    router.get("/", [CategoriesController, "index"])
-    router.put("/", [CategoriesController, "create"])
-    router.patch("/:id", [CategoriesController, "update"])
-    router.delete("/:id", [CategoriesController, "delete"])
+    
+    router
+      .group(() => {
+        router.get("/", [CategoriesController, "index"])
+        router.put("/", [CategoriesController, "create"])
+        router.patch("/:id", [CategoriesController, "update"])
+        router.delete("/:id", [CategoriesController, "delete"])
+      })
+      .prefix("/categories")
+
+    router
+      .group(() => {
+        router.get("/", [TypesController, "index"])
+        router.put("/", [TypesController, "create"])
+        router.patch("/:id", [TypesController, "update"])
+        router.delete("/:id", [TypesController, "delete"])
+      })
+      .prefix("/types")
+
+    router
+      .group(() => {
+        router.get("/", [SoundsController, "index"])
+        router.put("/", [SoundsController, "create"])
+        router.patch("/:id", [SoundsController, "update"])
+        router.delete("/:id", [SoundsController, "delete"])
+      })
+      .prefix("/sounds")
+
+    router
+      .group(() => {
+        router.get("/", [LicensesController, "index"])
+        router.put("/", [LicensesController, "create"])
+        router.patch("/:id", [LicensesController, "update"])
+        router.delete("/:id", [LicensesController, "delete"])
+      })
+      .prefix("/licenses")
+
+    router
+      .group(() => {
+        router.get("/", [NetworksController, "index"])
+        router.put("/", [NetworksController, "create"])
+        router.patch("/:id", [NetworksController, "update"])
+        router.delete("/:id", [NetworksController, "delete"])
+      })
+      .prefix("/networks")
+
+    router
+      .group(() => {
+        router.get("/", [QuestionsController, "index"])
+        router.put("/", [QuestionsController, "create"])
+        router.patch("/:id", [QuestionsController, "update"])
+        router.delete("/:id", [QuestionsController, "delete"])
+      })
+      .prefix("/questions")
   })
-  .prefix("/categories")
   .use(
     middleware.IsAdminMiddleware()
   )
 
-router
-  .group(() => {
-    router.get("/", [TypesController, "index"])
-    router.put("/", [TypesController, "create"])
-    router.patch("/:id", [TypesController, "update"])
-    router.delete("/:id", [TypesController, "delete"])
-  })
-  .prefix("/types")
-  .use(
-    middleware.IsAdminMiddleware()
-  )
-
-router
-  .group(() => {
-    router.get("/", [SoundsController, "index"])
-    router.put("/", [SoundsController, "create"])
-    router.patch("/:id", [SoundsController, "update"])
-    router.delete("/:id", [SoundsController, "delete"])
-  })
-  .prefix("/sounds")
-  .use(
-    middleware.IsAdminMiddleware()
-  )
-
-router
-  .group(() => {
-    router.get("/", [LicensesController, "index"])
-    router.put("/", [LicensesController, "create"])
-    router.patch("/:id", [LicensesController, "update"])
-    router.delete("/:id", [LicensesController, "delete"])
-  })
-  .prefix("/licenses")
-  .use(
-    middleware.IsAdminMiddleware()
-  )
