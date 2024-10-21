@@ -1,13 +1,14 @@
-interface FormProps {
+    interface FormProps {
     action?: string;
     children: React.ReactNode;
+    onSubmit?: () => void;
 }
 
-function Form({ action, children }: FormProps){
+function Form({ action, children, onSubmit }: FormProps){
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        console.log("submit")
         e.preventDefault();
+        onSubmit && onSubmit()
     }
 
     return (

@@ -28,6 +28,8 @@ import QuestionsController from '#controllers/questions_controller'
 //   middleware.IsAdminMiddleware()
 // )
 
+router.get("/", [CategoriesController, "index"]);
+
 router
   .group(() => {
     router.post("/login", [AuthController, "login"])
