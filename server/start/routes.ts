@@ -28,6 +28,16 @@ import QuestionsController from '#controllers/questions_controller'
 //   middleware.IsAdminMiddleware()
 // )
 
+// New version : 
+
+// .use(middleware.auth({
+//   guards: ["api"]
+// }))
+
+// .use(
+//   middleware.admin()
+// )
+
 router.get("/", [CategoriesController, "index"]);
 
 router
@@ -95,6 +105,5 @@ router
       .prefix("/questions")
   })
   .use(
-    middleware.IsAdminMiddleware()
+    middleware.admin()
   )
-
