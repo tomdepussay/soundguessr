@@ -27,6 +27,15 @@ export default class AuthController {
     public async register({ request }: HttpContext){
         const { username, email, password } = await register.validate(request.all())
 
+        const userExist = await User.findBy({ email, username });
+
+        if(userExist){
+            return {
+                success: false,
+                message: "L'utilisateur existe déjà."
+            }
+        }
+
         const hash = await User.hashPassword(password)
 
         const user = await User.create({ username, email, password: hash })

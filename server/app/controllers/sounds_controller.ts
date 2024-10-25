@@ -61,14 +61,16 @@ export default class SoundsController {
 
         try {
 
-            const infos = await ytdl.getInfo(url);
+            const clearUrl = url.split("&")[0];
+            
+            const infos = await ytdl.getInfo(clearUrl);
             const totalDuration = parseInt(infos.videoDetails.lengthSeconds);
             
             const fileName = `${license.categoryId}_${license.id}_${order}_${new Date().getTime()}.mp3`;
             const pathTemp = app.makePath('resources', 'sounds', "temp", `${fileName}`);
             const path = app.makePath('resources', 'sounds', `${fileName}`);
 
-            let command = `ytdlp.exe -x --audio-format mp3 -o ${pathTemp} ${url}`;
+            let command = `ytdlp.exe -x --audio-format mp3 -o ${pathTemp} ${clearUrl}`;
 
             execSync(command);
 
@@ -82,7 +84,7 @@ export default class SoundsController {
 
                 const sound = await Sound.create({
                     title,
-                    url,
+                    url: clearUrl,
                     path: fileName,
                     order,
                     isActive,

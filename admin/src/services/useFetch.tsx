@@ -3,27 +3,29 @@ import { useQuery } from "react-query";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-interface FetchOptions {
-    method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'; 
-    headers?: Record<string, string>; 
-    body?: any; 
-  }
+interface FetchProps {
+    name: string;
+    url: string;
+    options: OptionProps;
+}
 
-const useFetch = (url: string, options: FetchOptions = {} ) => {
+interface OptionProps {
+    method: string;
+    body: any;
+}
 
-    const fetcher = async () => {
-        const response = await fetch(url, {
-          method: options.method || 'GET',
-          headers: options.headers || { 'Content-Type': 'application/json' },
-          body: options.body ? JSON.stringify(options.body) : undefined,
-          ...options
-        });
-        
+const useFetch = ({ name, url, options}: FetchProps) => {
+    return useQuery(name, async() => {
+        const response = await fetch(`${apiUrl}${url}`, {
+          method: options.method || "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("token")}`
+          }, 
+          body: JSON.stringify(options.body)
+        })
         return response.json();
-      };
-
-    return useQuery([url, options], fetcher);
-
+    })
 }
 
 export default useFetch;

@@ -3,7 +3,6 @@ import Layout from '@components/Layout';
 import AuthGuard from '@services/AuthGuard';
 import AuthLoyout from '@components/AuthLayout';
 import Login from '@pages/auth/Login';
-import Register from '@pages/auth/Register';
 
 import Dashboard from '@pages/Dashboard';
 
@@ -29,7 +28,6 @@ function Router(){
 
             <Route element={<AuthLoyout />} >
                 <Route path='login' element={<Login />} />
-                <Route path='register' element={<Register />} />
             </Route>
 
             

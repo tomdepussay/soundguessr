@@ -4,7 +4,7 @@
     onSubmit?: () => void;
 }
 
-function Form({ action, children, onSubmit }: FormProps){
+function Form({ action, children, onSubmit, className }: FormProps){
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
