@@ -6,7 +6,7 @@ interface MutationProps {
     url: string;
     success: (data: any) => void;
     error: (error: any) => void;
-    options: OptionProps;
+    options?: OptionProps;
 }
 
 interface OptionProps {
@@ -17,15 +17,20 @@ interface OptionProps {
 const useMutation = ({ url, options, success, error }: MutationProps) => {
     return useMutationReact({
         mutationFn: async () => {
-            const response = await fetch(`${apiUrl}${url}`, {
-                method: options.method,
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${localStorage.getItem("token")}`
-                },
-                body: JSON.stringify(options.body)
-            });
-            return response.json();
+            try {
+                const response = await fetch(`${apiUrl}${url}`, {
+                    method: options?.method || "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${localStorage.getItem("token")}`
+                    },
+                    body: JSON.stringify(options?.body) || null
+                });
+                return response.json();
+            } catch (err) {
+                console.error("Fetch error:", err);
+                throw err;
+            }
         },
         onSuccess: success,
         onError: error

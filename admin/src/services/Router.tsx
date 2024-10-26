@@ -30,8 +30,11 @@ function Router(){
                 <Route path='login' element={<Login />} />
             </Route>
 
-            
-            <Route element={<AuthGuard><Layout /></AuthGuard>} >
+            <Route element={
+                <AuthGuard redirectTo="/login">
+                    <Layout />
+                </AuthGuard>
+            } >
 
                 <Route index element={<Dashboard />} />
                 <Route path="dashboard" element={<Dashboard />} />

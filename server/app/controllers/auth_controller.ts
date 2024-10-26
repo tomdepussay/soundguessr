@@ -62,6 +62,9 @@ export default class AuthController {
             isAdmin: userConnected.isAdmin,
             picture: userConnected.picture
         }
-        return user
+        return {
+            success: true,
+            user
+        }
     }
 }

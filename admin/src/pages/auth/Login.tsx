@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { FaEye, FaEyeSlash, FaLock, FaUser } from "react-icons/fa";
 import useMutation from "@services/useMutation";
 import Button from "@components/Button";
@@ -6,7 +6,7 @@ import { AuthContext } from "@services/AuthContext";
 
 function Login() {
 
-    const { user } = useContext(AuthContext);
+    const { user, login } = useContext(AuthContext);
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const [status, setStatus] = useState("idle");
@@ -24,6 +24,7 @@ function Login() {
         success: (data: any) => {
             if(data.success){
                 setStatus("success");
+                login(data.token.token);
                 setTimeout(() => {
                     window.location.href = "/";
                 }, 1000);
@@ -37,6 +38,10 @@ function Login() {
             setError("Un problème est survenu lors de la connexion");
         }
     })
+
+    useEffect(() => {
+        console.log(user);
+    }, [user]);
 
     const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();

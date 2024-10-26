@@ -6,7 +6,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 interface FetchProps {
     name: string;
     url: string;
-    options: OptionProps;
+    options?: OptionProps;
 }
 
 interface OptionProps {
@@ -17,12 +17,12 @@ interface OptionProps {
 const useFetch = ({ name, url, options}: FetchProps) => {
     return useQuery(name, async () => {
         const response = await fetch(`${apiUrl}${url}`, {
-          method: options.method || "GET",
+          method: options?.method || "GET",
           headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${localStorage.getItem("token")}`
           }, 
-          body: JSON.stringify(options.body)
+          body: JSON.stringify(options?.body) || null
         })
         return response.json();
     })

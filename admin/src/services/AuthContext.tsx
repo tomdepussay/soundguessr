@@ -1,9 +1,10 @@
 import React, { createContext, useState, useEffect } from 'react';
-import useLocalStorage from './useLocalStorage';
 import User from "@models/User";
+import useMutation from './useMutation';
 
 interface AuthContextType {
     user: User | null;
+    loading: boolean;
     login: (token: string) => void;
     logout: () => void;
 }
@@ -14,48 +15,57 @@ interface AuthProviderProps {
 
 export const AuthContext = createContext<AuthContextType>({
     user: null,
+    loading: true,
     login: () => {},
     logout: () => {}
 });
 
+const useFetchUserData = (setUser: (user: User | null) => void, setLoading: (loading: boolean) => void) => {
+    const mutate = useMutation({
+        url: "auth/user",
+        success: (data: any) => {
+            if(data.success){
+                setUser(data.user);
+            } else {
+                localStorage.removeItem("token");
+            }
+            setLoading(false);
+        },
+        error: (error: any) => {
+            console.error("Erreur lors de la récupération de l'utilisateur", error);
+            localStorage.removeItem("token");
+        }
+    });
+
+    return mutate;
+};
+
 export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
+    const fetchUserData = useFetchUserData(setUser, setLoading);
 
     useEffect(() => {
-        const token = useLocalStorage("token", null);
+        const token = localStorage.getItem("token");
         if (token) {
-            // Valider le token et récupérer les informations de l'utilisateur
-            //   fetchUserData(token);
+            fetchUserData.mutate(); 
+        } else {
+            setLoading(false);
         }
     }, []);
 
-    //   const fetchUserData = async (token) => {
-    //     try {
-    //       const response = await fetch('/api/user', {
-    //         headers: {
-    //           'Authorization': `Bearer ${token}`
-    //         }
-    //       });
-    //       const data = await response.json();
-    //       setUser(data.user);
-    //     } catch (error) {
-    //       console.error("Erreur lors de la récupération de l'utilisateur", error);
-    //       localStorage.removeItem("token");
-    //     }
-    //   };
-
     const login = (token: string) => {
-        useLocalStorage("token", token);
-        // fetchUserData(token);
+        localStorage.setItem("token", token);
+        fetchUserData.mutate(); 
     };
 
     const logout = () => {
-        useLocalStorage("token", null);
+        localStorage.removeItem("token");
         setUser(null);
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{ user, loading, login, logout }}>
             {children}
         </AuthContext.Provider>
     );
