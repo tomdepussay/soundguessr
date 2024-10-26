@@ -4,7 +4,6 @@ interface User {
     email: string;
     isAdmin: boolean;
     picture: string;
-    bio: string;
 }
 
 export default User;

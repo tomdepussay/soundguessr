@@ -52,4 +52,16 @@ export default class AuthController {
 
         return user
     }
+
+    public async user({ auth }: HttpContext){
+        const userConnected = await auth.authenticate()
+        const user = {
+            id: userConnected.id,
+            username: userConnected.username,
+            email: userConnected.email,
+            isAdmin: userConnected.isAdmin,
+            picture: userConnected.picture
+        }
+        return user
+    }
 }
