@@ -38,20 +38,8 @@ export default class User extends BaseModel {
     return hash.make(password)
   }
 
-  public static async verifyCredentials(email: string, password: string): Promise<User> {
-    const user = await User.findBy('email', email)
-    
-    if (!user) {
-      throw new Error('User not found')
-    }
-
-    const isPasswordValid = await hash.verify(user.password, password)
-
-    if (!isPasswordValid) {
-      throw new Error('Invalid password')
-    }
-
-    return user
+  public static async verifyPassword(user: User, password: string): Promise<boolean> {
+    return await hash.verify(user.password, password)
   }
 
   static accessTokens = DbAccessTokensProvider.forModel(User, {

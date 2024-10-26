@@ -43,24 +43,25 @@ const backgroundColorsDisabled = {
 }
 
 interface ButtonProps {
-    children: string;
+    children: string | React.ReactNode;
     color?: 'default' | 'primary' | 'secondary' | 'danger' | 'warning' | 'success' | 'info';
     disabled?: boolean;
     status?: string;
     icon?: React.ReactNode;
-    onClick: (e: React.FormEvent<HTMLButtonElement>) => void;
+    onClick?: (e: React.FormEvent<HTMLButtonElement>) => void;
+    type?: 'button' | 'submit' | 'reset';
 }
 
-function Button({ children, color = "default", disabled = false, status = "idle", icon, onClick }: ButtonProps){
+function Button({ children, color = "default", disabled = false, status = "idle", icon, onClick, type = "button" }: ButtonProps){
     return (
         <button
-            type='button'
+            type={type}
             disabled={disabled || status !== "idle"}
-            className={`flex justify-center gap-2 items-center shadow-md p-3 px-3 select-none rounded-xl text-white ${disabled || status !== "idle" ? `${backgroundColorsDisabled[color]} cursor-not-allowed` : `${backgroundColors[color]} ${backgroundColorsHover[color]} ${backgroundColorsActive[color]}`}`}
+            className={`flex justify-center gap-2 items-center shadow-md p-3 px-3 select-none rounded-xl text-white ${disabled || status !== "idle" ? status === "error" ? `bg-red-700` : `${backgroundColorsDisabled[color]} cursor-not-allowed` : `${backgroundColors[color]} ${backgroundColorsHover[color]} ${backgroundColorsActive[color]}`}`}
             onClick={status === "idle" ? onClick : undefined}
         >
             {
-                status === "pending" ? (
+                status === "loading" ? (
                     <Loader />
                 ) : status === "success" ? (
                     <MdCheck className='text-2xl' />

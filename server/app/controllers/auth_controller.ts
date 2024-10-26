@@ -6,22 +6,32 @@ export default class AuthController {
     public async login({ request, response }: HttpContext){
         const { email, password } = await login.validate(request.all())
 
-        const user = await User.verifyCredentials(email, password)
+        const user = await User.findBy('email', email)
+
+        if(user) {
+            const passwordValid = await User.verifyPassword(user, password)
+
+            if(passwordValid){
+                if(user.isActive){
+                    const token = await User.accessTokens.create(user)
+                    return {
+                        success: true,
+                        message: "Vous êtes connecté",
+                        token
+                    }
+                } else {
+                    return response.status(200).json({
+                        success: false,
+                        message: "Votre compte est inactif"
+                    })
+                }
+            }
+        }
         
-        if(!user.isActive){
-          return response.status(200).json({
+        return response.status(200).json({
             success: false,
-            message: "Votre compte est inactif"
-          })
-        }
-
-        const token = await User.accessTokens.create(user)
-
-        return {
-            success: true,
-            message: "Vous êtes connecté",
-            token
-        }
+            message: "Les informations d'identification sont incorrectes"
+        })
     }
 
     public async register({ request }: HttpContext){

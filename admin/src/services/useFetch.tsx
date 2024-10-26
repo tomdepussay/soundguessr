@@ -15,7 +15,7 @@ interface OptionProps {
 }
 
 const useFetch = ({ name, url, options}: FetchProps) => {
-    return useQuery(name, async() => {
+    return useQuery(name, async () => {
         const response = await fetch(`${apiUrl}${url}`, {
           method: options.method || "GET",
           headers: {
