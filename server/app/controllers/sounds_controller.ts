@@ -8,17 +8,92 @@ import Sound from '#models/sound';
 import fs from 'fs';
 import { execSync } from 'child_process';
 import env from '#start/env'
+import db from '@adonisjs/lucid/services/db';
 
 export default class SoundsController {
     public async index({ request, response }: HttpContext){
         const page = parseInt(request.input("page")) || 1
+        const search = request.input("search") || ""
+        let filter = request.input("filter") || ""
         const limit = env.get("PAGINATION_LIMIT_MIN")
 
-        const sounds = await Sound.query().paginate(page, limit)
+        if(filter == "license"){
+            filter = "licenses.title"
+        } else{
+            filter = "sounds.title"
+        }
+
+        const sounds = await db
+            .query()
+            .join("licenses", "sounds.license_id", "licenses.id")
+            .join("types", "sounds.type_id", "types.id")
+            .from("sounds")
+            .select(
+                "sounds.id",
+                "sounds.title",
+                "sounds.order",
+                'sounds.is_active AS isActive',
+                "licenses.title AS license",
+                "types.name AS type"
+            )
+            .where(filter, "LIKE", `%${search}%`)
+            .orderBy("sounds.order", "asc")
+            .paginate(page, limit)
 
         return response.status(200).json({
             success: true,
             sounds
+        })
+    }
+
+    public async show({ request, response }: HttpContext){
+        const id = request.param("id")
+
+        const sound = await db
+            .query()
+            .join("licenses", "sounds.license_id", "licenses.id")
+            .join("types", "sounds.type_id", "types.id")
+            .from("sounds")
+            .select(
+                "sounds.id",
+                "sounds.title",
+                "sounds.url",
+                "sounds.path",
+                "sounds.order",
+                "sounds.is_active AS isActive",
+                "sounds.before",
+                "sounds.after",
+                "licenses.id AS licenseId",
+                "licenses.title AS license",
+                "types.id AS typeId",
+                "types.name AS type"
+            )
+            .where("sounds.id", id)
+            .first()
+
+        if(!sound){
+            return response.status(404).json({
+                success: false,
+                message: "Ce son n'existe pas."
+            })
+        }
+
+        let path = app.makePath('resources', 'sounds', `${sound.path}`);
+
+        if(!fs.existsSync(path)){
+            return response.status(404).json({
+                success: false,
+                message: "Le fichier n'existe pas."
+            })
+        } else {
+            const file = fs.readFileSync(path, { encoding: 'base64' });
+            const audio = `data:audio/mp3;base64,${file}`;
+            sound.audio = audio;
+        }
+
+        return response.status(200).json({
+            success: true,
+            sound
         })
     }
 

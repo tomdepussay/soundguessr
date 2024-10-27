@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Loader from '@components/Loader';
 import { MdCheck, MdError } from "react-icons/md";
+import { Link } from 'react-router-dom';
 
 const backgroundColors = {
     default: 'bg-slate-600',
@@ -50,30 +51,41 @@ interface ButtonProps {
     icon?: React.ReactNode;
     onClick?: (e: React.FormEvent<HTMLButtonElement>) => void;
     type?: 'button' | 'submit' | 'reset';
+    link?: string;
 }
 
-function Button({ children, color = "default", disabled = false, status = "idle", icon, onClick, type = "button" }: ButtonProps){
-    return (
-        <button
-            type={type}
-            disabled={disabled || status !== "idle"}
-            className={`flex justify-center gap-2 items-center shadow-md p-3 px-3 select-none rounded-xl text-white ${disabled || status !== "idle" ? status === "error" ? `bg-red-700` : `${backgroundColorsDisabled[color]} cursor-not-allowed` : `${backgroundColors[color]} ${backgroundColorsHover[color]} ${backgroundColorsActive[color]}`}`}
-            onClick={status === "idle" ? onClick : undefined}
-        >
-            {
-                status === "loading" ? (
-                    <Loader />
-                ) : status === "success" ? (
-                    <MdCheck className='text-2xl' />
-                ) : status === "error" ? (
-                    <MdError className='text-2xl' />
-                ) : status === "idle" && icon ? (
-                    icon
-                ) : null
-            }
-            {children}
-        </button>
-    )
+function Button({ children, color = "default", disabled = false, status = "idle", icon, onClick, type = "button", link }: ButtonProps){
+    if(link){
+        return <Link 
+                    to={link} 
+                    className={`flex justify-center gap-2 items-center shadow-md p-3 px-3 select-none rounded-xl text-white ${backgroundColors[color]} ${backgroundColorsHover[color]} ${backgroundColorsActive[color]}`}
+                >
+                    {icon}
+                    {children}
+                </Link>
+    } else {
+        return (
+            <button
+                type={type}
+                disabled={disabled || status !== "idle"}
+                className={`flex justify-center gap-2 items-center shadow-md p-3 px-3 select-none rounded-xl text-white ${disabled || status !== "idle" ? status === "error" ? `bg-red-700` : `${backgroundColorsDisabled[color]} cursor-not-allowed` : `${backgroundColors[color]} ${backgroundColorsHover[color]} ${backgroundColorsActive[color]}`}`}
+                onClick={status === "idle" ? onClick : undefined}
+            >
+                {
+                    status === "loading" ? (
+                        <Loader />
+                    ) : status === "success" ? (
+                        <MdCheck className='text-2xl' />
+                    ) : status === "error" ? (
+                        <MdError className='text-2xl' />
+                    ) : status === "idle" && icon ? (
+                        icon
+                    ) : null
+                }
+                {children}
+            </button>
+        )
+    }
 }
 
 export default Button;

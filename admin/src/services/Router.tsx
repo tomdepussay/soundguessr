@@ -1,23 +1,24 @@
 import { Routes, Route } from 'react-router-dom';
 import Layout from '@components/Layout';
+import DataLayout from '@components/DataLayout';
 import AuthGuard from '@services/AuthGuard';
 import AuthLoyout from '@components/AuthLayout';
 import Login from '@pages/auth/Login';
 
 import Dashboard from '@pages/Dashboard';
 
-import Animes from '@pages/data/animes/Animes';
-import AddAnime from '@pages/data/animes/AddAnime';
+import Categories from '@pages/data/categories/Categories';
 
-import Parts from '@pages/data/parts/Parts';
+import Licenses from '@pages/data/licenses/Licenses';
 
-import Sounds from '@/pages/data/sounds/Sounds';
+import Sounds from '@pages/data/sounds/Sounds';
+import DetailsSound from '@pages/data/sounds/DetailsSound';
 
-import Types from '@/pages/data/types/Types';
+import Types from '@pages/data/types/Types';
 
-import Questions from '@/pages/data/questions/Questions';
+import Questions from '@pages/data/questions/Questions';
 
-import Networks from '@/pages/data/networks/Networks';
+import Networks from '@pages/data/networks/Networks';
 
 import Users from '@pages/Users';
 import Games from '@pages/Games';
@@ -39,20 +40,18 @@ function Router(){
                 <Route index element={<Dashboard />} />
                 <Route path="dashboard" element={<Dashboard />} />
 
-                <Route path="data">
-                    <Route path='animes'>
-                        <Route index element={<Animes />} />
-                        <Route path='add' element={<AddAnime />} />
+                <Route element={<DataLayout />} path="data">
+                    <Route path='categories'>
+                        <Route index element={<Categories />} />
                     </Route>
 
-                    <Route path='parts'>
-                        <Route index element={<Parts />} />
-                        <Route path='add' element={<div>Ajouter une partie</div>} />
+                    <Route path='licenses'>
+                        <Route index element={<Licenses />} />
                     </Route>
 
                     <Route path='sounds'>
                         <Route index element={<Sounds />} />
-                        <Route path='add' element={<div>Ajouter un son</div>} />
+                        <Route path={`:id`} element={<DetailsSound />} />
                     </Route>
 
                     <Route path='types'>

@@ -8,15 +8,17 @@ interface DropdownProps {
     title: string;
     icon: React.ReactNode;
     children?: React.ReactNode;
+    onClick?: () => void;
 }
 
-function Dropdown({ link, title, icon, children }: DropdownProps){
+function Dropdown({ link, title, icon, children, onClick }: DropdownProps){
 
-    const [isOpen, setIsOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(true);
     const navigate = useNavigate();
 
     const handleClick = () => {
         if(link){
+            onClick && onClick();
             navigate(link);
         } else {
             setIsOpen(!isOpen);
@@ -25,7 +27,7 @@ function Dropdown({ link, title, icon, children }: DropdownProps){
 
     return (
         <div className="relative">
-            <button onClick={handleClick} className="w-full h-14 flex justify-start gap-2 items-center px-4 text-white text-opacity-70 hover:text-opacity-100">
+            <button onClick={handleClick} className="w-full font-semibold h-14 flex justify-start gap-2 items-center px-4 text-white text-opacity-70 hover:text-opacity-100">
                 {icon}
                 {title}
                 {

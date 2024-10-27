@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { FaEye, FaEyeSlash, FaLock, FaUser } from "react-icons/fa";
 import useMutation from "@services/useMutation";
 import Button from "@components/Button";
@@ -38,10 +38,6 @@ function Login() {
             setError("Un problème est survenu lors de la connexion");
         }
     })
-
-    useEffect(() => {
-        console.log(user);
-    }, [user]);
 
     const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();

@@ -1,13 +1,17 @@
+import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Nav from "./Nav";
 
 function Layout(){
-    return (
-        <div className="w-screen h-screen flex overflow-hidden bg-slate-800 ">
-            
-            <Nav />
 
-            <main className='w-screen h-screen overflow-auto overflow-x-hidden'>
+    const [open, setOpen] = useState(false);
+
+    return (
+        <div className="w-screen min-h-screen bg-slate-800 md:flex">
+            
+            <Nav open={open} setOpen={setOpen} />
+
+            <main className={`flex-1 pb-20 md:pb-0`}>
                 
                 <Outlet />
 
