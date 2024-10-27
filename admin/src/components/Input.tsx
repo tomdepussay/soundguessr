@@ -5,7 +5,7 @@ interface InputProps {
     required?: boolean;
     status?: string;
     value?: string | number;
-    setValue?: (value: string) => void;
+    setValue?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     placeholder?: string;
     disabled?: boolean;
 }
@@ -27,7 +27,7 @@ function Input({ label, name, type = "text", status = "idle", required = false, 
                 name={name}
                 id={name}
                 value={value}
-                onChange={(e) => setValue && setValue(e.target.value)}
+                onChange={(e) => setValue && setValue(e)}
                 placeholder={placeholder}
                 className={`p-2 rounded-lg bg-slate-900 shadow-md text-white outline-none focus:shadow-inner ${status !== "idle" || disabled ? 'cursor-not-allowed' : 'cursor-text'}`}
             />

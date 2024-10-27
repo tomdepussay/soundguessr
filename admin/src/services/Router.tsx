@@ -13,6 +13,7 @@ import Licenses from '@pages/data/licenses/Licenses';
 
 import Sounds from '@pages/data/sounds/Sounds';
 import DetailsSound from '@pages/data/sounds/DetailsSound';
+import AddSound from '@pages/data/sounds/AddSound';
 
 import Types from '@pages/data/types/Types';
 
@@ -52,6 +53,7 @@ function Router(){
                     <Route path='sounds'>
                         <Route index element={<Sounds />} />
                         <Route path={`:id`} element={<DetailsSound />} />
+                        <Route path={`add`} element={<AddSound />} />
                     </Route>
 
                     <Route path='types'>

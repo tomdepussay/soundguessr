@@ -9,6 +9,7 @@ import fs from 'fs';
 import { execSync } from 'child_process';
 import env from '#start/env'
 import db from '@adonisjs/lucid/services/db';
+import OptionsByGroups from '#services/optionsByGroups';
 
 export default class SoundsController {
     public async index({ request, response }: HttpContext){
@@ -95,6 +96,32 @@ export default class SoundsController {
         return response.status(200).json({
             success: true,
             sound
+        })
+    }
+
+    public async add({ request, response }: HttpContext){
+        const query = await db
+            .query()
+            .join("categories", "licenses.category_id", "categories.id")
+            .from("licenses")
+            .groupBy("categories.name")
+            .select("licenses.id AS value", "licenses.title AS label", "categories.name AS groupLabel")
+            .orderBy("categories.name", "asc")
+
+        const licenses = OptionsByGroups(query);
+
+        const queryTypes = await db
+            .query()
+            .from("types")
+            .select("types.id AS value", "types.name AS label", db.raw("'Types' AS groupLabel"))
+            .orderBy("types.name", "asc")
+
+        const types = OptionsByGroups(queryTypes);
+        
+        return response.status(200).json({
+            success: true,
+            licenses,
+            types
         })
     }
 

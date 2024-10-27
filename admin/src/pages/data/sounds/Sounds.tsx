@@ -119,13 +119,13 @@ function Sounds() {
                                     </TableCell>
                                     <TableCell important border>
                                         <div className="flex gap-2 justify-start items-center">
-                                            <Button link={`${location.pathname}/${sound.id}`} color="info">
+                                            <Button link={`/data/sounds/${sound.id}`} color="info">
                                                 <FaEye />
                                             </Button>
-                                            <Button link={`${location.pathname}/edit/${sound.id}`} color='success'>
+                                            <Button link={`/data/sounds/edit/${sound.id}`} color='success'>
                                                 <FaEdit />
                                             </Button>
-                                            <Button link={`${location.pathname}/delete`} color='danger'>
+                                            <Button link={`/data/sounds/delete`} color='danger'>
                                                 <FaRegTrashAlt />
                                             </Button>
                                         </div>

@@ -72,6 +72,7 @@ router
     router
       .group(() => {
         router.get("/", [SoundsController, "index"])
+        router.get("/add", [SoundsController, "add"])
         router.get("/:id", [SoundsController, "show"])
         router.put("/", [SoundsController, "create"])
         router.patch("/:id", [SoundsController, "update"])

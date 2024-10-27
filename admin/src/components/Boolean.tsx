@@ -7,7 +7,7 @@ interface BooleanProps {
     status?: string;
     required?: boolean;
     value?: boolean;
-    setValue?: (value: boolean) => void;
+    setValue?: () => void;
     disabled?: boolean;
 }
 
@@ -24,7 +24,7 @@ function Boolean({ label, name, status = "idle", required = false, value = false
             <Button
                 color={value ? 'success' : 'danger'}
                 disabled={status !== "idle" || disabled}
-                onClick={() => setValue && setValue(!value)}
+                onClick={() => setValue && setValue()}
             >
                 {value ? 'Oui' : 'Non'}
             </Button>
