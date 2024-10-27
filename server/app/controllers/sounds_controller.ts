@@ -79,6 +79,7 @@ export default class SoundsController {
         }
 
         let path = app.makePath('resources', 'sounds', `${sound.path}`);
+        sound.path = `resources/sounds/${sound.path}`;
 
         if(!fs.existsSync(path)){
             return response.status(404).json({
