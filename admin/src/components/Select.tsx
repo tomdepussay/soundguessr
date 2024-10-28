@@ -10,6 +10,8 @@ interface SelectProps {
     setValue?: (value: string) => void;
     displayGroup?: boolean;
     disabled?: boolean;
+    placeholder?: string;
+    error?: string;
 }
 
 interface Option {
@@ -22,7 +24,7 @@ interface Group {
     options: Option[];
 }
 
-function Select({ label, name, groups, required = false, status = "idle", value, setValue, disabled = false, displayGroup = false }: SelectProps){
+function Select({ label, name, groups, required = false, status = "idle", value, setValue, disabled = false, displayGroup = false, placeholder = "Sélectionner une valeur", error = "" }: SelectProps){
     return (
         <div className="flex-1 flex flex-col gap-1">
             <label className="text-white select-none text-md font-semibold pl-1" htmlFor={name}>
@@ -38,8 +40,9 @@ function Select({ label, name, groups, required = false, status = "idle", value,
                 value={value} 
                 onChange={(e) => setValue && setValue(e.target.value)} 
                 disabled={status !== "idle" || disabled} 
-                className={`p-2 rounded-lg bg-slate-900 shadow-md text-white outline-none focus:shadow-inner ${status !== "idle" || disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`
+                className={`p-2 rounded-lg bg-slate-900 shadow-md text-white outline-none focus:shadow-inner ${error !== "" ? "border-red-500 border-2" : ""} ${status !== "idle" || disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`
             }>
+                <option value="0" hidden disabled>{placeholder}</option>
                 {
                     !displayGroup ? (
                         groups.map((group, index) => (
@@ -66,6 +69,9 @@ function Select({ label, name, groups, required = false, status = "idle", value,
                     ))
                 }
             </select>
+            {
+                error && <span className="text-red-500 mt-1 ml-2 font-semibold text-md">{error}</span>
+            }
         </div>
     )
 }

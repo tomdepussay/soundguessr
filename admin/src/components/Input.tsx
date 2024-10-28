@@ -8,9 +8,10 @@ interface InputProps {
     setValue?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     placeholder?: string;
     disabled?: boolean;
+    error?: string;
 }
 
-function Input({ label, name, type = "text", status = "idle", required = false, value, setValue, placeholder = "Taper ici", disabled = false }: InputProps){
+function Input({ label, name, type = "text", status = "idle", required = false, value, setValue, placeholder = "Taper ici", disabled = false, error = "" }: InputProps){
     return (
         <div className="flex flex-col gap1">
             <label className="text-white select-none text-md font-semibold pl-1" htmlFor={name}>
@@ -29,8 +30,11 @@ function Input({ label, name, type = "text", status = "idle", required = false, 
                 value={value}
                 onChange={(e) => setValue && setValue(e)}
                 placeholder={placeholder}
-                className={`p-2 rounded-lg bg-slate-900 shadow-md text-white outline-none focus:shadow-inner ${status !== "idle" || disabled ? 'cursor-not-allowed' : 'cursor-text'}`}
+                className={`p-2 rounded-lg bg-slate-900 shadow-md text-white outline-none focus:shadow-inner ${error !== "" ? "border-red-500 border-2" : ""} ${status !== "idle" || disabled ? 'cursor-not-allowed' : 'cursor-text'}`}
             />
+            {
+                error && <span className="text-red-500 mt-1 ml-2 font-semibold text-md">{error}</span>
+            }
         </div>
     )
 }

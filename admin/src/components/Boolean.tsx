@@ -9,9 +9,10 @@ interface BooleanProps {
     value?: boolean;
     setValue?: () => void;
     disabled?: boolean;
+    error?: string;
 }
 
-function Boolean({ label, name, status = "idle", required = false, value = false, setValue, disabled = false }: BooleanProps){
+function Boolean({ label, name, status = "idle", required = false, value = false, setValue, disabled = false, error = "" }: BooleanProps){
     return (
         <div className="flex-1 flex flex-col gap-1">
             <label className="text-white select-none text-md font-semibold pl-1" htmlFor={name}>
@@ -28,6 +29,9 @@ function Boolean({ label, name, status = "idle", required = false, value = false
             >
                 {value ? 'Oui' : 'Non'}
             </Button>
+            {
+                error && <span className="text-red-500 font-semibold text-sm">{error}</span>
+            }
             <input
                 name={name}
                 id={name}

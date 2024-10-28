@@ -104,10 +104,9 @@ export default class SoundsController {
             .query()
             .join("categories", "licenses.category_id", "categories.id")
             .from("licenses")
-            .groupBy("categories.name")
             .select("licenses.id AS value", "licenses.title AS label", "categories.name AS groupLabel")
             .orderBy("categories.name", "asc")
-
+        
         const licenses = OptionsByGroups(query);
 
         const queryTypes = await db
