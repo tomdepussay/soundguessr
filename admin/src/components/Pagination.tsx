@@ -20,7 +20,7 @@ function Pagination({ page, setPage, totalPages }: PaginationProps){
                     </Button>
                 )
             }
-            <select name="pagination" id="pagination" value={page} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPage(Number(e.target.value))} className="p-1 text-lg rounded-md outline-none">
+            <select name="pagination" id="pagination" value={page} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPage(Number(e.target.value))} className="p-2 rounded-lg bg-slate-900 shadow-md text-white outline-none focus:shadow-inner">
                 {
                     Array.from(Array(totalPages).keys()).map((index) => (
                         <option key={index} value={index + 1}>{index + 1}</option>

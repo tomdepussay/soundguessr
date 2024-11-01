@@ -1,20 +1,12 @@
-    interface FormProps {
-    action?: string;
+interface FormProps {
     children: React.ReactNode;
-    onSubmit?: () => void;
 }
 
-function Form({ action, children, onSubmit, className }: FormProps){
-
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        onSubmit && onSubmit()
-    }
-
+function Form({ children }: FormProps){
     return (
-        <form className='w-full p-2 flex flex-row flex-wrap' action={action} onSubmit={handleSubmit}>
+        <div className="w-full h-fit grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
             {children}
-        </form>
+        </div>
     )
 }
 

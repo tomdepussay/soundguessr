@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Nav from "./Nav";
+import { Toaster } from "react-hot-toast";
 
 function Layout(){
 
@@ -8,6 +9,7 @@ function Layout(){
 
     return (
         <div className="w-screen min-h-screen bg-slate-800 md:flex">
+            <Toaster position="bottom-right" reverseOrder={false} />
             
             <Nav open={open} setOpen={setOpen} />
 

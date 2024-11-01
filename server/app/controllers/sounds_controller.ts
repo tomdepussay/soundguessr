@@ -38,6 +38,7 @@ export default class SoundsController {
                 "types.name AS type"
             )
             .where(filter, "LIKE", `%${search}%`)
+            .orderBy("sounds.license_id", "asc")
             .orderBy("sounds.order", "asc")
             .paginate(page, limit)
 
@@ -221,7 +222,7 @@ export default class SoundsController {
     public async update({ request, response }: HttpContext){
         const id = request.param("id")
         const { title, url, before = 0, after = 0, order, isActive, licenseId, typeId } = await soundValidator.validate(request.all())
-
+        
         const sound = await Sound.find(id)
 
         if(!sound){
@@ -302,7 +303,7 @@ export default class SoundsController {
                 })
 
             } catch (err) {
-                console.log(err)
+                console.log("Erreur2 : ", err)
                 fs.unlinkSync(pathTemp);
                 return response.status(400).json({
                     success: false,
@@ -311,7 +312,7 @@ export default class SoundsController {
             }
         
         } catch (err) {
-            console.log(err)
+            console.log("Erreur1 : ", err)
             return response.status(400).json({
                 success: false,
                 message: "Une erreur est survenue."

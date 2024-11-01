@@ -111,6 +111,8 @@ function DetailsSound(){
                                 ]
                             }
                         ]} value={sound.typeId} disabled />
+
+                        <audio src=""></audio>
                     </div>
                 )
             }

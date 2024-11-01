@@ -6,14 +6,17 @@ import Boolean from "@components/Boolean";
 import Select from "@components/Select";
 import { FaArrowLeft } from "react-icons/fa";
 import useFetch from "@services/useFetch";
-import { MdAdd } from "react-icons/md";
+import { MdEdit } from "react-icons/md";
 import toast from "react-hot-toast";
 import useMutation from "@services/useMutation";
 import Form from "@components/Form";
+import { useParams } from "react-router-dom";
 
 interface Sound {
+    id: number;
     title: string;
     url: string;
+    path: string;
     order: number;
     isActive: boolean;
     before: number;
@@ -34,12 +37,15 @@ interface ErrorState {
   typeId: string;
 }
 
-function AddSound(){
+function EditSound(){
 
+    const { id } = useParams();
     const { setCurrentPage } = useContext(DataContext);
     const [sound, setSound] = useState<Sound>({
+        id: 0,
         title: "",
         url: "",
+        path: "",
         order: 0,
         isActive: true,
         before: 0,
@@ -47,6 +53,7 @@ function AddSound(){
         licenseId: 0,
         typeId: 0
     });
+    const [title, setTitle] = useState<string>("");
     const [error, setError] = useState<ErrorState>({
         title: "",
         url: "",
@@ -65,23 +72,37 @@ function AddSound(){
         url: `sounds/add`
     });
 
+    const { data: soundData, isLoading: soundLoading } = useFetch({ 
+        name: "sound", 
+        url: `sounds/${id}` 
+    });
+
     const mutate = useMutation({
-        url: "sounds",
+        url: `sounds/${id}`,
         options: {
-            method: "PUT",
-            body: sound
+            method: "PATCH",
+            body: {
+                title: sound.title,
+                url: sound.url,
+                order: sound.order,
+                isActive: sound.isActive,
+                before: sound.before,
+                after: sound.after,
+                licenseId: sound.licenseId,
+                typeId: sound.typeId
+            }
         },
         success: (data: any) => {
             if(data.success){
                 setStatus("success");
-                toast.success("Le son a été ajouté avec succès");
+                toast.success("Le son a été modifié avec succès");
                 setTimeout(() => {
                     window.location.href = "/data/sounds";
                 }, 1000);
             }
         },
         error: (error: string) => {
-            toast.error("Une erreur est survenue lors de l'ajout du son");
+            toast.error("Une erreur est survenue lors de la modification du son");
             console.log(error);
         }
     })
@@ -160,7 +181,7 @@ function AddSound(){
             return;
         }
 
-        toast.loading("Ajout du son en cours...");
+        toast.loading("Modification du son en cours...");
 
         mutate.mutate();
         
@@ -174,8 +195,15 @@ function AddSound(){
     }, [data]);
 
     useEffect(() => {
+        if(soundData && soundData.success){
+            setSound(soundData.sound);
+            setTitle(soundData.sound.title);
+        }
+    }, [soundData]);
+
+    useEffect(() => {
         setCurrentPage({
-            title: "Ajouter un son",
+            title: `Modifier le son : ${title}`,
             Buttons: [
                 <Button link={"/data/sounds"} color="danger">
                     <span className="text-xl flex justify-center items-center gap-2">
@@ -183,55 +211,53 @@ function AddSound(){
                         Retour
                     </span>
                 </Button>,
-                <Button onClick={handleSubmit} color="success" status={status} icon={<MdAdd />}>
+                <Button onClick={handleSubmit} color="success" status={status} icon={<MdEdit />}>
                     <span className="text-xl flex justify-center items-center gap-2">
-                        Ajouter
+                        Modifier
                     </span>
                 </Button>
             ]
         });
-    }, [status, sound, error]);
+    }, [status, title]);
 
     return (
-        <Form>
-            <Input label="Titre" error={error.title} name="title" value={sound.title} setValue={handleChangeInput} required />
-            <Input label="URL" error={error.url} name="url" value={sound.url} setValue={handleChangeInput} required />
-            <Input type="number" error={error.order} label="Ordre" name="order" value={sound.order} setValue={handleChangeInput} required />
-            <Boolean label="Actif" name="isActive" value={sound.isActive} setValue={() => setSound({
-                ...sound,
-                isActive: !sound.isActive
-            })} required />
-            <Input type="number" label="Rogner au début" error={error.before} name="before" value={sound.before} setValue={handleChangeInput} />
-            <Input type="number" label="Rogner à la fin" error={error.after} name="after" value={sound.after} setValue={handleChangeInput} />
-            {
-                !isLoading && (
-                    <>
-                        <Select
-                            label="Licence" 
-                            name="licenseId" 
-                            error={error.licenseId} 
-                            groups={licenses} 
-                            placeholder="Sélectionner une licence" 
-                            value={sound.licenseId} 
-                            setValue={handleChangeSelect} 
-                            required 
-                            displayGroup
-                        />
-                        <Select 
-                            label="Type" 
-                            name="typeId" 
-                            error={error.typeId} 
-                            groups={types} 
-                            placeholder="Sélectionner un type" 
-                            value={sound.typeId} 
-                            setValue={handleChangeSelect} 
-                            required 
-                        />
-                    </>
-                )
-            }
-        </Form>
+        !isLoading && !soundLoading && (
+            <Form>
+                <Input label="ID" name="ID" value={sound.id} disabled />
+                <Input label="Titre" error={error.title} name="title" value={sound.title} setValue={handleChangeInput} required />
+                <Input label="URL" error={error.url} name="url" value={sound.url} setValue={handleChangeInput} required />
+                <Input label="Chemin d'accès" name="path" value={sound.path} disabled />
+                <Input type="number" error={error.order} label="Ordre" name="order" value={sound.order} setValue={handleChangeInput} required />
+                <Boolean label="Actif" name="isActive" value={sound.isActive} setValue={() => setSound({
+                    ...sound,
+                    isActive: !sound.isActive
+                })} required />
+                <Input type="number" label="Rogner au début" error={error.before} name="before" value={sound.before} setValue={handleChangeInput} />
+                <Input type="number" label="Rogner à la fin" error={error.after} name="after" value={sound.after} setValue={handleChangeInput} />
+                <Select
+                    label="Licence" 
+                    name="licenseId" 
+                    error={error.licenseId} 
+                    groups={licenses} 
+                    placeholder="Sélectionner une licence" 
+                    value={sound.licenseId} 
+                    setValue={handleChangeSelect} 
+                    required 
+                    displayGroup
+                />
+                <Select 
+                    label="Type" 
+                    name="typeId" 
+                    error={error.typeId} 
+                    groups={types} 
+                    placeholder="Sélectionner un type" 
+                    value={sound.typeId} 
+                    setValue={handleChangeSelect} 
+                    required 
+                />
+            </Form>          
+        )
     )
 }
 
-export default AddSound;
+export default EditSound;

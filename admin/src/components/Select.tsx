@@ -7,7 +7,7 @@ interface SelectProps {
     required?: boolean;
     status?: string;
     value?: string | number;
-    setValue?: (value: string) => void;
+    setValue?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
     displayGroup?: boolean;
     disabled?: boolean;
     placeholder?: string;
@@ -38,7 +38,7 @@ function Select({ label, name, groups, required = false, status = "idle", value,
                 name={name} 
                 id={name} 
                 value={value} 
-                onChange={(e) => setValue && setValue(e.target.value)} 
+                onChange={(e) => setValue && setValue(e)} 
                 disabled={status !== "idle" || disabled} 
                 className={`p-2 rounded-lg bg-slate-900 shadow-md text-white outline-none focus:shadow-inner ${error !== "" ? "border-red-500 border-2" : ""} ${status !== "idle" || disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`
             }>

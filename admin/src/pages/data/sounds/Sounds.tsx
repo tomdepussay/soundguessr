@@ -5,7 +5,9 @@ import useDebounce from '@/services/useDebounce';
 import PreTable from '@components/PreTable';
 import Sound from '@models/Sound';
 import Table from '@components/Table';
+import TableCaption from '@components/TableCaption';
 import TableHeader from '@components/TableHeader';
+import TableBody from '@components/TableBody';
 import TableRow from '@components/TableRow';
 import TableCell from '@components/TableCell';
 import Loader from '@components/Loader';
@@ -31,6 +33,7 @@ function Sounds() {
     const { setCurrentPage } = useContext(DataContext);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [total, setTotal] = useState(0);
     const [search, setSearch] = useState("");
     const debouncedSearch = useDebounce(search, 500);
     const [filterMode, setFilterMode] = useState("none");
@@ -45,6 +48,7 @@ function Sounds() {
         if(data){
             setSounds(data.sounds.data);
             setTotalPages(data.sounds.meta.lastPage);
+            setTotal(data.sounds.meta.total);
         }
     }, [data]);
 
@@ -92,6 +96,9 @@ function Sounds() {
                     </div>
                 ) : (
                     <Table>
+                        <TableCaption position='bottom'>
+                            {total} son(s) sur {totalPages} page(s)
+                        </TableCaption>
                         <TableHeader>
                             <TableCell important>Titre</TableCell>
                             <TableCell important>Licence</TableCell>
@@ -103,34 +110,36 @@ function Sounds() {
 
                         {
                             sounds.map((sound, index) => (
-                                <TableRow key={sound.id} index={index}>
-                                    <TableCell important>{sound.title}</TableCell>
-                                    <TableCell important border>{sound.license}</TableCell>
-                                    <TableCell border>{sound.type}</TableCell>
-                                    <TableCell border>{sound.order}</TableCell>
-                                    <TableCell border>
-                                        {
-                                            sound.isActive ? (
-                                                <span className="bg-green-700 p-2 py-1 rounded font-semibold">Oui</span>
-                                            ) : (
-                                                <span className="bg-red-700 p-2 py-1 rounded font-semibold">Non</span>
-                                            )
-                                        }
-                                    </TableCell>
-                                    <TableCell important border>
-                                        <div className="flex gap-2 justify-start items-center">
-                                            <Button link={`/data/sounds/${sound.id}`} color="info">
-                                                <FaEye />
-                                            </Button>
-                                            <Button link={`/data/sounds/edit/${sound.id}`} color='success'>
-                                                <FaEdit />
-                                            </Button>
-                                            <Button link={`/data/sounds/delete`} color='danger'>
-                                                <FaRegTrashAlt />
-                                            </Button>
-                                        </div>
-                                    </TableCell>
-                                </TableRow>
+                                <TableBody key={index} index={index}>
+                                    <TableRow key={sound.id} index={index}>
+                                        <TableCell important>{sound.title}</TableCell>
+                                        <TableCell important border>{sound.license}</TableCell>
+                                        <TableCell border>{sound.type}</TableCell>
+                                        <TableCell border>{sound.order}</TableCell>
+                                        <TableCell border>
+                                            {
+                                                sound.isActive ? (
+                                                    <span className="bg-green-700 p-2 py-1 rounded font-semibold">Oui</span>
+                                                ) : (
+                                                    <span className="bg-red-700 p-2 py-1 rounded font-semibold">Non</span>
+                                                )
+                                            }
+                                        </TableCell>
+                                        <TableCell important border>
+                                            <div className="flex gap-2 justify-start items-center">
+                                                <Button link={`/data/sounds/${sound.id}`} color="info">
+                                                    <FaEye />
+                                                </Button>
+                                                <Button link={`/data/sounds/edit/${sound.id}`} color='success'>
+                                                    <FaEdit />
+                                                </Button>
+                                                <Button link={`/data/sounds/delete`} color='danger'>
+                                                    <FaRegTrashAlt />
+                                                </Button>
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                </TableBody>
                             ))
                         }
                     </Table>
