@@ -17,10 +17,7 @@ function Login() {
 
     const mutate = useMutation({
         url: "auth/login",
-        options: {
-            method: "POST",
-            body: credentials
-        },
+        method: "POST",
         success: (data: any) => {
             if(data.success){
                 setStatus("success");
@@ -49,7 +46,7 @@ function Login() {
             return;
         }
 
-        mutate.mutate();
+        mutate.mutate({ body: credentials });
     }
     
     const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {

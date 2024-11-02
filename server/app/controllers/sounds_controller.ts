@@ -100,7 +100,7 @@ export default class SoundsController {
         })
     }
 
-    public async add({ request, response }: HttpContext){
+    public async add({ response }: HttpContext){
         const query = await db
             .query()
             .join("categories", "licenses.category_id", "categories.id")
@@ -343,6 +343,29 @@ export default class SoundsController {
         return response.status(200).json({
             success: true,
             message: "Le son a été supprimé"
+        })
+    }
+
+    public async active({ request, response }: HttpContext){
+        const id = request.param("id")
+
+        const sound = await Sound.find(id)
+
+        if(!sound){
+            return response.status(404).json({
+                success: false,
+                messsage: "Ce son n'existe pas."
+            });
+        }
+
+        sound.isActive = !sound.isActive
+
+        await sound.save()
+
+        return response.status(200).json({
+            success: true,
+            message: "Le son a été modifié",
+            sound
         })
     }
 }

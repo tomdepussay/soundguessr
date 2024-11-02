@@ -77,15 +77,19 @@ router
         router.put("/", [SoundsController, "create"])
         router.patch("/:id", [SoundsController, "update"])
         router.delete("/:id", [SoundsController, "delete"])
+        router.patch("/active/:id", [SoundsController, "active"])
       })
       .prefix("/sounds")
 
     router
       .group(() => {
         router.get("/", [LicensesController, "index"])
+        router.get("/add", [LicensesController, "add"])
+        router.get("/:id", [LicensesController, "show"])
         router.put("/", [LicensesController, "create"])
         router.patch("/:id", [LicensesController, "update"])
         router.delete("/:id", [LicensesController, "delete"])
+        router.patch("/active/:id", [LicensesController, "active"])
       })
       .prefix("/licenses")
 

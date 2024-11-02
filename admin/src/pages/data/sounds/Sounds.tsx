@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useLocation } from 'react-router-dom';
 import useFetch from '@services/useFetch';
+import useMutation from '@/services/useMutation';
 import useDebounce from '@/services/useDebounce';
 import PreTable from '@components/PreTable';
 import Sound from '@models/Sound';
@@ -14,8 +14,10 @@ import Loader from '@components/Loader';
 import Button from '@components/Button';
 import { FaEdit, FaRegTrashAlt, FaEye } from "react-icons/fa";
 import { DataContext } from '@/services/DataContext';
+import { AlertContext } from '@services/AlertContext';
 import { MdAdd } from "react-icons/md";
-
+import toast from 'react-hot-toast';
+import { IoMdSwitch } from "react-icons/io";
 
 const FilterModes: {mode: string, label: string}[] = [
     {
@@ -31,6 +33,7 @@ const FilterModes: {mode: string, label: string}[] = [
 function Sounds() {
 
     const { setCurrentPage } = useContext(DataContext);
+    const { showAlert, hideAlert } = useContext(AlertContext);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [total, setTotal] = useState(0);
@@ -38,10 +41,37 @@ function Sounds() {
     const debouncedSearch = useDebounce(search, 500);
     const [filterMode, setFilterMode] = useState("none");
     const [sounds, setSounds] = useState<Sound[]>([]);
-    const location = useLocation();
 
-    const { data, isLoading } = useFetch({ name: ["sounds", { page, debouncedSearch }], 
+    const { data, isLoading, refetch } = useFetch({ name: ["sounds", { page, debouncedSearch }], 
         url: `sounds?page=${page}&search=${debouncedSearch}&filter=${filterMode}` 
+    });
+
+    const mutation = useMutation({
+        url: `sounds`,
+        method: "DELETE",
+        success: () => {
+            toast.success("Son supprimé avec succès !");
+            hideAlert();
+            refetch();
+        },
+        error: (error: any) => {
+            toast.error("Erreur lors de la suppression du son");
+            console.error("Erreur lors de la suppression du son", error);
+        }
+    })
+
+    const mutationActive = useMutation({
+        url: `sounds/active`,
+        method: "PATCH",
+        success: () => {
+            hideAlert();
+            toast.success("Son modifié avec succès !");
+            refetch();
+        },
+        error: (error: any) => {
+            toast.error("Erreur lors de la modification du son");
+            console.error("Erreur lors de la modification du son", error);
+        }
     });
 
     useEffect(() => {
@@ -96,7 +126,7 @@ function Sounds() {
                     </div>
                 ) : (
                     <Table>
-                        <TableCaption position='bottom'>
+                        <TableCaption>
                             {total} son(s) sur {totalPages} page(s)
                         </TableCaption>
                         <TableHeader>
@@ -133,8 +163,21 @@ function Sounds() {
                                                 <Button link={`/data/sounds/edit/${sound.id}`} color='success'>
                                                     <FaEdit />
                                                 </Button>
-                                                <Button link={`/data/sounds/delete`} color='danger'>
+                                                <Button onClick={() => {
+                                                    showAlert(`Voulez-vous vraiment supprimer le son "${sound.title}" ?`, () => {
+                                                        
+                                                        mutation.mutate({ param: sound.id });
+                                                    });
+                                                }} color='danger'>
                                                     <FaRegTrashAlt />
+                                                </Button>
+                                                <Button onClick={() => {
+                                                    const message = sound.isActive ? `Voulez-vous vraiment désactiver le son "${sound.title}" ?` : `Voulez-vous vraiment activer le son "${sound.title}" ?`;
+                                                    showAlert(message, () => {
+                                                        mutationActive.mutate({ param: sound.id })
+                                                    })
+                                                }} color="warning">
+                                                    <IoMdSwitch />
                                                 </Button>
                                             </div>
                                         </TableCell>

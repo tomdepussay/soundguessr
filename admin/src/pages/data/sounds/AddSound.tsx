@@ -67,10 +67,7 @@ function AddSound(){
 
     const mutate = useMutation({
         url: "sounds",
-        options: {
-            method: "PUT",
-            body: sound
-        },
+        method: "PUT",
         success: (data: any) => {
             if(data.success){
                 setStatus("success");
@@ -162,7 +159,7 @@ function AddSound(){
 
         toast.loading("Ajout du son en cours...");
 
-        mutate.mutate();
+        mutate.mutate({ body: sound });
         
     };
 

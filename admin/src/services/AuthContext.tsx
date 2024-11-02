@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
-            fetchUserData.mutate(); 
+            fetchUserData.mutate({}); 
         } else {
             setLoading(false);
         }
@@ -56,7 +56,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const login = (token: string) => {
         localStorage.setItem("token", token);
-        fetchUserData.mutate(); 
+        fetchUserData.mutate({}); 
     };
 
     const logout = () => {

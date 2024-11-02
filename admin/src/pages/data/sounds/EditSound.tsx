@@ -79,19 +79,7 @@ function EditSound(){
 
     const mutate = useMutation({
         url: `sounds/${id}`,
-        options: {
-            method: "PATCH",
-            body: {
-                title: sound.title,
-                url: sound.url,
-                order: sound.order,
-                isActive: sound.isActive,
-                before: sound.before,
-                after: sound.after,
-                licenseId: sound.licenseId,
-                typeId: sound.typeId
-            }
-        },
+        method: "PATCH",
         success: (data: any) => {
             if(data.success){
                 setStatus("success");
@@ -183,7 +171,19 @@ function EditSound(){
 
         toast.loading("Modification du son en cours...");
 
-        mutate.mutate();
+        setSound((prevSound) => {
+            mutate.mutate({body: {
+                title: prevSound.title,
+                url: prevSound.url,
+                order: prevSound.order,
+                isActive: prevSound.isActive,
+                before: prevSound.before,
+                after: prevSound.after,
+                licenseId: prevSound.licenseId,
+                typeId: prevSound.typeId
+            }});
+            return prevSound;
+        })
         
     };
 

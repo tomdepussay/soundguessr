@@ -6,25 +6,22 @@ interface MutationProps {
     url: string;
     success: (data: any) => void;
     error: (error: any) => void;
-    options?: OptionProps;
+    method?: string;
 }
 
-interface OptionProps {
-    method: string;
-    body: any;
-}
-
-const useMutation = ({ url, options, success, error }: MutationProps) => {
+const useMutation = ({ url, method = "GET", success, error }: MutationProps) => {
     return useMutationReact({
-        mutationFn: async () => {
+        mutationFn: async (variable: { body?: any, param?: any }) => {
             try {
-                const response = await fetch(`${apiUrl}${url}`, {
-                    method: options?.method || "GET",
+                const response = await fetch(`${apiUrl}${url}${
+                    variable?.param ? `/${variable.param}` : ""
+                }`, {
+                    method: method,
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${localStorage.getItem("token")}`
                     },
-                    body: JSON.stringify(options?.body) || null
+                    body: JSON.stringify(variable?.body) || null
                 });
                 return response.json();
             } catch (err) {

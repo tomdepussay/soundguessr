@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Input from "@components/Input";
 import Boolean from "@components/Boolean";
 import Select from "@components/Select";
@@ -8,6 +8,9 @@ import { DataContext } from "@/services/DataContext";
 import Button from "@components/Button";
 import { FaArrowLeft, FaEdit, FaRegTrashAlt } from "react-icons/fa";
 import Loader from "@/components/Loader";
+import useMutation from "@/services/useMutation";
+import toast from "react-hot-toast";
+import { AlertContext } from "@/services/AlertContext";
 
 interface Sound {
     id: number;
@@ -28,6 +31,7 @@ interface Sound {
 function DetailsSound(){
 
     const { id } = useParams();
+    const { showAlert, hideAlert } = useContext(AlertContext);
     const { setCurrentPage } = useContext(DataContext);
     const [sound, setSound] = useState<Sound>({
         id: 0,
@@ -44,9 +48,26 @@ function DetailsSound(){
         typeId: 0,
         type: ""
     });
+    const navigate = useNavigate();
     const { data, isLoading } = useFetch({ name: "sound", 
         url: `sounds/${id}` 
     });
+
+    const mutation = useMutation({
+        url: `sounds`,
+        method: "DELETE",
+        success: () => {
+            toast.success("Son supprimé avec succès !");
+            hideAlert();
+            setTimeout(() => {
+                navigate("/data/sounds");
+            }, 1000);
+        },
+        error: (error: any) => {
+            toast.error("Erreur lors de la suppression du son");
+            console.error("Erreur lors de la suppression du son", error);
+        }
+    })
 
     useEffect(() => {
         setCurrentPage({
@@ -71,11 +92,16 @@ function DetailsSound(){
     return (
         <div className="w-full h-fit">
             <div className="w-full flex gap-2 my-5 items-center justify-evenly">
-                <Button link={`${location.pathname}/edit/${sound.id}`} color='success'>
+                <Button link={`/data/sounds/edit/${sound.id}`} color='success'>
                     <FaEdit />
                     Modifier
                 </Button>
-                <Button link={`${location.pathname}/delete`} color='danger'>
+                <Button onClick={() => {
+                    showAlert(`Voulez-vous vraiment supprimer le son "${sound.title}" ?`, () => {
+                        
+                        mutation.mutate({ param: sound.id });
+                    });
+                }} color='danger'>
                     <FaRegTrashAlt />
                     Supprimer
                 </Button>
@@ -112,7 +138,10 @@ function DetailsSound(){
                             }
                         ]} value={sound.typeId} disabled />
 
-                        <audio src=""></audio>
+                        <audio controls src={sound.audio}>
+                            Your browser does not support the
+                            <code>audio</code> element.
+                        </audio>
                     </div>
                 )
             }
