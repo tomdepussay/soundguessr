@@ -91,7 +91,7 @@ export default class LicensesController {
             .from("categories")
             .select(
                 "id as value",
-                "title as label",
+                "name as label",
                 db.raw("'Category' as groupLabel")
             )
             .orderBy("name", "asc")

@@ -13,7 +13,7 @@ interface InputProps {
 
 function Input({ label, name, type = "text", status = "idle", required = false, value, setValue, placeholder = "Taper ici", disabled = false, error = "" }: InputProps){
     return (
-        <div className="flex flex-col gap1">
+        <div className={`flex flex-col gap-1`}>
             <label className="text-white select-none text-md font-semibold pl-1" htmlFor={name}>
                 {label}
                 {

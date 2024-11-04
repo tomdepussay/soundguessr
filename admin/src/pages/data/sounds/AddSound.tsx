@@ -10,6 +10,7 @@ import { MdAdd } from "react-icons/md";
 import toast from "react-hot-toast";
 import useMutation from "@services/useMutation";
 import Form from "@components/Form";
+import FormRow from "@components/FormRow";
 
 interface Sound {
     title: string;
@@ -191,42 +192,48 @@ function AddSound(){
 
     return (
         <Form>
-            <Input label="Titre" error={error.title} name="title" value={sound.title} setValue={handleChangeInput} required />
-            <Input label="URL" error={error.url} name="url" value={sound.url} setValue={handleChangeInput} required />
-            <Input type="number" error={error.order} label="Ordre" name="order" value={sound.order} setValue={handleChangeInput} required />
-            <Boolean label="Actif" name="isActive" value={sound.isActive} setValue={() => setSound({
-                ...sound,
-                isActive: !sound.isActive
-            })} required />
-            <Input type="number" label="Rogner au début" error={error.before} name="before" value={sound.before} setValue={handleChangeInput} />
-            <Input type="number" label="Rogner à la fin" error={error.after} name="after" value={sound.after} setValue={handleChangeInput} />
-            {
-                !isLoading && (
-                    <>
-                        <Select
-                            label="Licence" 
-                            name="licenseId" 
-                            error={error.licenseId} 
-                            groups={licenses} 
-                            placeholder="Sélectionner une licence" 
-                            value={sound.licenseId} 
-                            setValue={handleChangeSelect} 
-                            required 
-                            displayGroup
-                        />
-                        <Select 
-                            label="Type" 
-                            name="typeId" 
-                            error={error.typeId} 
-                            groups={types} 
-                            placeholder="Sélectionner un type" 
-                            value={sound.typeId} 
-                            setValue={handleChangeSelect} 
-                            required 
-                        />
-                    </>
-                )
-            }
+            <FormRow>
+                <Input label="Titre" error={error.title} name="title" value={sound.title} setValue={handleChangeInput} required />
+                <Input label="URL" error={error.url} name="url" value={sound.url} setValue={handleChangeInput} required />
+                <Input type="number" error={error.order} label="Ordre" name="order" value={sound.order} setValue={handleChangeInput} required />
+            </FormRow>
+            <FormRow>
+                <Boolean label="Actif" name="isActive" value={sound.isActive} setValue={() => setSound({
+                    ...sound,
+                    isActive: !sound.isActive
+                })} required />
+                <Input type="number" label="Rogner au début" error={error.before} name="before" value={sound.before} setValue={handleChangeInput} />
+                <Input type="number" label="Rogner à la fin" error={error.after} name="after" value={sound.after} setValue={handleChangeInput} />
+            </FormRow>
+            <FormRow>
+                {
+                    !isLoading && (
+                        <>
+                            <Select
+                                label="Licence" 
+                                name="licenseId" 
+                                error={error.licenseId} 
+                                groups={licenses} 
+                                placeholder="Sélectionner une licence" 
+                                value={sound.licenseId} 
+                                setValue={handleChangeSelect} 
+                                required 
+                                displayGroup
+                            />
+                            <Select 
+                                label="Type" 
+                                name="typeId" 
+                                error={error.typeId} 
+                                groups={types} 
+                                placeholder="Sélectionner un type" 
+                                value={sound.typeId} 
+                                setValue={handleChangeSelect} 
+                                required 
+                            />
+                        </>
+                    )
+                }
+            </FormRow>
         </Form>
     )
 }

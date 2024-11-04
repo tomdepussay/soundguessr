@@ -12,69 +12,59 @@ import useMutation from "@/services/useMutation";
 import toast from "react-hot-toast";
 import { AlertContext } from "@/services/AlertContext";
 
-interface Sound {
+interface License {
     id: number;
     title: string;
-    url: string;
     path: string;
-    audio: string;
-    order: number;
+    image: string;
+    top100: number;
     isActive: boolean;
-    before: number;
-    after: number;
-    licenseId: number;
-    license: string;
-    typeId: number;
-    type: string;
+    categoryId: number;
+    category: string;
 }
 
-function DetailsSound(){
+function DetailsLicense(){
 
     const { id } = useParams();
     const { showAlert, hideAlert } = useContext(AlertContext);
     const { setCurrentPage } = useContext(DataContext);
-    const [sound, setSound] = useState<Sound>({
+    const [license, setLicense] = useState<License>({
         id: 0,
         title: "",
-        url: "",
         path: "",
-        audio: "",
-        order: 0,
+        image: "",
+        top100: 0,
         isActive: false,
-        before: 0,
-        after: 0,
-        licenseId: 0,
-        license: "",
-        typeId: 0,
-        type: ""
+        categoryId: 0,
+        category: ""
     });
     const navigate = useNavigate();
     const { data, isLoading } = useFetch({ 
-        name: "sound", 
-        url: `sounds/${id}` 
+        name: "license", 
+        url: `licenses/${id}` 
     });
 
     const mutation = useMutation({
-        url: `sounds`,
+        url: `licenses`,
         method: "DELETE",
         success: () => {
-            toast.success("Son supprimé avec succès !");
+            toast.success("Licence supprimée avec succès !");
             hideAlert();
             setTimeout(() => {
-                navigate("/data/sounds");
+                navigate("/data/licenses");
             }, 1000);
         },
         error: (error: any) => {
-            toast.error("Erreur lors de la suppression du son");
-            console.error("Erreur lors de la suppression du son", error);
+            toast.error("Erreur lors de la suppression de la licence");
+            console.error("Erreur lors de la suppression de la licence", error);
         }
     })
 
     useEffect(() => {
         setCurrentPage({
-            title: "Détails du son",
+            title: "Détails de la licence",
             Buttons: [
-                <Button link={"/data/sounds"} color="danger">
+                <Button link={"/data/licenses"} color="danger">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <FaArrowLeft />
                         Retour
@@ -86,21 +76,21 @@ function DetailsSound(){
 
     useEffect(() => {
         if(data){
-            setSound(data.sound);
+            setLicense(data.license);
         }
     }, [data]);
 
     return (
         <div className="w-full h-fit">
             <div className="w-full flex gap-2 my-5 items-center justify-evenly">
-                <Button link={`/data/sounds/edit/${sound.id}`} color='success'>
+                <Button link={`/data/sounds/edit/${license.id}`} color='success'>
                     <FaEdit />
                     Modifier
                 </Button>
                 <Button onClick={() => {
-                    showAlert(`Voulez-vous vraiment supprimer le son "${sound.title}" ?`, () => {
+                    showAlert(`Voulez-vous vraiment supprimer la licence "${license.title}" ?`, () => {
                         
-                        mutation.mutate({ param: sound.id });
+                        mutation.mutate({ param: license.id });
                     });
                 }} color='danger'>
                     <FaRegTrashAlt />
@@ -115,34 +105,20 @@ function DetailsSound(){
                 ) : (
                     <div className="w-full h-fit grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
                         <Input label="ID" name="ID" value={id} disabled />
-                        <Input label="Titre" name="title" value={sound.title} disabled />
-                        <Input label="URL" name="url" value={sound.url} disabled />
-                        <Input label="Chemin d'accès" name="path" value={sound.path} disabled />
-                        <Input label="Ordre" name="order" value={sound.order} disabled />
-                        <Boolean label="Actif" name="isActive" value={sound.isActive} disabled />
-                        <Input label="Rogner au début" name="before" value={sound.before} disabled />
-                        <Input label="Rogner à la fin" name="after" value={sound.after} disabled />
-                        <Select label="Licence" name="licence" groups={[
+                        <Input label="Titre" name="title" value={license.title} disabled />
+                        <Input label="Chemin d'accès" name="path" value={license.path} disabled />
+                        <Input label="Top 100" name="top100" value={license.top100} disabled />
+                        <Boolean label="Actif" name="isActive" value={license.isActive} disabled />
+                        <Select label="Categorie" name="category" groups={[
                             {
                                 label: "1",
                                 options: [
-                                    { label: sound.license, value: sound.licenseId }
+                                    { label: license.category, value: license.categoryId }
                                 ]
                             }
-                        ]} value={sound.licenseId} disabled />
-                        <Select label="Type" name="type" groups={[
-                            {
-                                label: "1",
-                                options: [
-                                    { label: sound.license, value: sound.licenseId }
-                                ]
-                            }
-                        ]} value={sound.typeId} disabled />
+                        ]} value={license.categoryId} disabled />
 
-                        <audio controls src={sound.audio}>
-                            Your browser does not support the
-                            <code>audio</code> element.
-                        </audio>
+                        <img src={license.image} alt="Image de la licence" />
                     </div>
                 )
             }
@@ -151,4 +127,4 @@ function DetailsSound(){
     )
 }
 
-export default DetailsSound;
+export default DetailsLicense;

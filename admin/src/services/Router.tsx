@@ -10,6 +10,9 @@ import Dashboard from '@pages/Dashboard';
 import Categories from '@pages/data/categories/Categories';
 
 import Licenses from '@pages/data/licenses/Licenses';
+import DetailsLicense from '@pages/data/licenses/DetailsLicense';
+import AddLicense from '@pages/data/licenses/AddLicense';
+import EditLicense from '@pages/data/licenses/EditLicense';
 
 import Sounds from '@pages/data/sounds/Sounds';
 import DetailsSound from '@pages/data/sounds/DetailsSound';
@@ -49,6 +52,10 @@ function Router(){
 
                     <Route path='licenses'>
                         <Route index element={<Licenses />} />
+                        <Route path={`:id`} element={<DetailsLicense />} />
+                        <Route path={`add`} element={<AddLicense />} />
+                        <Route path={`edit/:id`} element={<EditLicense />} />
+                        
                     </Route>
 
                     <Route path='sounds'>
