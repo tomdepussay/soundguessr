@@ -7,9 +7,10 @@ interface MutationProps {
     success: (data: any) => void;
     error: (error: any) => void;
     method?: string;
+    contentType?: string;
 }
 
-const useMutation = ({ url, method = "GET", success, error }: MutationProps) => {
+const useMutation = ({ url, method = "GET", success, error, contentType = "application/json" }: MutationProps) => {
     return useMutationReact({
         mutationFn: async (variable: { body?: any, param?: any }) => {
             try {
@@ -18,7 +19,7 @@ const useMutation = ({ url, method = "GET", success, error }: MutationProps) => 
                 }`, {
                     method: method,
                     headers: {
-                        "Content-Type": "application/json",
+                        "Content-Type": contentType,
                         "Authorization": `Bearer ${localStorage.getItem("token")}`
                     },
                     body: JSON.stringify(variable?.body) || null

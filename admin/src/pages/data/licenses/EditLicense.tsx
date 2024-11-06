@@ -10,6 +10,7 @@ import { MdEdit } from "react-icons/md";
 import toast from "react-hot-toast";
 import useMutation from "@services/useMutation";
 import Form from "@components/Form";
+import FormRow from "@components/FormRow";
 import { useParams } from "react-router-dom";
 
 interface License {
@@ -178,27 +179,33 @@ function EditLicense(){
     return (
         !isLoading && !licenseLoading && (
             <Form>
-                <Input label="ID" name="ID" value={license.id} disabled />
-                <Input label="Titre" error={error.title} name="title" value={license.title} setValue={handleChangeInput} required />
-                <Input label="Chemin d'accès" name="path" value={license.path} disabled />
-                <Boolean label="Top 100" name="top100" value={license.top100} setValue={() => setLicense({
-                    ...license,
-                    top100: !license.top100
-                })} required />
-                <Boolean label="Actif" name="isActive" value={license.isActive} setValue={() => setLicense({
-                    ...license,
-                    isActive: !license.isActive
-                })} required />
-                <Select 
-                    label="Catégorie" 
-                    name="categoryId" 
-                    error={error.categoryId} 
-                    groups={categories} 
-                    placeholder="Sélectionner une catégorie" 
-                    value={license.categoryId} 
-                    setValue={handleChangeSelect} 
-                    required 
-                />
+                <FormRow>
+                    <Input label="ID" name="ID" value={license.id} disabled />
+                    <Input label="Chemin d'accès" name="path" value={license.path} disabled />
+                </FormRow>
+                <FormRow>
+                    <Input label="Titre" error={error.title} name="title" value={license.title} setValue={handleChangeInput} required />   
+                    <Select 
+                        label="Categorie" 
+                        name="categoryId" 
+                        error={error.categoryId} 
+                        groups={categories} 
+                        placeholder="Sélectionner une catégorie" 
+                        value={license.categoryId} 
+                        setValue={handleChangeSelect} 
+                        required 
+                    />
+                </FormRow>
+                <FormRow>
+                    <Boolean label="Top 100" name="top100" value={license.top100} setValue={() => setLicense({
+                        ...license,
+                        top100: !license.top100
+                    })} required />
+                    <Boolean label="Actif" name="isActive" value={license.isActive} setValue={() => setLicense({
+                        ...license,
+                        isActive: !license.isActive
+                    })} required />
+                </FormRow>
             </Form>          
         )
     )

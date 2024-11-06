@@ -11,13 +11,15 @@ import Loader from "@/components/Loader";
 import useMutation from "@/services/useMutation";
 import toast from "react-hot-toast";
 import { AlertContext } from "@/services/AlertContext";
+import Form from "@components/Form";
+import FormRow from "@components/FormRow";
 
 interface License {
     id: number;
     title: string;
     path: string;
     image: string;
-    top100: number;
+    top100: boolean;
     isActive: boolean;
     categoryId: number;
     category: string;
@@ -33,7 +35,7 @@ function DetailsLicense(){
         title: "",
         path: "",
         image: "",
-        top100: 0,
+        top100: false,
         isActive: false,
         categoryId: 0,
         category: ""
@@ -82,7 +84,7 @@ function DetailsLicense(){
 
     return (
         <div className="w-full h-fit">
-            <div className="w-full flex gap-2 my-5 items-center justify-evenly">
+            <div className="w-full flex gap-10 ps-5 my-5 items-center justify-start">
                 <Button link={`/data/sounds/edit/${license.id}`} color='success'>
                     <FaEdit />
                     Modifier
@@ -103,23 +105,27 @@ function DetailsLicense(){
                         <Loader big />
                     </div>
                 ) : (
-                    <div className="w-full h-fit grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-                        <Input label="ID" name="ID" value={id} disabled />
-                        <Input label="Titre" name="title" value={license.title} disabled />
-                        <Input label="Chemin d'accès" name="path" value={license.path} disabled />
-                        <Input label="Top 100" name="top100" value={license.top100} disabled />
-                        <Boolean label="Actif" name="isActive" value={license.isActive} disabled />
-                        <Select label="Categorie" name="category" groups={[
-                            {
-                                label: "1",
-                                options: [
-                                    { label: license.category, value: license.categoryId }
-                                ]
-                            }
-                        ]} value={license.categoryId} disabled />
-
-                        <img src={license.image} alt="Image de la licence" />
-                    </div>
+                    <Form>
+                        <FormRow>
+                            <Input label="ID" name="ID" value={id} disabled />
+                            <Input label="Chemin d'accès" name="path" value={license.path} disabled />
+                        </FormRow>
+                        <FormRow>
+                            <Input label="Titre" name="title" value={license.title} disabled />
+                            <Select label="Categorie" name="category" groups={[
+                                {
+                                    label: "1",
+                                    options: [
+                                        { label: license.category, value: license.categoryId }
+                                    ]
+                                }
+                            ]} value={license.categoryId} disabled />
+                        </FormRow>
+                        <FormRow>
+                            <Boolean label="Top 100" name="top100" value={license.top100} disabled />
+                            <Boolean label="Actif" name="isActive" value={license.isActive} disabled />
+                        </FormRow>
+                    </Form>
                 )
             }
             

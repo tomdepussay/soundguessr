@@ -10,6 +10,8 @@ import { MdAdd } from "react-icons/md";
 import toast from "react-hot-toast";
 import useMutation from "@services/useMutation";
 import Form from "@components/Form";
+import FormRow from "@components/FormRow";
+import File from "@components/File";
 
 interface License {
     title: string;
@@ -18,11 +20,12 @@ interface License {
     categoryId: number;
 }
 
-type ErrorKeys = 'title' | 'categoryId';
+type ErrorKeys = 'title' | 'categoryId' | 'file';
 
 interface ErrorState {
     title: string;
     categoryId: string;
+    file: string;
 }
 
 function AddLicense(){
@@ -34,9 +37,11 @@ function AddLicense(){
         isActive: true,
         categoryId: 0
     });
+    const [file, setFile] = useState<File | null>(null);
     const [error, setError] = useState<ErrorState>({
         title: "",
         categoryId: "",
+        file: ""
     });
     const [status, setStatus] = useState("idle");
     const [categories, setCategories] = useState<Group[]>([]);
@@ -94,6 +99,48 @@ function AddLicense(){
         });
     }
 
+    const handleChangeFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files;
+        handleErrors("file");
+
+        if(files && files.length > 0){
+            const selectedFile = files[0];
+            const fileType = selectedFile.type;
+
+            if(fileType !== 'image/png' && fileType !== 'image/jpeg' && fileType !== 'image/jpg'){
+                setError({
+                    ...error,
+                    file: "Le fichier doit être une image de type PNG, JPEG ou JPG"
+                });
+                return;
+            } else {
+                setError({
+                    ...error,
+                    file: ""
+                });
+            }
+
+            setFile(selectedFile);
+        }
+    }
+
+    // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const selectedFile = e.target.files?.[0];
+    //     if (selectedFile) {
+
+    //         const fileType = selectedFile.type;
+
+    //         if(fileType !== 'image/png' && fileType !== 'image/jpeg' && fileType !== 'image/jpg'){
+    //             setError("Le fichier doit être une image de type PNG, JPEG ou JPG");
+    //             return;
+    //         } else {
+    //             setError("");
+    //         }
+
+    //         setFile(selectedFile);
+    //     }
+    // }
+
     const handleSubmit = () => {
         setStatus("loading");
 
@@ -120,7 +167,18 @@ function AddLicense(){
 
         toast.loading("Ajout de la licence en cours...");
 
-        mutate.mutate({ body: license });
+        console.log(license);
+
+        const formData = new FormData();
+        formData.append("title", license.title);
+        formData.append("top100", license.top100.toString());
+        formData.append("isActive", license.isActive.toString());
+        formData.append("categoryId", license.categoryId.toString());
+        formData.append("file", file as Blob);
+
+        console.log(formData);
+
+        // mutate.mutate({ body: formData });
         
     };
 
@@ -151,29 +209,36 @@ function AddLicense(){
 
     return (
         <Form>
-            <Input label="Titre" error={error.title} name="title" value={license.title} setValue={handleChangeInput} required />
-            <Boolean label="Top 100" name="top100" value={license.top100} setValue={() => setLicense({
-                ...license,
-                top100: !license.top100
-            })} required />
-            <Boolean label="Actif" name="isActive" value={license.isActive} setValue={() => setLicense({
-                ...license,
-                isActive: !license.isActive
-            })} required />
-            {
-                !isLoading && (
-                    <Select 
-                        label="Categorie" 
-                        name="categoryId" 
-                        error={error.categoryId} 
-                        groups={categories} 
-                        placeholder="Sélectionner une catégorie" 
-                        value={license.categoryId} 
-                        setValue={handleChangeSelect} 
-                        required 
-                    />
-                )
-            }
+            <FormRow>
+                <Input label="Titre" error={error.title} name="title" value={license.title} setValue={handleChangeInput} required />
+                {
+                    !isLoading && (
+                        <Select 
+                            label="Categorie" 
+                            name="categoryId" 
+                            error={error.categoryId} 
+                            groups={categories} 
+                            placeholder="Sélectionner une catégorie" 
+                            value={license.categoryId} 
+                            setValue={handleChangeSelect} 
+                            required 
+                        />
+                    )
+                }
+            </FormRow>
+            <FormRow>
+                <Boolean label="Top 100" name="top100" value={license.top100} setValue={() => setLicense({
+                    ...license,
+                    top100: !license.top100
+                })} required />
+                <Boolean label="Actif" name="isActive" value={license.isActive} setValue={() => setLicense({
+                    ...license,
+                    isActive: !license.isActive
+                })} required />
+            </FormRow>
+            <FormRow>
+                <File label="Fichier" name="file" value={file} setValue={handleChangeFile} error={error.file} required />
+            </FormRow>
         </Form>
     )
 }

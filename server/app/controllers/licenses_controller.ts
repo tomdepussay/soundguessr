@@ -105,6 +105,7 @@ export default class LicensesController {
     }
 
     public async create({ request, response }: HttpContext){
+        console.log(request.all())
         const { title, top100, isActive, categoryId } = await licenseValidator.validate(request.all())
         const file = request.file('file', {
             size: '2mb',
