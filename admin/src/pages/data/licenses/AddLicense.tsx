@@ -167,8 +167,6 @@ function AddLicense(){
 
         toast.loading("Ajout de la licence en cours...");
 
-        console.log(license);
-
         const formData = new FormData();
         formData.append("title", license.title);
         formData.append("top100", license.top100.toString());
@@ -176,9 +174,7 @@ function AddLicense(){
         formData.append("categoryId", license.categoryId.toString());
         formData.append("file", file as Blob);
 
-        console.log(formData);
-
-        // mutate.mutate({ body: formData });
+        mutate.mutate({ body: formData });
         
     };
 
