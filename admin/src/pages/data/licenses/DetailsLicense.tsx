@@ -18,7 +18,7 @@ interface License {
     id: number;
     title: string;
     path: string;
-    image: string;
+    picture: string;
     top100: boolean;
     isActive: boolean;
     categoryId: number;
@@ -34,7 +34,7 @@ function DetailsLicense(){
         id: 0,
         title: "",
         path: "",
-        image: "",
+        picture: "",
         top100: false,
         isActive: false,
         categoryId: 0,
@@ -124,6 +124,9 @@ function DetailsLicense(){
                         <FormRow>
                             <Boolean label="Top 100" name="top100" value={license.top100} disabled />
                             <Boolean label="Actif" name="isActive" value={license.isActive} disabled />
+                        </FormRow>
+                        <FormRow>
+                            <img src={license.picture} className="w-52" alt={`Image de la licence : ${license.title}`} />
                         </FormRow>
                     </Form>
                 )

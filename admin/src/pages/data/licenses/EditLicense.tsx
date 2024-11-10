@@ -4,6 +4,7 @@ import Button from "@components/Button";
 import Input from "@components/Input";
 import Boolean from "@components/Boolean";
 import Select from "@components/Select";
+import File from "@components/File";
 import { FaArrowLeft } from "react-icons/fa";
 import useFetch from "@services/useFetch";
 import { MdEdit } from "react-icons/md";
@@ -17,16 +18,18 @@ interface License {
     id: number;
     title: string;
     path: string;
+    picture: string;
     top100: boolean;
     isActive: boolean;
     categoryId: number;
 }
 
-type ErrorKeys = 'title' | 'categoryId';
+type ErrorKeys = 'title' | 'categoryId' | 'file';
 
 interface ErrorState {
     title: string;
     categoryId: string;
+    file: string;
 }
 
 function EditLicense(){
@@ -37,6 +40,7 @@ function EditLicense(){
         id: 0,
         title: "",
         path: "",
+        picture: "",
         top100: true,
         isActive: true,
         categoryId: 0
@@ -45,7 +49,9 @@ function EditLicense(){
     const [error, setError] = useState<ErrorState>({
         title: "",
         categoryId: "",
+        file: ""
     });
+    const [file, setFile] = useState<File | null>(null);
     const [status, setStatus] = useState("idle");
     const [categories, setCategories] = useState<Group[]>([]);
 
@@ -107,6 +113,31 @@ function EditLicense(){
         });
     }
 
+    const handleChangeFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const files = event.target.files;
+        handleErrors("file");
+
+        if(files && files.length > 0){
+            const selectedFile = files[0];
+            const fileType = selectedFile.type;
+
+            if(fileType !== 'image/png' && fileType !== 'image/jpeg' && fileType !== 'image/jpg'){
+                setError({
+                    ...error,
+                    file: "Le fichier doit être une image de type PNG, JPEG ou JPG"
+                });
+                return;
+            } else {
+                setError({
+                    ...error,
+                    file: ""
+                });
+            }
+
+            setFile(selectedFile);
+        }
+    }
+
     const handleSubmit = () => {
         setStatus("loading");
 
@@ -134,14 +165,23 @@ function EditLicense(){
         toast.loading("Modification de la licence en cours...");
 
         setLicense((prevLicense) => {
-            mutate.mutate({body: {
-                title: license.title,
-                categoryId: license.categoryId,
-                isActive: license.isActive
-            }});
+
+            const formData = new FormData();
+            formData.append("title", prevLicense.title);
+            formData.append("categoryId", prevLicense.categoryId.toString());
+            formData.append("top100", prevLicense.top100.toString());
+            formData.append("isActive", prevLicense.isActive.toString());
+            
+            setFile((prevFile) => {
+                if(prevFile){
+                    formData.append("file", prevFile as Blob);
+                }
+                return prevFile;
+            })
+
+            mutate.mutate({body: formData});
             return prevLicense;
         })
-        
     };
 
     useEffect(() => {
@@ -205,6 +245,9 @@ function EditLicense(){
                         ...license,
                         isActive: !license.isActive
                     })} required />
+                </FormRow>
+                <FormRow>
+                    <File label="Fichier" name="file" value={file} setValue={handleChangeFile} error={error.file} placeholder={license.picture} required />
                 </FormRow>
             </Form>          
         )

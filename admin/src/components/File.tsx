@@ -7,9 +7,10 @@ interface FileProps {
     setValue?: (event: React.ChangeEvent<HTMLInputElement>) => void;
     disabled?: boolean;
     error?: string;
+    placeholder?: string;
 }
 
-function File({ label, name, status = "idle", required = false, value, setValue, disabled = false, error = "" }: FileProps) {
+function File({ label, name, status = "idle", required = false, value, setValue, disabled = false, error = "", placeholder }: FileProps) {
     return (
         <div className="flex flex-col gap-1">
             <label className="text-white select-none text-md font-semibold pl-1" htmlFor={name}>
@@ -30,6 +31,8 @@ function File({ label, name, status = "idle", required = false, value, setValue,
                     {
                         value ? (
                             <img src={URL.createObjectURL(value)} alt={name} className='max-h-44 max-w-44 object-cover' />
+                        ) : placeholder ? (
+                            <img src={placeholder} alt={name} className='max-h-44 max-w-44 object-cover' />
                         ) : (
                             <span className='text-white text-center'>
                                 Aucun fichier sélectionné

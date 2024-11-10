@@ -124,23 +124,6 @@ function AddLicense(){
         }
     }
 
-    // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     const selectedFile = e.target.files?.[0];
-    //     if (selectedFile) {
-
-    //         const fileType = selectedFile.type;
-
-    //         if(fileType !== 'image/png' && fileType !== 'image/jpeg' && fileType !== 'image/jpg'){
-    //             setError("Le fichier doit être une image de type PNG, JPEG ou JPG");
-    //             return;
-    //         } else {
-    //             setError("");
-    //         }
-
-    //         setFile(selectedFile);
-    //     }
-    // }
-
     const handleSubmit = () => {
         setStatus("loading");
 
@@ -154,6 +137,10 @@ function AddLicense(){
 
         if (license.categoryId === 0) {
             newError.categoryId = "La catégorie est obligatoire";
+        }
+
+        if(!file){
+            newError.file = "Le fichier est obligatoire";
         }
 
         if (Object.keys(newError).length > 0) {
