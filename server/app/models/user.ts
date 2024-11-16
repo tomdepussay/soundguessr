@@ -1,7 +1,9 @@
 import { DateTime } from 'luxon'
 import hash from '@adonisjs/core/services/hash'
-import { BaseModel, column } from '@adonisjs/lucid/orm'
+import { BaseModel, column, manyToMany } from '@adonisjs/lucid/orm'
 import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
+import Right from './right.js'
+import * as relations from '@adonisjs/lucid/types/relations'
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -27,6 +29,14 @@ export default class User extends BaseModel {
 
   @column({ columnName: 'is_active' })
   declare isActive: boolean
+
+  @column({ columnName: 'profile_id'})
+  declare profileId: number
+
+  @manyToMany(() => Right, {
+    pivotTable: 'users_rights'
+  })
+  public rights!: relations.ManyToMany<typeof Right>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
