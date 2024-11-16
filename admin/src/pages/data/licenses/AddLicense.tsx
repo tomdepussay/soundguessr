@@ -57,7 +57,7 @@ function AddLicense(){
         success: (data: any) => {
             if(data.success){
                 setStatus("success");
-                toast.success("La licence a été ajoutée avec succès");
+                toast.success(data.message);
                 setTimeout(() => {
                     window.location.href = "/data/licenses";
                 }, 1000);
