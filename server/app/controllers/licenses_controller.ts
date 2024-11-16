@@ -6,6 +6,8 @@ import app from '@adonisjs/core/services/app'
 import db from '@adonisjs/lucid/services/db'
 import fs from 'fs'
 import OptionsByGroups from '#services/optionsByGroups';
+import Sound from '#models/sound'
+import SoundsController from './sounds_controller.js'
 
 export default class LicensesController {
     public async index({ request, response }: HttpContext){
@@ -16,6 +18,7 @@ export default class LicensesController {
         const licenses = await db
             .query()
             .join("categories", "licenses.category_id", "categories.id")
+            .leftJoin("sounds", "licenses.id", "sounds.license_id")
             .from("licenses")
             .select(
                 "licenses.id", 
@@ -23,21 +26,13 @@ export default class LicensesController {
                 "licenses.top100", 
                 "licenses.is_active as isActive", 
                 "licenses.path", 
-                "categories.name as category"
+                "categories.name as category",
+                db.raw("COUNT(sounds.id) as sounds_count")
             )
             .where("licenses.title", "like", `%${search}%`)
+            .groupBy("licenses.id", "categories.name")
             .orderBy("licenses.id", "desc")
             .paginate(page, limit)
-
-        licenses.forEach((license: { path: string; picture: string }) => {
-            if(license.path){
-                let path = app.makePath('resources', 'licenses', license.path)
-                if(fs.existsSync(path)){
-                    const picture = fs.readFileSync(path, { encoding: 'base64' })
-                    license.picture = `data:image/png;base64,${picture}`
-                }
-            }
-        })
 
         return response.status(200).json({
             success: true,
@@ -219,18 +214,31 @@ export default class LicensesController {
             })
         }
 
+        await this.deleteLicense(license)
+
+        return response.status(200).json({
+            success: true,
+            message: "La licence a été supprimée."
+        })
+    }
+
+    public async deleteLicense(license: License){
         const resourcesPath = app.makePath('resources', 'licenses', license.path)
 
         if(fs.existsSync(resourcesPath)){
             fs.unlinkSync(resourcesPath)
         }
 
-        await license.delete()
+        const sounds = await Sound.query().where("license_id", license.id);
+        const soundsController = new SoundsController();
 
-        return response.status(200).json({
-            success: true,
-            message: "La licence a été supprimée."
-        })
+        if(sounds.length > 0){
+            for(const sound of sounds){
+                await soundsController.deleteSound(sound)
+            }
+        }
+
+        return await license.delete()
     }
 
     public async active({ request, response }: HttpContext){
@@ -249,10 +257,11 @@ export default class LicensesController {
 
         await license.save()
 
+        let message = license.isActive ? "La licence a été activée" : "La licence a été désactivée"
+
         return response.status(200).json({
             success: true,
-            message: "La licence a été modifiée.",
-            license
+            message
         })
     }
 }

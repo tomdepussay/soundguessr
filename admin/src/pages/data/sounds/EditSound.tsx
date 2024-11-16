@@ -84,10 +84,13 @@ function EditSound(){
         success: (data: any) => {
             if(data.success){
                 setStatus("success");
-                toast.success("Le son a été modifié avec succès");
+                toast.success(data.message);
                 setTimeout(() => {
                     window.location.href = "/data/sounds";
                 }, 1000);
+            } else {
+                setStatus("error");
+                toast.error(data.message);
             }
         },
         error: (error: string) => {
@@ -131,6 +134,8 @@ function EditSound(){
 
         let newError: Partial<ErrorState> = {};
 
+        console.log(sound);
+
         if (sound.title === "") {
             newError.title = "Le titre est obligatoire";
         } else if (sound.title.length > 255) {
@@ -140,8 +145,8 @@ function EditSound(){
         if (sound.url === "") {
             newError.url = "L'url est obligatoire";
         }
-
-        if(sound.order === 0){
+        
+        if(sound.order <= 0){
             newError.order = "L'ordre est obligatoire";
         }
 
@@ -219,7 +224,7 @@ function EditSound(){
                 </Button>
             ]
         });
-    }, [status, title]);
+    }, [status, title, sound]);
 
     return (
         !isLoading && !soundLoading && (

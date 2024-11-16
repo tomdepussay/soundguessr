@@ -59,12 +59,16 @@ function DetailsSound(){
     const mutation = useMutation({
         url: `sounds`,
         method: "DELETE",
-        success: () => {
-            toast.success("Son supprimé avec succès !");
-            hideAlert();
-            setTimeout(() => {
-                navigate("/data/sounds");
-            }, 1000);
+        success: (data) => {
+            if(data.success){
+                toast.success(data.message);
+                hideAlert();
+                setTimeout(() => {
+                    navigate("/data/sounds");
+                }, 1000);
+            } else {
+                toast.error(data.message);
+            }
         },
         error: (error: any) => {
             toast.error("Erreur lors de la suppression du son");

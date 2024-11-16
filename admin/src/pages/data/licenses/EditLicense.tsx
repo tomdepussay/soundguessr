@@ -71,17 +71,21 @@ function EditLicense(){
         success: (data: any) => {
             if(data.success){
                 setStatus("success");
-                toast.success("La licence a été modifiée avec succès");
+                toast.success(data.message);
                 setTimeout(() => {
                     window.location.href = "/data/licenses";
                 }, 1000);
+            } else {
+                setStatus("error");
+                toast.error(data.message);
             }
         },
         error: (error: string) => {
-            toast.error("Une erreur est survenue lors de la modification de la licence");
+            toast.error(data.message);
             console.log(error);
         }
     })
+
 
     const handleErrors = (name: string) => {
         if (error[name as ErrorKeys] !== "") {
@@ -214,7 +218,7 @@ function EditLicense(){
                 </Button>
             ]
         });
-    }, [status, title]);
+    }, [status, title, license]);
 
     return (
         !isLoading && !licenseLoading && (

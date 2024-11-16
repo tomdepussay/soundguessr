@@ -72,10 +72,13 @@ function AddSound(){
         success: (data: any) => {
             if(data.success){
                 setStatus("success");
-                toast.success("Le son a été ajouté avec succès");
+                toast.success(data.message);
                 setTimeout(() => {
                     window.location.href = "/data/sounds";
                 }, 1000);
+            } else {
+                setStatus("error");
+                toast.error(data.message);
             }
         },
         error: (error: string) => {
@@ -129,7 +132,7 @@ function AddSound(){
             newError.url = "L'url est obligatoire";
         }
 
-        if(sound.order === 0){
+        if(sound.order <= 0){
             newError.order = "L'ordre est obligatoire";
         }
 

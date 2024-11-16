@@ -6,4 +6,5 @@ interface License {
     top100: boolean;
     category: string;
     isActive: boolean;
+    sounds_count: number;
 }

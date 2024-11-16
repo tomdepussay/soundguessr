@@ -15,7 +15,7 @@ function Alert({ message, onClick, hideAlert }: AlertProps){
             <div className="relative z-50 w-full h-full flex justify-center items-center">
                 <div className="w-1/3 bg-slate-800 rounded-3xl shadow-lg p-12">
                     <div className="w-full text-white text-center text-xl font-semibold">
-                        Voulez vous vraiment supprimer ce son ?
+                        {message}
                     </div>
                     <div className="w-full flex justify-center items-center gap-4 mt-8">
                         <Button color="success" onClick={onClick}>

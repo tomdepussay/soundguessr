@@ -49,10 +49,14 @@ function Sounds() {
     const mutation = useMutation({
         url: `sounds`,
         method: "DELETE",
-        success: () => {
-            toast.success("Son supprimé avec succès !");
-            hideAlert();
-            refetch();
+        success: (data) => {
+            if(data.success){
+                toast.success(data.message);
+                hideAlert();
+                refetch();
+            } else {
+                toast.error(data.message);
+            }
         },
         error: (error: any) => {
             toast.error("Erreur lors de la suppression du son");
@@ -63,10 +67,14 @@ function Sounds() {
     const mutationActive = useMutation({
         url: `sounds/active`,
         method: "PATCH",
-        success: () => {
-            hideAlert();
-            toast.success("Son modifié avec succès !");
-            refetch();
+        success: (data) => {
+            if(data.success){
+                hideAlert();
+                toast.success(data.message);
+                refetch();
+            } else {
+                toast.error(data.message);
+            }
         },
         error: (error: any) => {
             toast.error("Erreur lors de la modification du son");

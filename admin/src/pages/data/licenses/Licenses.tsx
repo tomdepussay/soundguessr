@@ -36,10 +36,14 @@ function Licenses() {
     const mutation = useMutation({
         url: `licenses`,
         method: "DELETE",
-        success: () => {
-            toast.success("Licence supprimée avec succès !");
-            hideAlert();
-            refetch();
+        success: (data) => {
+            if(data.success){
+                toast.success(data.message);
+                hideAlert();
+                refetch();
+            } else {
+                toast.error(data.message);
+            }
         },
         error: (error: any) => {
             toast.error("Erreur lors de la suppression de la licence");
@@ -50,10 +54,14 @@ function Licenses() {
     const mutationActive = useMutation({
         url: `licenses/active`,
         method: "PATCH",
-        success: () => {
-            hideAlert();
-            toast.success("Licence modifiée avec succès !");
-            refetch();
+        success: (data) => {
+            if(data.success){
+                hideAlert();
+                toast.success(data.message);
+                refetch();
+            } else {
+                toast.error(data.message);
+            }
         },
         error: (error: any) => {
             toast.error("Erreur lors de la modification de la licence");
@@ -118,6 +126,7 @@ function Licenses() {
                             <TableCell important>Categorie</TableCell>
                             <TableCell>Top 100</TableCell>
                             <TableCell>Actif</TableCell>
+                            <TableCell>Nb sons</TableCell>
                             <TableCell important></TableCell>
                         </TableHeader>
 
@@ -145,6 +154,11 @@ function Licenses() {
                                                 )
                                             }
                                         </TableCell>
+                                        <TableCell border>
+                                            {
+                                                license.sounds_count
+                                            }
+                                        </TableCell>
                                         <TableCell important border>
                                             <div className="flex gap-2 justify-start items-center">
                                                 <Button link={`/data/licenses/${license.id}`} color="info">
@@ -154,7 +168,7 @@ function Licenses() {
                                                     <FaEdit />
                                                 </Button>
                                                 <Button onClick={() => {
-                                                    showAlert(`Voulez-vous vraiment supprimer la licence "${license.title}" ?`, () => {
+                                                    showAlert(`Voulez-vous vraiment supprimer la licence "${license.title}" et ses sons ?`, () => {
                                                         
                                                         mutation.mutate({ param: license.id });
                                                     });

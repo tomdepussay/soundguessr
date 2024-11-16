@@ -49,15 +49,19 @@ function DetailsLicense(){
     const mutation = useMutation({
         url: `licenses`,
         method: "DELETE",
-        success: () => {
-            toast.success("Licence supprimée avec succès !");
-            hideAlert();
-            setTimeout(() => {
-                navigate("/data/licenses");
-            }, 1000);
+        success: (data) => {
+            if(data.success){
+                toast.success(data.message);
+                hideAlert();
+                setTimeout(() => {
+                    navigate("/data/licenses");
+                }, 1000);
+            } else {
+                toast.error(data.message);
+            }
         },
         error: (error: any) => {
-            toast.error("Erreur lors de la suppression de la licence");
+            toast.error("Une erreur s'est produite lors de la suppression de la licence");
             console.error("Erreur lors de la suppression de la licence", error);
         }
     })
@@ -85,12 +89,12 @@ function DetailsLicense(){
     return (
         <div className="w-full h-fit">
             <div className="w-full flex gap-10 ps-5 my-5 items-center justify-start">
-                <Button link={`/data/sounds/edit/${license.id}`} color='success'>
+                <Button link={`/data/licenses/edit/${license.id}`} color='success'>
                     <FaEdit />
                     Modifier
                 </Button>
                 <Button onClick={() => {
-                    showAlert(`Voulez-vous vraiment supprimer la licence "${license.title}" ?`, () => {
+                    showAlert(`Voulez-vous vraiment supprimer la licence "${license.title}" et ses sons ?`, () => {
                         
                         mutation.mutate({ param: license.id });
                     });

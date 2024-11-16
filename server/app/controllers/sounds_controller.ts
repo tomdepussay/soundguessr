@@ -331,19 +331,23 @@ export default class SoundsController {
                 messsage: "Ce son n'existe pas."
             });
         }
+        
+        await this.deleteSound(sound)
 
+        return response.status(200).json({
+            success: true,
+            message: "Le son a été supprimé"
+        })
+    }
+
+    public async deleteSound(sound: Sound){
         const path = app.makePath('resources', 'sounds', `${sound.path}`);
 
         if(fs.existsSync(path)){
             fs.unlinkSync(path)
         }
 
-        await sound.delete()
-
-        return response.status(200).json({
-            success: true,
-            message: "Le son a été supprimé"
-        })
+        return await sound.delete()
     }
 
     public async active({ request, response }: HttpContext){
@@ -362,10 +366,11 @@ export default class SoundsController {
 
         await sound.save()
 
+        let message = sound.isActive ? "Le son a été activé" : "Le son a été désactivé"
+
         return response.status(200).json({
             success: true,
-            message: "Le son a été modifié",
-            sound
+            message
         })
     }
 }

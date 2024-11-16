@@ -61,10 +61,13 @@ function AddLicense(){
                 setTimeout(() => {
                     window.location.href = "/data/licenses";
                 }, 1000);
+            } else {
+                toast.error(data.message);
+                setStatus("error");
             }
         },
         error: (error: string) => {
-            toast.error("Une erreur est survenue lors de l'ajout de la licence");
+            toast.error("Une erreur s'est produite lors de l'ajout de la licence");
             console.log(error);
         }
     })
