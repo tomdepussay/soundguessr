@@ -3,8 +3,6 @@ import { DataContext } from "@/services/DataContext";
 import Button from "@components/Button";
 import Input from "@components/Input";
 import Boolean from "@components/Boolean";
-import Select from "@components/Select";
-import File from "@components/File";
 import { FaArrowLeft } from "react-icons/fa";
 import useFetch from "@services/useFetch";
 import { MdEdit } from "react-icons/md";
@@ -14,7 +12,7 @@ import Form from "@components/Form";
 import FormRow from "@components/FormRow";
 import { useParams } from "react-router-dom";
 
-interface Category {
+interface Type {
     id: number;
     name: string;
     isActive: boolean;
@@ -26,11 +24,11 @@ interface ErrorState {
     name: string;
 }
 
-function EditCategory(){
+function EditType(){
 
     const { id } = useParams();
     const { setCurrentPage } = useContext(DataContext);
-    const [category, setCategory] = useState<Category>({
+    const [type, setType] = useState<Type>({
         id: 0,
         name: "",
         isActive: true
@@ -42,19 +40,19 @@ function EditCategory(){
     const [status, setStatus] = useState("idle");
 
     const { data, isLoading } = useFetch({ 
-        name: "category", 
-        url: `categories/${id}`
+        name: "type", 
+        url: `types/${id}`
     });
 
     const mutate = useMutation({
-        url: `categories/${id}`,
+        url: `types/${id}`,
         method: "PATCH",
         success: (data: any) => {
             if(data.success){
                 setStatus("success");
                 toast.success(data.message);
                 setTimeout(() => {
-                    window.location.href = "/data/categories";
+                    window.location.href = "/data/types";
                 }, 1000);
             } else {
                 setStatus("error");
@@ -62,7 +60,7 @@ function EditCategory(){
             }
         },
         error: (error: string) => {
-            toast.error("Une erreur s'est produite lors de la modification de la catégorie");
+            toast.error("Une erreur s'est produite lors de la modification du type");
             console.log(error);
         }
     })
@@ -82,8 +80,8 @@ function EditCategory(){
         const { name, value } = e.target;
         handleErrors(name);
     
-        setCategory({
-            ...category,
+        setType({
+            ...type,
             [name]: value
         });
     };
@@ -93,9 +91,9 @@ function EditCategory(){
 
         let newError: Partial<ErrorState> = {};
 
-        if (category.name === "") {
+        if (type.name === "") {
             newError.name = "Le nom est obligatoire";
-        } else if (category.name.length > 255) {
+        } else if (type.name.length > 255) {
             newError.name = "Le nom ne doit pas dépasser 255 caractères";
         }
 
@@ -108,24 +106,24 @@ function EditCategory(){
             return;
         }
 
-        toast.loading("Modification de la catégorie en cours...");
+        toast.loading("Modification du type en cours...");
 
-        mutate.mutate({ body: category });
+        mutate.mutate({ body: type });
     };
 
     useEffect(() => {
         console.log(data);
         if(data && data.success){
-            setCategory(data.category);
-            setName(data.category.name);
+            setType(data.type);
+            setName(data.type.name);
         }
     }, [data]);
 
     useEffect(() => {
         setCurrentPage({
-            title: `Modifier la catégorie : ${name}`,
+            title: `Modifier le type : ${name}`,
             Buttons: [
-                <Button link={"/data/categories"} color="danger">
+                <Button link={"/data/types"} color="danger">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <FaArrowLeft />
                         Retour
@@ -138,19 +136,19 @@ function EditCategory(){
                 </Button>
             ]
         });
-    }, [status, name, category]);
+    }, [status, name, type]);
 
     return (
         !isLoading && (
             <Form>
                 <FormRow>
-                    <Input label="ID" name="ID" value={category.id} disabled />
+                    <Input label="ID" name="ID" value={type.id} disabled />
                 </FormRow>
                 <FormRow>
-                    <Input label="Nom" error={error.name} name="name" value={category.name} setValue={handleChangeInput} required />  
-                    <Boolean label="Actif" name="isActive" value={category.isActive} setValue={() => setCategory({
-                        ...category,
-                        isActive: !category.isActive
+                    <Input label="Nom" error={error.name} name="name" value={type.name} setValue={handleChangeInput} required />  
+                    <Boolean label="Actif" name="isActive" value={type.isActive} setValue={() => setType({
+                        ...type,
+                        isActive: !type.isActive
                     })} required />
                 </FormRow>
             </Form>          
@@ -158,4 +156,4 @@ function EditCategory(){
     )
 }
 
-export default EditCategory;
+export default EditType;

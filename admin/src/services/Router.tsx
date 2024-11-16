@@ -23,6 +23,9 @@ import AddSound from '@pages/data/sounds/AddSound';
 import EditSound from '@pages/data/sounds/EditSound';
 
 import Types from '@pages/data/types/Types';
+import DetailsType from '@pages/data/types/DetailsType';
+import AddType from '@pages/data/types/AddType';
+import EditType from '@pages/data/types/EditType';
 
 import Questions from '@pages/data/questions/Questions';
 
@@ -73,7 +76,9 @@ function Router(){
 
                     <Route path='types'>
                         <Route index element={<Types />} />
-                        <Route path='add' element={<div>Ajouter un type</div>} />
+                        <Route path={`:id`} element={<DetailsType />} />
+                        <Route path={`add`} element={<AddType />} />
+                        <Route path={`edit/:id`} element={<EditType />} />                        
                     </Route>
 
                     <Route path='questions'>

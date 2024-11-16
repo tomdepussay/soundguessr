@@ -81,7 +81,7 @@ function EditLicense(){
             }
         },
         error: (error: string) => {
-            toast.error(data.message);
+            toast.error("Une erreur s'est produite lors de la modification de la licence");
             console.log(error);
         }
     })
