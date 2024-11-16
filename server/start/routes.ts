@@ -54,9 +54,11 @@ router
     router
       .group(() => {
         router.get("/", [CategoriesController, "index"])
+        router.get("/:id", [CategoriesController, "show"])
         router.put("/", [CategoriesController, "create"])
         router.patch("/:id", [CategoriesController, "update"])
         router.delete("/:id", [CategoriesController, "delete"])
+        router.patch("/active/:id", [CategoriesController, "active"])
       })
       .prefix("/categories")
 

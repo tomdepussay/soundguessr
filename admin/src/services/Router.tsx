@@ -8,6 +8,9 @@ import Login from '@pages/auth/Login';
 import Dashboard from '@pages/Dashboard';
 
 import Categories from '@pages/data/categories/Categories';
+import DetailsCategory from '@pages/data/categories/DetailsCategory';
+import AddCategory from '@pages/data/categories/AddCategory';
+import EditCategory from '@pages/data/categories/EditCategory';
 
 import Licenses from '@pages/data/licenses/Licenses';
 import DetailsLicense from '@pages/data/licenses/DetailsLicense';
@@ -48,6 +51,9 @@ function Router(){
                 <Route element={<DataLayout />} path="data">
                     <Route path='categories'>
                         <Route index element={<Categories />} />
+                        <Route path={`:id`} element={<DetailsCategory />} />
+                        <Route path={`add`} element={<AddCategory />} />
+                        <Route path={`edit/:id`} element={<EditCategory />} />
                     </Route>
 
                     <Route path='licenses'>
