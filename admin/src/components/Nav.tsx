@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import Dropdown from "./Dropdown";
 import DropdownItem from "./DropdownItem";
 
-import { MdMonitor, MdGames, MdOutlineSlideshow, MdContentCut, MdMusicNote, MdCategory, MdOutlineQuestionMark, MdCompareArrows, MdMenu } from "react-icons/md";
+import { MdBalance, MdGroup, MdMonitor, MdGames, MdOutlineSlideshow, MdContentCut, MdMusicNote, MdCategory, MdOutlineQuestionMark, MdCompareArrows, MdMenu } from "react-icons/md";
 import { FaDatabase, FaUsers, FaShare } from "react-icons/fa";
 import { BiCategory } from "react-icons/bi";
 
@@ -49,6 +49,12 @@ function Nav({ open, setOpen }: NavProps) {
                     </DropdownItem>
                     <DropdownItem link={"/data/questions"} onClick={closeMenu} icon={<MdOutlineQuestionMark />}>
                         Questions
+                    </DropdownItem>
+                    <DropdownItem link={"/data/profiles"} onClick={closeMenu} icon={<MdGroup />}>
+                        Profils
+                    </DropdownItem>
+                    <DropdownItem link={"/data/rights"} onClick={closeMenu} icon={<MdBalance />}>
+                        Droits
                     </DropdownItem>
                     <DropdownItem link={"/data/networks"} onClick={closeMenu} icon={<FaShare />}>
                         Réseaux Sociaux

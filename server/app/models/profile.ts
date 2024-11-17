@@ -11,7 +11,7 @@ export default class Profile extends BaseModel {
   declare name: string
 
   @column({ columnName: 'description' })
-  declare description: string
+  declare description: string | null
 
   @manyToMany(() => Right, {
     pivotTable: 'profiles_rights'

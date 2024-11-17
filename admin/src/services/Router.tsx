@@ -33,6 +33,10 @@ import Networks from '@pages/data/networks/Networks';
 
 import Users from '@pages/Users';
 import Games from '@pages/Games';
+import Profiles from '@/pages/data/profiles/Profiles';
+import DetailsProfile from '@/pages/data/profiles/DetailsProfile';
+import AddProfile from '@/pages/data/profiles/AddProfile';
+import EditProfile from '@/pages/data/profiles/EditProfile';
 
 function Router(){
     return (
@@ -84,6 +88,13 @@ function Router(){
                     <Route path='questions'>
                         <Route index element={<Questions />} />
                         <Route path='add' element={<div>Ajouter une question</div>} />
+                    </Route>
+
+                    <Route path="profiles">
+                        <Route index element={<Profiles />} />
+                        <Route path={`:id`} element={<DetailsProfile />} />
+                        <Route path={`add`} element={<AddProfile />} />
+                        <Route path={`edit/:id`} element={<EditProfile />} /> 
                     </Route>
 
                     <Route path='networks'>

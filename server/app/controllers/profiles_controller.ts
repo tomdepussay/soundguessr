@@ -2,6 +2,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import env from '#start/env'
 import db from '@adonisjs/lucid/services/db'
 import Profile from '#models/profile'
+import { profileValidator } from '#validators/profile'
 
 export default class ProfilesController {
     public async index({ request, response }: HttpContext){
@@ -49,7 +50,7 @@ export default class ProfilesController {
     }
 
     public async create({ request, response }: HttpContext){
-        const { name, description } = request.all()
+        const { name, description } = await profileValidator.validate(request.all())
 
         const existingProfile = await Profile.findBy("name", name);
         if(existingProfile){
@@ -73,7 +74,7 @@ export default class ProfilesController {
 
     public async update({ request, response }: HttpContext){
         const id = request.param("id")
-        const { name, description } = request.all()
+        const { name, description } = await profileValidator.validate(request.all())
 
         const profile = await Profile.findBy("id", id);
 

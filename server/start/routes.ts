@@ -17,6 +17,8 @@ import LicensesController from '#controllers/licenses_controller'
 import SoundsController from '#controllers/sounds_controller'
 import NetworksController from '#controllers/networks_controller'
 import QuestionsController from '#controllers/questions_controller'
+import ProfilesController from '#controllers/profiles_controller'
+import RightsController from '#controllers/rights_controller'
 
 // Utiliser le middleware IsConnected :
 // .use(
@@ -114,6 +116,27 @@ router
         router.delete("/:id", [QuestionsController, "delete"])
       })
       .prefix("/questions")
+
+    router
+      .group(() => {
+        router.get("/", [ProfilesController, "index"])
+        router.get("/:id", [ProfilesController, "show"])
+        router.put("/", [ProfilesController, "create"])
+        router.patch("/:id", [ProfilesController, "update"])
+        router.delete("/:id", [ProfilesController, "delete"])
+      })
+      .prefix("/profiles")
+
+
+    router
+      .group(() => {
+        router.get("/", [RightsController, "index"])
+        router.get("/:id", [RightsController, "show"])
+        router.put("/", [RightsController, "create"])
+        router.patch("/:id", [RightsController, "update"])
+        router.delete("/:id", [RightsController, "delete"])
+      })
+      .prefix("rights")
   })
   .use(
     middleware.admin()
