@@ -11,13 +11,14 @@ import TableRow from '@components/TableRow';
 import TableCell from '@components/TableCell';
 import Loader from '@components/Loader';
 import Button from '@components/Button';
-import { FaEdit, FaRegTrashAlt, FaEye, FaArrowsAltH } from "react-icons/fa";
+import { FaEdit, FaRegTrashAlt, FaEye } from "react-icons/fa";
 import { DataContext } from '@/services/DataContext';
 import { AlertContext } from '@services/AlertContext';
 import { MdAdd } from "react-icons/md";
 import toast from 'react-hot-toast';
+import { IoMdSwitch } from "react-icons/io";
 
-function Profiles() {
+function Rights() {
 
     const { setCurrentPage } = useContext(DataContext);
     const { showAlert, hideAlert } = useContext(AlertContext);
@@ -26,14 +27,14 @@ function Profiles() {
     const [total, setTotal] = useState(0);
     const [search, setSearch] = useState("");
     const debouncedSearch = useDebounce(search, 500);
-    const [profiles, setProfiles] = useState<Profile[]>([]);
+    const [rights, setRights] = useState<Right[]>([]);
 
-    const { data, isLoading, refetch } = useFetch({ name: ["profiles", { page, debouncedSearch }], 
-        url: `profiles?page=${page}&search=${debouncedSearch}` 
+    const { data, isLoading, refetch } = useFetch({ name: ["rights", { page, debouncedSearch }], 
+        url: `rights?page=${page}&search=${debouncedSearch}` 
     });
 
     const mutation = useMutation({
-        url: `profiles`,
+        url: `rights`,
         method: "DELETE",
         success: (data) => {
             if(data.success){
@@ -45,34 +46,16 @@ function Profiles() {
             }
         },
         error: (error: any) => {
-            toast.error("Erreur lors de la suppression du profils");
-            console.error("Erreur lors de la suppression du profils", error);
+            toast.error("Erreur lors de la suppression du droit");
+            console.error("Erreur lors de la suppression du droit", error);
         }
     })
 
-    const mutationActive = useMutation({
-        url: `categories/active`,
-        method: "PATCH",
-        success: (data) => {
-            if(data.success){
-                hideAlert();
-                toast.success(data.message);
-                refetch();
-            } else {
-                toast.error(data.message);
-            }
-        },
-        error: (error: any) => {
-            toast.error("Erreur lors de la modification de la catégorie");
-            console.error("Erreur lors de la modification de la catégorie", error);
-        }
-    });
-
     useEffect(() => {
         if(data){
-            setProfiles(data.profiles.data);
-            setTotalPages(data.profiles.meta.lastPage);
-            setTotal(data.profiles.meta.total);
+            setRights(data.rights.data);
+            setTotalPages(data.rights.meta.lastPage);
+            setTotal(data.rights.meta.total);
         }
     }, [data]);
 
@@ -82,13 +65,13 @@ function Profiles() {
 
     useEffect(() => {
         setCurrentPage({
-            title: "Gestion des profils",
+            title: "Gestion des droits",
             Buttons: [
-                <Button link={"/data/profiles/add"} color="success">
+                <Button link={"/data/rights/add"} color="success">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <MdAdd />
                         <span className='hidden md:block'>
-                            Ajouter un profil
+                            Ajouter un droit
                         </span>
                     </span>
                 </Button>
@@ -107,9 +90,9 @@ function Profiles() {
             />
 
             {
-                profiles.length === 0 && !isLoading ? (
+                rights.length === 0 && !isLoading ? (
                     <div className="flex justify-center items-center h-64 text-white font-semibold">
-                        <p className="text-2xl">Aucune profil trouvé.</p>
+                        <p className="text-2xl">Aucun droit trouvé.</p>
                     </div>
                 ) : isLoading ? (
                     <div className="flex-1 flex justify-center items-center">
@@ -118,48 +101,41 @@ function Profiles() {
                 ) : (
                     <Table>
                         <TableCaption>
-                            {total} profil(s) sur {totalPages} page(s)
+                            {total} droit(s) sur {totalPages} page(s)
                         </TableCaption>
                         <TableHeader>
                             <TableCell important>Nom</TableCell>
-                            <TableCell>Description</TableCell>
-                            <TableCell>Nb utilisateurs</TableCell>
+                            <TableCell important>Code</TableCell>
+                            <TableCell>Nb profils</TableCell>
                             <TableCell important></TableCell>
                         </TableHeader>
 
                         {
-                            profiles.map((profile, index) => (
+                            rights.map((right, index) => (
                                 <TableBody key={index} index={index}>
-                                    <TableRow key={profile.id} index={index}>
-                                        <TableCell important>{profile.name}</TableCell>
+                                    <TableRow key={right.id} index={index}>
+                                        <TableCell important>{right.name}</TableCell>
+                                        <TableCell border>{right.code}</TableCell>
                                         <TableCell border>
                                             {
-                                                profile.description ? profile.description : "Aucune description"
-                                            }
-                                        </TableCell>
-                                        <TableCell border>
-                                            {
-                                                profile.users_count
+                                                right.profiles_count
                                             }
                                         </TableCell>
                                         <TableCell important border>
                                             <div className="flex gap-2 justify-start items-center">
-                                                <Button link={`/data/profiles/${profile.id}`} color="info">
+                                                <Button link={`/data/rights/${right.id}`} color="info">
                                                     <FaEye />
                                                 </Button>
-                                                <Button link={`/data/profiles/edit/${profile.id}`} color='success'>
+                                                <Button link={`/data/rights/edit/${right.id}`} color='success'>
                                                     <FaEdit />
                                                 </Button>
                                                 <Button onClick={() => {
-                                                    showAlert(`Voulez-vous vraiment supprimer le profil "${profile.name}" ?`, () => {
+                                                    showAlert(`Voulez-vous vraiment supprimer le droit "${right.name}" ?`, () => {
                                                         
-                                                        mutation.mutate({ param: profile.id });
+                                                        mutation.mutate({ param: right.id });
                                                     });
                                                 }} color='danger'>
                                                     <FaRegTrashAlt />
-                                                </Button>
-                                                <Button link={`/data/profiles/rights/${profile.id}`} color="warning">
-                                                    <FaArrowsAltH />
                                                 </Button>
                                             </div>
                                         </TableCell>
@@ -174,4 +150,4 @@ function Profiles() {
     )
 }
 
-export default Profiles;
+export default Rights;

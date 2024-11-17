@@ -18,6 +18,7 @@ export default class RightsController {
             .select(
                 "rights.id",
                 "rights.name",
+                "rights.code",
                 db.raw("COUNT(profiles.id) as profiles_count")
             )
             .where("rights.name", "like", `%${search}%`)

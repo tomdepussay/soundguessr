@@ -120,6 +120,7 @@ router
     router
       .group(() => {
         router.get("/", [ProfilesController, "index"])
+        router.get("/add", [ProfilesController, "add"])
         router.get("/:id", [ProfilesController, "show"])
         router.put("/", [ProfilesController, "create"])
         router.patch("/:id", [ProfilesController, "update"])

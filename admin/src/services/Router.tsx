@@ -37,6 +37,11 @@ import Profiles from '@/pages/data/profiles/Profiles';
 import DetailsProfile from '@/pages/data/profiles/DetailsProfile';
 import AddProfile from '@/pages/data/profiles/AddProfile';
 import EditProfile from '@/pages/data/profiles/EditProfile';
+import Rights from '@/pages/data/rights/Rights';
+import DetailsRight from '@/pages/data/rights/DetailsRight';
+import AddRight from '@/pages/data/rights/AddRight';
+import EditRight from '@/pages/data/rights/EditRight';
+import RightsProfile from '@/pages/data/profiles/RightsProfile';
 
 function Router(){
     return (
@@ -95,6 +100,14 @@ function Router(){
                         <Route path={`:id`} element={<DetailsProfile />} />
                         <Route path={`add`} element={<AddProfile />} />
                         <Route path={`edit/:id`} element={<EditProfile />} /> 
+                        <Route path={`rights/:id`} element={<RightsProfile />} />
+                    </Route>
+
+                    <Route path="rights">
+                        <Route index element={<Rights />} />
+                        <Route path={`:id`} element={<DetailsRight />} />
+                        <Route path={`add`} element={<AddRight />} />
+                        <Route path={`edit/:id`} element={<EditRight />} /> 
                     </Route>
 
                     <Route path='networks'>
