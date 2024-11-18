@@ -28,8 +28,8 @@ function Nav({ open, setOpen }: NavProps) {
 
             {/* Barre de navigation principale, masquée sur les petits écrans */}
             <nav className={`bg-slate-900 h-screen w-full flex flex-col justify-start shadow-2xl md:flex ${open ? 'block' : 'hidden'} md:w-72 md:block`}>
-                <div className="w-full h-14 flex justify-center gap-2 items-center px-4 text-white select-none">
-                    <h1 className="text-3xl text-white font-semibold">SoundGuessr</h1>
+                <div className="w-full h-14 flex justify-center gap-2 items-center px-2 text-white select-none">
+                    <h1 className="text-2xl text-white font-semibold">SoundGuessr</h1>
                 </div>
 
                 <Dropdown link={"/"} title="Tableau de bord" onClick={closeMenu} icon={<MdMonitor />} />

@@ -10,7 +10,7 @@ interface DropdownItemProps {
 
 function DropdownItem({ children, icon, link, onClick }: DropdownItemProps) {
     return (
-        <Link to={link} onClick={onClick} className="w-full h-14 flex font-semibold justify-start gap-2 items-center px-4 text-white hover:bg-slate-700 shadow-inner">
+        <Link to={link} onClick={onClick} className="w-full p-3 pl-4 flex font-semibold justify-start gap-2 items-center px-4 text-white hover:bg-slate-700 shadow-inner">
             {icon}
             {children}
         </Link>
