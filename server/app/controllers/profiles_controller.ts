@@ -181,4 +181,21 @@ export default class ProfilesController {
             message: "Le profil a été supprimé avec succès."
         })
     }
+
+    public async rights({ request, response }: HttpContext){
+        const id = request.param("id");
+
+        const rightsResult = await db.
+            query()
+            .from("profiles_rights")
+            .select("id")
+            .where("profile_id", id);
+        
+        const rights = rightsResult.map((right) => (right.id));
+
+        return response.status(200).json({
+            success: true,
+            rights
+        })
+    }
 }

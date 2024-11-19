@@ -125,6 +125,7 @@ router
         router.put("/", [ProfilesController, "create"])
         router.patch("/:id", [ProfilesController, "update"])
         router.delete("/:id", [ProfilesController, "delete"])
+        router.get("/rights/:id", [ProfilesController, "rights"])
       })
       .prefix("/profiles")
 

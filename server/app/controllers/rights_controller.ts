@@ -116,7 +116,9 @@ export default class RightsController {
     }
 
     public async level({ request, response }: HttpContext){
+        const id = request.param("id");
         const { right } = request.all()
+
         const query = db
         .query()
         .from("rights")

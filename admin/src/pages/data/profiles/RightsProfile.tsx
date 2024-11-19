@@ -22,6 +22,7 @@ interface Right {
     id: number;
     code: string;
     name: string;
+    affected: boolean;
     before: string[];
 }
 
@@ -47,6 +48,7 @@ function RightsProfile() {
         level: 0,
         value: null
     }]);
+    const [rights, setRights] = useState<number[]>();
 
     const { data, isLoading } = useFetch({ 
         name: "profile", 
@@ -58,8 +60,13 @@ function RightsProfile() {
         url: "profiles/add"
     });
 
+    const { data: dataRightsProfile, isLoading: isLoadingRightsProfile } = useFetch({
+        name: "RightsProfile",
+        url: `profiles/rights/${id}`
+    });
+
     const mutate = useMutation({
-        url: "rights/level",
+        url: `rights/level`,
         method: "POST",
         success: (data) => {
             let rights = [];
@@ -116,6 +123,16 @@ function RightsProfile() {
             setCols((prevCols) => [...prevCols, ...newCols]);
         }
     }, [dataMaxColumn])
+    
+    useEffect(() => {
+        if(dataRightsProfile && dataRightsProfile.success){
+            setRights(dataRightsProfile.rights);
+        }    
+    }, [dataRightsProfile])
+
+    useEffect(() => {
+        console.log(selected)
+    }, [selected])
 
     useEffect(() => {
         mutate.mutate({
@@ -124,6 +141,7 @@ function RightsProfile() {
             }
         })
     }, [selected])
+
 
     useEffect(() => {
         setCurrentPage({
@@ -161,7 +179,18 @@ function RightsProfile() {
                                             cols[index] && cols[index].value && cols[index].value.map((right: Right) => (
                                                 <li 
                                                     key={right.id}
-                                                    className={`text-white select-none p-2 text-lg  rounded-xl cursor-pointer ${selected.codes.includes(right.code) ? "bg-slate-900/70 hover:bg-slate-800" : "hover:bg-slate-900/70"}`} 
+                                                    className={`text-white select-none p-2 text-lg mb-2 rounded-xl cursor-pointer 
+                                                        ${selected.codes.includes(right.code) ? 
+                                                        (
+                                                            rights && rights.includes(right.id) ?
+                                                            "bg-green-600/60 hover:bg-green-500/60" :
+                                                            "bg-slate-900/70"
+                                                        ) : 
+                                                        (
+                                                            rights && rights.includes(right.id) ? 
+                                                            "bg-green-500/60 hover:bg-green-600/60" :
+                                                            "hover:bg-slate-900/70"
+                                                        )}`} 
                                                     onClick={() => {
                                                         if(!selected.codes.includes(right.code)){
                                                             setSelected({
