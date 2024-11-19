@@ -114,4 +114,42 @@ export default class RightsController {
             message: "Le droit a été supprimé."
         })
     }
+
+    public async level({ request, response }: HttpContext){
+        const { right } = request.all()
+        const query = db
+        .query()
+        .from("rights")
+        .select("id", "name", "code");
+
+        if (right === undefined) {
+            query.where("rights.code", "not like", "%.%" );
+        } else {
+            query.where("rights.code", "like", `${right}.%`);
+        }
+
+        query.orderBy("id", "asc")
+        
+        const rightsResult = await query;
+
+        let rights = []
+
+        if(right !== undefined){
+            for(let r of rightsResult){
+                let code = r.code;
+                code = code.slice(right.length + 1, code.length);
+                
+                if(code.split(".").length === 1){
+                    rights.push(r)
+                }
+            } 
+        } else {
+            rights = rightsResult
+        }
+
+        return response.status(200).json({
+            success: true,
+            rights
+        })
+    }
 }

@@ -22,7 +22,7 @@ export default class ProfilesController {
             )
             .where("profiles.name", "like", `%${search}%`)
             .groupBy("profiles.id")
-            .orderBy("profiles.id", "desc")
+            .orderBy("profiles.id", "asc")
             .paginate(page, limit)
 
         return response.status(200).json({
@@ -50,58 +50,68 @@ export default class ProfilesController {
     }
 
     public async add({ request, response }: HttpContext){
-        const rights = await db.query().from("rights").select("id", "name", "code");
 
-        // Fonction pour créer la hiérarchie
-        const buildHierarchy = (rights: any) => {
-          // Créer un objet pour regrouper les droits par leur parent
-          const map: any = {};
-        
-          // Préparer les nœuds
-          rights.forEach((right: any) => {
-            map[right.code] = { 
-              code: right.code,
-              name: right.name,
-              affected: false,
-              rights: []
-            };
-          });
-        
-          // Construire la hiérarchie
-          const result: any = [];
-          rights.forEach((right: any) => {
-            const parentCode = right.code.split('.').slice(0, -1).join('.');
-            if (map[parentCode]) {
-              map[parentCode].rights.push(map[right.code]);
-            } else {
-              result.push(map[right.code]);
-            }
-          });
-        
-          return result;
-        };
+        // Requete SELECT MAX(LENGTH(code) - LENGTH(REPLACE(code, '.', '')) + 1) AS max_elements
+        // FROM rights;
 
-        // Fonction pour calculer la profondeur maximale
-        const calculateMaxDepth = (nodes: any[], depth = 1): number => {
-            let maxDepth = depth;
-            nodes.forEach((node) => {
-                if (node.rights.length > 0) {
-                    maxDepth = Math.max(maxDepth, calculateMaxDepth(node.rights, depth + 1));
-                }
-            });
-            return maxDepth;
-        };
-        
-        // Construire la matrice
-        const matrix = buildHierarchy(rights);
 
-        // Calculer le nombre de colonnes max
-        const maxColumns = calculateMaxDepth(matrix);
+        const maxColumnResult = await db
+            .query()
+            .from("rights")
+            .select(db.raw('max(length(rights.code) - length(replace(rights.code, ".", "")) + 1) as max_elements'));
+        
+        const maxColumn = maxColumnResult[0].max_elements
+        // const rights = await db.query().from("rights").select("id", "name", "code");
+
+        // // Fonction pour créer la hiérarchie
+        // const buildHierarchy = (rights: any) => {
+        //   // Créer un objet pour regrouper les droits par leur parent
+        //   const map: any = {};
+        
+        //   // Préparer les nœuds
+        //   rights.forEach((right: any) => {
+        //     map[right.code] = { 
+        //       code: right.code,
+        //       name: right.name,
+        //       affected: false,
+        //       rights: []
+        //     };
+        //   });
+        
+        //   // Construire la hiérarchie
+        //   const result: any = [];
+        //   rights.forEach((right: any) => {
+        //     const parentCode = right.code.split('.').slice(0, -1).join('.');
+        //     if (map[parentCode]) {
+        //       map[parentCode].rights.push(map[right.code]);
+        //     } else {
+        //       result.push(map[right.code]);
+        //     }
+        //   });
+        
+        //   return result;
+        // };
+
+        // // Fonction pour calculer la profondeur maximale
+        // const calculateMaxDepth = (nodes: any[], depth = 1): number => {
+        //     let maxDepth = depth;
+        //     nodes.forEach((node) => {
+        //         if (node.rights.length > 0) {
+        //             maxDepth = Math.max(maxDepth, calculateMaxDepth(node.rights, depth + 1));
+        //         }
+        //     });
+        //     return maxDepth;
+        // };
+        
+        // // Construire la matrice
+        // const matrix = buildHierarchy(rights);
+
+        // // Calculer le nombre de colonnes max
+        // const maxColumns = calculateMaxDepth(matrix);
 
         return response.status(200).json({
             success: true,
-            matrix,
-            maxColumns
+            maxColumn
         })
     }
 

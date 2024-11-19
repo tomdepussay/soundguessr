@@ -27,7 +27,7 @@ function Layout() {
                         }
                     </div>
                 </div>
-                <div className="p-3 flex flex-column md:overflow-y-auto">
+                <div className="p-3 flex flex-column md:overflow-y-auto h-full">
                     <Outlet />
                 </div>
             </div>

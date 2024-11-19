@@ -136,6 +136,7 @@ router
         router.put("/", [RightsController, "create"])
         router.patch("/:id", [RightsController, "update"])
         router.delete("/:id", [RightsController, "delete"])
+        router.post("/level", [RightsController, "level"]);
       })
       .prefix("rights")
   })
