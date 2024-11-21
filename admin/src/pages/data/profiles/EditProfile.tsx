@@ -130,13 +130,13 @@ function EditProfile(){
         setCurrentPage({
             title: `Modifier le profil : ${name}`,
             Buttons: [
-                <Button link={"/data/profiles"} color="danger">
+                <Button label="Retour" link={"/data/profiles"} color="danger">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <FaArrowLeft />
                         Retour
                     </span>
                 </Button>,
-                <Button onClick={handleSubmit} color="success" status={status} icon={<MdEdit />}>
+                <Button label="Modifier le profil" onClick={handleSubmit} color="success" status={status} icon={<MdEdit />}>
                     <span className="text-xl flex justify-center items-center gap-2">
                         Modifier
                     </span>

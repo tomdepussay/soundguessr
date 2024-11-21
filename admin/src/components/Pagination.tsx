@@ -13,14 +13,14 @@ function Pagination({ page, setPage, totalPages }: PaginationProps){
         <div className="flex justify-center items-center gap-2">
             {
                 page > 1 && (
-                    <Button onClick={() => {
+                    <Button label="Page précédente" onClick={() => {
                         setPage(page - 1);
                     }}>
                         <FaArrowLeft />
                     </Button>
                 )
             }
-            <select name="pagination" id="pagination" value={page} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPage(Number(e.target.value))} className="p-2 rounded-lg bg-slate-900 shadow-md text-white outline-none focus:shadow-inner">
+            <select aria-label="Choisir une page" name="pagination" id="pagination" value={page} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPage(Number(e.target.value))} className="p-2 rounded-lg bg-slate-900 shadow-md text-white outline-none focus:shadow-inner">
                 {
                     Array.from(Array(totalPages).keys()).map((index) => (
                         <option key={index} value={index + 1}>{index + 1}</option>
@@ -29,7 +29,7 @@ function Pagination({ page, setPage, totalPages }: PaginationProps){
             </select>
             {
                 page < totalPages && (
-                    <Button onClick={() => {
+                    <Button label="Page suivante" onClick={() => {
                         setPage(page + 1);
                     }}>
                         <FaArrowRight />

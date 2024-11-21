@@ -205,13 +205,13 @@ function EditLicense(){
         setCurrentPage({
             title: `Modifier la licence : ${title}`,
             Buttons: [
-                <Button link={"/data/licenses"} color="danger">
+                <Button label="Retour" link={"/data/licenses"} color="danger">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <FaArrowLeft />
                         Retour
                     </span>
                 </Button>,
-                <Button onClick={handleSubmit} color="success" status={status} icon={<MdEdit />}>
+                <Button label="Modifier la licence" onClick={handleSubmit} color="success" status={status} icon={<MdEdit />}>
                     <span className="text-xl flex justify-center items-center gap-2">
                         Modifier
                     </span>

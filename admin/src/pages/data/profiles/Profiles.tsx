@@ -86,7 +86,7 @@ function Profiles() {
         setCurrentPage({
             title: "Gestion des profils",
             Buttons: [
-                <Button visible={hasPermission("admin.data.profiles.add")} link={"/data/profiles/add"} color="success">
+                <Button label='Ajouter un profil' visible={hasPermission("admin.data.profiles.add")} link={"/data/profiles/add"} color="success">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <MdAdd />
                         <span className='hidden md:block'>
@@ -146,13 +146,13 @@ function Profiles() {
                                         </TableCell>
                                         <TableCell important border>
                                             <div className="flex gap-2 justify-start items-center">
-                                                <Button visible={hasPermission("admin.data.profiles.details")} link={`/data/profiles/${profile.id}`} color="info">
+                                                <Button label='Voir les détails du profil' visible={hasPermission("admin.data.profiles.details")} link={`/data/profiles/${profile.id}`} color="info">
                                                     <FaEye />
                                                 </Button>
-                                                <Button visible={hasPermission("admin.data.profiles.edit")} link={`/data/profiles/edit/${profile.id}`} color='success'>
+                                                <Button label='Modifier le profil' visible={hasPermission("admin.data.profiles.edit")} link={`/data/profiles/edit/${profile.id}`} color='success'>
                                                     <FaEdit />
                                                 </Button>
-                                                <Button visible={hasPermission("admin.data.profiles.delete")} onClick={() => {
+                                                <Button label='Supprimer le profil' visible={hasPermission("admin.data.profiles.delete")} onClick={() => {
                                                     showAlert(`Voulez-vous vraiment supprimer le profil "${profile.name}" ?`, () => {
                                                         
                                                         mutation.mutate({ param: profile.id });
@@ -160,7 +160,7 @@ function Profiles() {
                                                 }} color='danger'>
                                                     <FaRegTrashAlt />
                                                 </Button>
-                                                <Button visible={hasPermission("admin.data.profiles.rights")} link={`/data/profiles/rights/${profile.id}`} color="warning">
+                                                <Button label='Affecter des droits au profil' visible={hasPermission("admin.data.profiles.rights")} link={`/data/profiles/rights/${profile.id}`} color="warning">
                                                     <FaArrowsAltH />
                                                 </Button>
                                             </div>

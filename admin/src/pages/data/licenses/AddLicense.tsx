@@ -178,13 +178,13 @@ function AddLicense(){
         setCurrentPage({
             title: "Ajouter une licence",
             Buttons: [
-                <Button link={"/data/licenses"} color="danger">
+                <Button label="Retour" link={"/data/licenses"} color="danger">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <FaArrowLeft />
                         Retour
                     </span>
                 </Button>,
-                <Button onClick={handleSubmit} color="success" status={status} icon={<MdAdd />}>
+                <Button label="Ajouter une licence" onClick={handleSubmit} color="success" status={status} icon={<MdAdd />}>
                     <span className="text-xl flex justify-center items-center gap-2">
                         Ajouter
                     </span>

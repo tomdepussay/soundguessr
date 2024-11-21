@@ -45,6 +45,7 @@ const backgroundColorsDisabled = {
 
 interface ButtonProps {
     children: string | React.ReactNode;
+    label?: string;
     color?: 'default' | 'primary' | 'secondary' | 'danger' | 'warning' | 'success' | 'info';
     disabled?: boolean;
     status?: string;
@@ -55,12 +56,13 @@ interface ButtonProps {
     visible?: boolean;
 }
 
-function Button({ children, color = "default", disabled = false, status = "idle", icon, onClick, type = "button", link, visible = true }: ButtonProps){
+function Button({ children, label = "Bouton", color = "default", disabled = false, status = "idle", icon, onClick, type = "button", link, visible = true }: ButtonProps){
     
     if(!visible) return null;
     
     if(link){
         return <Link 
+                    aria-label={label}
                     to={link} 
                     className={`flex justify-center gap-2 items-center shadow-md p-3 px-3 select-none rounded-xl text-white ${backgroundColors[color]} ${backgroundColorsHover[color]} ${backgroundColorsActive[color]}`}
                 >
@@ -70,6 +72,7 @@ function Button({ children, color = "default", disabled = false, status = "idle"
     } else {
         return (
             <button
+                aria-label={label}
                 type={type}
                 disabled={disabled || status !== "idle"}
                 className={`flex justify-center gap-2 items-center shadow-md p-3 px-3 select-none rounded-xl text-white ${disabled || status !== "idle" ? status === "error" ? `bg-red-700` : `${backgroundColorsDisabled[color]} cursor-not-allowed` : `${backgroundColors[color]} ${backgroundColorsHover[color]} ${backgroundColorsActive[color]}`}`}

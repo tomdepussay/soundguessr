@@ -62,7 +62,7 @@ function DetailsType(){
         setCurrentPage({
             title: "Détails du type",
             Buttons: [
-                <Button link={"/data/types"} color="danger">
+                <Button label="Retour" link={"/data/types"} color="danger">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <FaArrowLeft />
                         Retour
@@ -83,11 +83,11 @@ function DetailsType(){
             {
                 hasPermission(["admin.data.types.edit", "admin.data.types.delete"]) && (
                     <div className="w-full flex gap-10 ps-5 my-5 items-center justify-start">
-                        <Button visible={hasPermission("admin.data.types.edit")} link={`/data/types/edit/${type.id}`} color='success'>
+                        <Button label="Modifier le type" visible={hasPermission("admin.data.types.edit")} link={`/data/types/edit/${type.id}`} color='success'>
                             <FaEdit />
                             Modifier
                         </Button>
-                        <Button visible={hasPermission("admin.data.types.edit")} onClick={() => {
+                        <Button label="Supprimer le type" visible={hasPermission("admin.data.types.edit")} onClick={() => {
                             showAlert(`Voulez-vous vraiment supprimer le type "${type.name}" et ses sons ?`, () => {
 
                                 mutation.mutate({ param: type.id });

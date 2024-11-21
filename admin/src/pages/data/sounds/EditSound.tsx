@@ -211,13 +211,13 @@ function EditSound(){
         setCurrentPage({
             title: `Modifier le son : ${title}`,
             Buttons: [
-                <Button link={"/data/sounds"} color="danger">
+                <Button label="Retour" link={"/data/sounds"} color="danger">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <FaArrowLeft />
                         Retour
                     </span>
                 </Button>,
-                <Button onClick={handleSubmit} color="success" status={status} icon={<MdEdit />}>
+                <Button label="Modifier le son" onClick={handleSubmit} color="success" status={status} icon={<MdEdit />}>
                     <span className="text-xl flex justify-center items-center gap-2">
                         Modifier
                     </span>

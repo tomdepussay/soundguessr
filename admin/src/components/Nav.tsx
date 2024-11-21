@@ -24,7 +24,7 @@ function Nav({ open, setOpen }: NavProps) {
             {/* Barre en haut, visible uniquement sur les petits écrans */}
             <div className="bg-slate-900 sticky top-0 left-0 z-50 w-full h-14 flex justify-between items-center px-4 text-white md:hidden">
                 <h1 className="text-xl font-semibold">SoundGuessr</h1>
-                <button onClick={toggleMenu} className="text-white">
+                <button aria-label="Ouvrir le menu de navigation" onClick={toggleMenu} className="text-white">
                     <MdMenu size={24} />
                 </button>
             </div>
@@ -72,7 +72,7 @@ function Nav({ open, setOpen }: NavProps) {
 
                 <Dropdown link={"/games"} onClick={closeMenu} title="Parties" icon={<MdGames />} visible={hasPermission("admin.data.games")} />
 
-                <Link to={"/"} className="mt-auto mb-0 bg-slate-500 w-full h-14 flex justify-center gap-2 items-center px-4 text-slate-900 opacity-90 hover:opacity-100">
+                <Link to={"/"} className="mt-auto mb-0 bg-slate-500 w-full h-14 flex justify-center gap-2 items-center px-4 text-white font-semibold opacity-90 hover:opacity-100">
                     Retour au site
                 </Link>
 

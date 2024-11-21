@@ -87,7 +87,7 @@ function Types() {
         setCurrentPage({
             title: "Gestion des types",
             Buttons: [
-                <Button visible={hasPermission("admin.data.types.add")} link={"/data/types/add"} color="success">
+                <Button label='Ajouter un type' visible={hasPermission("admin.data.types.add")} link={"/data/types/add"} color="success">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <MdAdd />
                         <span className='hidden md:block'>
@@ -151,13 +151,13 @@ function Types() {
                                         </TableCell>
                                         <TableCell important border>
                                             <div className="flex gap-2 justify-start items-center">
-                                                <Button visible={hasPermission("admin.data.types.details")} link={`/data/types/${type.id}`} color="info">
+                                                <Button label='Voir les détails du type' visible={hasPermission("admin.data.types.details")} link={`/data/types/${type.id}`} color="info">
                                                     <FaEye />
                                                 </Button>
-                                                <Button visible={hasPermission("admin.data.types.edit")} link={`/data/types/edit/${type.id}`} color='success'>
+                                                <Button label='Modifier le type' visible={hasPermission("admin.data.types.edit")} link={`/data/types/edit/${type.id}`} color='success'>
                                                     <FaEdit />
                                                 </Button>
-                                                <Button visible={hasPermission("admin.data.types.delete")} onClick={() => {
+                                                <Button label='Supprimer le type' visible={hasPermission("admin.data.types.delete")} onClick={() => {
                                                     showAlert(`Voulez-vous vraiment supprimer le type "${type.name}" et ses sons ?`, () => {
                                                         
                                                         mutation.mutate({ param: type.id });
@@ -165,7 +165,7 @@ function Types() {
                                                 }} color='danger'>
                                                     <FaRegTrashAlt />
                                                 </Button>
-                                                <Button visible={hasPermission("admin.data.types.active")} onClick={() => {
+                                                <Button label={type.isActive ? "Désactiver le type" : "Activer le type"} visible={hasPermission("admin.data.types.active")} onClick={() => {
                                                     const message = type.isActive ? `Voulez-vous vraiment désactiver le type "${type.name}" ?` : `Voulez-vous vraiment activer le type "${type.name}" ?`;
                                                     showAlert(message, () => {
                                                         mutationActive.mutate({ param: type.id })

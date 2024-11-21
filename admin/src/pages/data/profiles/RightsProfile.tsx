@@ -162,13 +162,13 @@ function RightsProfile() {
         setCurrentPage({
             title: `Affecter les droits au profil : ${profile.name}`,
             Buttons: [
-                <Button link={"/data/profiles"} color="danger">
+                <Button label="Retour" link={"/data/profiles"} color="danger">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <FaArrowLeft />
                         Retour
                     </span>
                 </Button>,
-                <Button onClick={handleSubmmit} color="success" status={status} icon={<FaArrowsAltH />}>
+                <Button label="Affecter les droits" onClick={handleSubmmit} color="success" status={status} icon={<FaArrowsAltH />}>
                     <span className="text-xl flex justify-center items-center gap-2">
                         Affecter
                     </span>

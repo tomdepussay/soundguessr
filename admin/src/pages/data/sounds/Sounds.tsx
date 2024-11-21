@@ -100,7 +100,7 @@ function Sounds() {
         setCurrentPage({
             title: "Gestion des sons",
             Buttons: [
-                <Button visible={hasPermission("admin.data.sounds.add")} link={"/data/sounds/add"} color="success">
+                <Button label='Ajouter un son' visible={hasPermission("admin.data.sounds.add")} link={"/data/sounds/add"} color="success">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <MdAdd />
                         <span className='hidden md:block'>
@@ -167,13 +167,13 @@ function Sounds() {
                                         </TableCell>
                                         <TableCell important border>
                                             <div className="flex gap-2 justify-start items-center">
-                                                <Button visible={hasPermission("admin.data.sounds.details")} link={`/data/sounds/${sound.id}`} color="info">
+                                                <Button label='Voir les détails du son' visible={hasPermission("admin.data.sounds.details")} link={`/data/sounds/${sound.id}`} color="info">
                                                     <FaEye />
                                                 </Button>
-                                                <Button visible={hasPermission("admin.data.sounds.edit")} link={`/data/sounds/edit/${sound.id}`} color='success'>
+                                                <Button label='Modifier le son' visible={hasPermission("admin.data.sounds.edit")} link={`/data/sounds/edit/${sound.id}`} color='success'>
                                                     <FaEdit />
                                                 </Button>
-                                                <Button visible={hasPermission("admin.data.sounds.delete")} onClick={() => {
+                                                <Button label='Supprimer le son' visible={hasPermission("admin.data.sounds.delete")} onClick={() => {
                                                     showAlert(`Voulez-vous vraiment supprimer le son "${sound.title}" ?`, () => {
                                                         
                                                         mutation.mutate({ param: sound.id });
@@ -181,7 +181,7 @@ function Sounds() {
                                                 }} color='danger'>
                                                     <FaRegTrashAlt />
                                                 </Button>
-                                                <Button visible={hasPermission("admin.data.sounds.active")} onClick={() => {
+                                                <Button label={sound.isActive ? "Désactiver le son" : "Activer le son"} visible={hasPermission("admin.data.sounds.active")} onClick={() => {
                                                     const message = sound.isActive ? `Voulez-vous vraiment désactiver le son "${sound.title}" ?` : `Voulez-vous vraiment activer le son "${sound.title}" ?`;
                                                     showAlert(message, () => {
                                                         mutationActive.mutate({ param: sound.id })

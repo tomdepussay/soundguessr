@@ -62,7 +62,7 @@ function DetailsRight(){
         setCurrentPage({
             title: "Détails du droit",
             Buttons: [
-                <Button link={"/data/rights"} color="danger">
+                <Button label="Retour" link={"/data/rights"} color="danger">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <FaArrowLeft />
                         Retour
@@ -83,11 +83,11 @@ function DetailsRight(){
             {
                 hasPermission(["admin.data.rights.edit", "admin.data.rights.delete"]) && (
                     <div className="w-full flex gap-10 ps-5 my-5 items-center justify-start">
-                        <Button visible={hasPermission("admin.data.rights.edit")} link={`/data/categories/edit/${right.id}`} color='success'>
+                        <Button label="Modifier le droit" visible={hasPermission("admin.data.rights.edit")} link={`/data/categories/edit/${right.id}`} color='success'>
                             <FaEdit />
                             Modifier
                         </Button>
-                        <Button visible={hasPermission("admin.data.rights.delete")} onClick={() => {
+                        <Button label="Supprimer le droit" visible={hasPermission("admin.data.rights.delete")} onClick={() => {
                             showAlert(`Voulez-vous vraiment supprimer le droit "${right.name}" ?`, () => {
 
                                 mutation.mutate({ param: right.id });

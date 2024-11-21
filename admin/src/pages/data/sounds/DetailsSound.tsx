@@ -82,7 +82,7 @@ function DetailsSound(){
         setCurrentPage({
             title: "Détails du son",
             Buttons: [
-                <Button link={"/data/sounds"} color="danger">
+                <Button label="Retour" link={"/data/sounds"} color="danger">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <FaArrowLeft />
                         Retour
@@ -103,11 +103,11 @@ function DetailsSound(){
             {
                 hasPermission(["admin.data.sounds.edit", "admin.data.sounds.delete"]) && (
                     <div className="w-full flex gap-10 ps-5 my-5 items-center justify-start">
-                        <Button visible={hasPermission("admin.data.sounds.edit")} link={`/data/sounds/edit/${sound.id}`} color='success'>
+                        <Button label="Modifier le son" visible={hasPermission("admin.data.sounds.edit")} link={`/data/sounds/edit/${sound.id}`} color='success'>
                             <FaEdit />
                             Modifier
                         </Button>
-                        <Button visible={hasPermission("admin.data.sounds.delete")} onClick={() => {
+                        <Button label="Supprimer le son" visible={hasPermission("admin.data.sounds.delete")} onClick={() => {
                             showAlert(`Voulez-vous vraiment supprimer le son "${sound.title}" ?`, () => {
 
                                 mutation.mutate({ param: sound.id });

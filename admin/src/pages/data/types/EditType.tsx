@@ -123,13 +123,13 @@ function EditType(){
         setCurrentPage({
             title: `Modifier le type : ${name}`,
             Buttons: [
-                <Button link={"/data/types"} color="danger">
+                <Button label="Retour" link={"/data/types"} color="danger">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <FaArrowLeft />
                         Retour
                     </span>
                 </Button>,
-                <Button onClick={handleSubmit} color="success" status={status} icon={<MdEdit />}>
+                <Button label="Modifier le type" onClick={handleSubmit} color="success" status={status} icon={<MdEdit />}>
                     <span className="text-xl flex justify-center items-center gap-2">
                         Modifier
                     </span>

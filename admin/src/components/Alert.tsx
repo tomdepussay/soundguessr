@@ -18,12 +18,12 @@ function Alert({ message, onClick, hideAlert }: AlertProps){
                         {message}
                     </div>
                     <div className="w-full flex justify-center items-center gap-4 mt-8">
-                        <Button color="success" onClick={onClick}>
+                        <Button label="Oui" color="success" onClick={onClick}>
                             <span className="font-semibold text-xl">
                                 Oui
                             </span>
                         </Button>
-                        <Button color="danger" onClick={hideAlert}>
+                        <Button label="Non" color="danger" onClick={hideAlert}>
                             <span className="font-semibold text-xl">
                                 Non
                             </span>

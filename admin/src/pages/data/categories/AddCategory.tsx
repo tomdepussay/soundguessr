@@ -107,13 +107,13 @@ function AddCategory(){
         setCurrentPage({
             title: "Ajouter une catégorie",
             Buttons: [
-                <Button link={"/data/categories"} color="danger">
+                <Button label="Retour" link={"/data/categories"} color="danger">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <FaArrowLeft />
                         Retour
                     </span>
                 </Button>,
-                <Button onClick={handleSubmit} color="success" status={status} icon={<MdAdd />}>
+                <Button label="Ajouter une catégorie" onClick={handleSubmit} color="success" status={status} icon={<MdAdd />}>
                     <span className="text-xl flex justify-center items-center gap-2">
                         Ajouter
                     </span>

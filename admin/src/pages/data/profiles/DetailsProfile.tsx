@@ -62,7 +62,7 @@ function DetailsProfile(){
         setCurrentPage({
             title: "Détails du profil",
             Buttons: [
-                <Button link={"/data/profiles"} color="danger">
+                <Button label="Retour" link={"/data/profiles"} color="danger">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <FaArrowLeft />
                         Retour
@@ -83,11 +83,11 @@ function DetailsProfile(){
             {
                 hasPermission(["admin.data.profiles.edit", "admin.data.profiles.delete"]) && (
                     <div className="w-full flex gap-10 ps-5 my-5 items-center justify-start">
-                        <Button visible={hasPermission("admin.data.profiles.edit")} link={`/data/categories/edit/${profile.id}`} color='success'>
+                        <Button label="Modifier le profil" visible={hasPermission("admin.data.profiles.edit")} link={`/data/categories/edit/${profile.id}`} color='success'>
                             <FaEdit />
                             Modifier
                         </Button>
-                        <Button visible={hasPermission("admin.data.profiles.edit")} onClick={() => {
+                        <Button label="Supprimer le profil" visible={hasPermission("admin.data.profiles.edit")} onClick={() => {
                             showAlert(`Voulez-vous vraiment supprimer le profil "${profile.name}" ?`, () => {
 
                                 mutation.mutate({ param: profile.id });

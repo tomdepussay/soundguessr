@@ -113,13 +113,13 @@ function AddProfile(){
         setCurrentPage({
             title: "Ajouter un profil",
             Buttons: [
-                <Button link={"/data/profiles"} color="danger">
+                <Button label="Retour" link={"/data/profiles"} color="danger">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <FaArrowLeft />
                         Retour
                     </span>
                 </Button>,
-                <Button onClick={handleSubmit} color="success" status={status} icon={<MdAdd />}>
+                <Button label="Ajouter un profil" onClick={handleSubmit} color="success" status={status} icon={<MdAdd />}>
                     <span className="text-xl flex justify-center items-center gap-2">
                         Ajouter
                     </span>

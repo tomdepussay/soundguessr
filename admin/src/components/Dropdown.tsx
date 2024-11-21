@@ -30,7 +30,11 @@ function Dropdown({ link, title, icon, children, onClick, visible }: DropdownPro
 
     return (
         <div className="relative">
-            <button onClick={handleClick} className="w-full font-semibold p-3 flex justify-start gap-2 items-center px-4 text-white text-opacity-70 hover:text-opacity-100">
+            <button 
+                aria-label={`Ouvrir le menu ${title}`}
+                onClick={handleClick} 
+                className="w-full font-semibold p-3 flex justify-start gap-2 items-center px-4 text-white text-opacity-70 hover:text-opacity-100"
+            >
                 {icon}
                 {title}
                 {

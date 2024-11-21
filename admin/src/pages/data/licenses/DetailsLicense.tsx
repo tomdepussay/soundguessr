@@ -72,7 +72,7 @@ function DetailsLicense(){
         setCurrentPage({
             title: "Détails de la licence",
             Buttons: [
-                <Button link={"/data/licenses"} color="danger">
+                <Button label="Retour" link={"/data/licenses"} color="danger">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <FaArrowLeft />
                         Retour
@@ -93,11 +93,11 @@ function DetailsLicense(){
             {
                 hasPermission(["admin.data.licenses.edit", "admin.data.licenses.delete"]) && (
                     <div className="w-full flex gap-10 ps-5 my-5 items-center justify-start">
-                        <Button visible={hasPermission("admin.data.licenses.edit")} link={`/data/licenses/edit/${license.id}`} color='success'>
+                        <Button label="Modifier la licence" visible={hasPermission("admin.data.licenses.edit")} link={`/data/licenses/edit/${license.id}`} color='success'>
                             <FaEdit />
                             Modifier
                         </Button>
-                        <Button visible={hasPermission("admin.data.licenses.delete")} onClick={() => {
+                        <Button label="Supprimer la licence" visible={hasPermission("admin.data.licenses.delete")} onClick={() => {
                             showAlert(`Voulez-vous vraiment supprimer la licence "${license.title}" et ses sons ?`, () => {
 
                                 mutation.mutate({ param: license.id });

@@ -62,7 +62,7 @@ function DetailsCategory(){
         setCurrentPage({
             title: "Détails de la catégorie",
             Buttons: [
-                <Button link={"/data/categories"} color="danger">
+                <Button label="Retour" link={"/data/categories"} color="danger">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <FaArrowLeft />
                         Retour
@@ -83,11 +83,11 @@ function DetailsCategory(){
             {
                 hasPermission(["admin.data.categories.edit", "admin.data.categories.delete"]) && (
                     <div className="w-full flex gap-10 ps-5 my-5 items-center justify-start">
-                        <Button visible={hasPermission("admin.data.categories.edit")} link={`/data/categories/edit/${category.id}`} color='success'>
+                        <Button label="Modifier la catégorie" visible={hasPermission("admin.data.categories.edit")} link={`/data/categories/edit/${category.id}`} color='success'>
                             <FaEdit />
                             Modifier
                         </Button>
-                        <Button visible={hasPermission("admin.data.categories.delete")} onClick={() => {
+                        <Button label="Supprimer la catégorie" visible={hasPermission("admin.data.categories.delete")} onClick={() => {
                             showAlert(`Voulez-vous vraiment supprimer la catégorie "${category.name}" et ses licences ?`, () => {
 
                                 mutation.mutate({ param: category.id });

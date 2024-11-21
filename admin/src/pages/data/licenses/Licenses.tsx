@@ -87,7 +87,7 @@ function Licenses() {
         setCurrentPage({
             title: "Gestion des licences",
             Buttons: [
-                <Button visible={hasPermission("admin.data.licenses.add")} link={"/data/licenses/add"} color="success">
+                <Button label="Ajouter une licence" visible={hasPermission("admin.data.licenses.add")} link={"/data/licenses/add"} color="success">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <MdAdd />
                         <span className='hidden md:block'>
@@ -163,13 +163,13 @@ function Licenses() {
                                         </TableCell>
                                         <TableCell important border>
                                             <div className="flex gap-2 justify-start items-center">
-                                                <Button visible={hasPermission("admin.data.licenses.details")} link={`/data/licenses/${license.id}`} color="info">
+                                                <Button label="Voir les détails de la licence" visible={hasPermission("admin.data.licenses.details")} link={`/data/licenses/${license.id}`} color="info">
                                                     <FaEye />
                                                 </Button>
-                                                <Button visible={hasPermission("admin.data.licenses.edit")} link={`/data/licenses/edit/${license.id}`} color='success'>
+                                                <Button label="Modifier la licence" visible={hasPermission("admin.data.licenses.edit")} link={`/data/licenses/edit/${license.id}`} color='success'>
                                                     <FaEdit />
                                                 </Button>
-                                                <Button visible={hasPermission("admin.data.licenses.delete")} onClick={() => {
+                                                <Button label="Supprimer la licence" visible={hasPermission("admin.data.licenses.delete")} onClick={() => {
                                                     showAlert(`Voulez-vous vraiment supprimer la licence "${license.title}" et ses sons ?`, () => {
                                                         
                                                         mutation.mutate({ param: license.id });
@@ -177,7 +177,7 @@ function Licenses() {
                                                 }} color='danger'>
                                                     <FaRegTrashAlt />
                                                 </Button>
-                                                <Button visible={hasPermission("admin.data.licenses.active")} onClick={() => {
+                                                <Button label={license.isActive ? "Désactiver la licence" : "Activer la licence"} visible={hasPermission("admin.data.licenses.active")} onClick={() => {
                                                     const message = license.isActive ? `Voulez-vous vraiment désactiver la licence "${license.title}" ?` : `Voulez-vous vraiment activer la licence "${license.title}" ?`;
                                                     showAlert(message, () => {
                                                         mutationActive.mutate({ param: license.id })

@@ -178,13 +178,13 @@ function AddSound(){
         setCurrentPage({
             title: "Ajouter un son",
             Buttons: [
-                <Button link={"/data/sounds"} color="danger">
+                <Button label="Retour" link={"/data/sounds"} color="danger">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <FaArrowLeft />
                         Retour
                     </span>
                 </Button>,
-                <Button onClick={handleSubmit} color="success" status={status} icon={<MdAdd />}>
+                <Button label="Ajouter un son" onClick={handleSubmit} color="success" status={status} icon={<MdAdd />}>
                     <span className="text-xl flex justify-center items-center gap-2">
                         Ajouter
                     </span>

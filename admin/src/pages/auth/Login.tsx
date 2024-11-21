@@ -72,7 +72,7 @@ function Login() {
                 <div className="flex items-center gap-3 bg-slate-800 px-3 rounded text-xl w-4/5">
                     <FaLock className="text-white" />
                     <input type={showPassword ? "text" : "password"} name="password" id="password" className="bg-transparent py-2 outline-none text-white w-full" placeholder="Mot de passe" value={credentials.password} onChange={onChange} required />
-                    <button type="button" onClick={(event) => {
+                    <button aria-label={showPassword ? "Cacher le mot de passe" : "Voir le mot de passe"} type="button" onClick={(event) => {
                         event.preventDefault();
                         setShowPassword(!showPassword);
                     }}>
@@ -88,7 +88,7 @@ function Login() {
                         </div>
                     )
                 }
-                <Button status={status} color="success" type="submit">
+                <Button label="Se connecter" status={status} color="success" type="submit">
                     <span className="text-xl">
                         Se connecter
                     </span>
