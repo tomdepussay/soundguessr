@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import { AlertContext } from "@/services/AlertContext";
 import Form from "@components/Form";
 import FormRow from "@components/FormRow";
+import { AuthContext } from "@/services/AuthContext";
 
 interface Sound {
     id: number;
@@ -32,6 +33,7 @@ interface Sound {
 
 function DetailsSound(){
 
+    const { hasPermission } = useContext(AuthContext);
     const { id } = useParams();
     const { showAlert, hideAlert } = useContext(AlertContext);
     const { setCurrentPage } = useContext(DataContext);
@@ -98,21 +100,25 @@ function DetailsSound(){
 
     return (
         <div className="w-full h-fit">
-            <div className="w-full flex gap-10 ps-5 my-5 items-center justify-start">
-                <Button link={`/data/sounds/edit/${sound.id}`} color='success'>
-                    <FaEdit />
-                    Modifier
-                </Button>
-                <Button onClick={() => {
-                    showAlert(`Voulez-vous vraiment supprimer le son "${sound.title}" ?`, () => {
-                        
-                        mutation.mutate({ param: sound.id });
-                    });
-                }} color='danger'>
-                    <FaRegTrashAlt />
-                    Supprimer
-                </Button>
-            </div>
+            {
+                hasPermission(["admin.data.sounds.edit", "admin.data.sounds.delete"]) && (
+                    <div className="w-full flex gap-10 ps-5 my-5 items-center justify-start">
+                        <Button visible={hasPermission("admin.data.sounds.edit")} link={`/data/sounds/edit/${sound.id}`} color='success'>
+                            <FaEdit />
+                            Modifier
+                        </Button>
+                        <Button visible={hasPermission("admin.data.sounds.delete")} onClick={() => {
+                            showAlert(`Voulez-vous vraiment supprimer le son "${sound.title}" ?`, () => {
+
+                                mutation.mutate({ param: sound.id });
+                            });
+                        }} color='danger'>
+                            <FaRegTrashAlt />
+                            Supprimer
+                        </Button>
+                    </div>
+                )
+            }
             {
                 isLoading ? (
                     <div className="flex-1 flex justify-center items-center">

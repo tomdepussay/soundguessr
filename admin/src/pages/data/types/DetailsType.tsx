@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import { AlertContext } from "@/services/AlertContext";
 import Form from "@components/Form";
 import FormRow from "@components/FormRow";
+import { AuthContext } from "@/services/AuthContext";
 
 interface Type {
     id: number;
@@ -22,6 +23,7 @@ interface Type {
 
 function DetailsType(){
 
+    const { hasPermission } = useContext(AuthContext);
     const { id } = useParams();
     const { showAlert, hideAlert } = useContext(AlertContext);
     const { setCurrentPage } = useContext(DataContext);
@@ -78,21 +80,25 @@ function DetailsType(){
 
     return (
         <div className="w-full h-fit">
-            <div className="w-full flex gap-10 ps-5 my-5 items-center justify-start">
-                <Button link={`/data/types/edit/${type.id}`} color='success'>
-                    <FaEdit />
-                    Modifier
-                </Button>
-                <Button onClick={() => {
-                    showAlert(`Voulez-vous vraiment supprimer le type "${type.name}" et ses sons ?`, () => {
-                        
-                        mutation.mutate({ param: type.id });
-                    });
-                }} color='danger'>
-                    <FaRegTrashAlt />
-                    Supprimer
-                </Button>
-            </div>
+            {
+                hasPermission(["admin.data.types.edit", "admin.data.types.delete"]) && (
+                    <div className="w-full flex gap-10 ps-5 my-5 items-center justify-start">
+                        <Button visible={hasPermission("admin.data.types.edit")} link={`/data/types/edit/${type.id}`} color='success'>
+                            <FaEdit />
+                            Modifier
+                        </Button>
+                        <Button visible={hasPermission("admin.data.types.edit")} onClick={() => {
+                            showAlert(`Voulez-vous vraiment supprimer le type "${type.name}" et ses sons ?`, () => {
+
+                                mutation.mutate({ param: type.id });
+                            });
+                        }} color='danger'>
+                            <FaRegTrashAlt />
+                            Supprimer
+                        </Button>
+                    </div>
+                )
+            }
             {
                 isLoading ? (
                     <div className="flex-1 flex justify-center items-center">

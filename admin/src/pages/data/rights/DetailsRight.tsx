@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import { AlertContext } from "@/services/AlertContext";
 import Form from "@components/Form";
 import FormRow from "@components/FormRow";
+import { AuthContext } from "@/services/AuthContext";
 
 interface Right {
     id: number;
@@ -22,6 +23,7 @@ interface Right {
 
 function DetailsRight(){
 
+    const { hasPermission } = useContext(AuthContext);
     const { id } = useParams();
     const { showAlert, hideAlert } = useContext(AlertContext);
     const { setCurrentPage } = useContext(DataContext);
@@ -78,21 +80,25 @@ function DetailsRight(){
 
     return (
         <div className="w-full h-fit">
-            <div className="w-full flex gap-10 ps-5 my-5 items-center justify-start">
-                <Button link={`/data/categories/edit/${right.id}`} color='success'>
-                    <FaEdit />
-                    Modifier
-                </Button>
-                <Button onClick={() => {
-                    showAlert(`Voulez-vous vraiment supprimer le droit "${right.name}" ?`, () => {
-                        
-                        mutation.mutate({ param: right.id });
-                    });
-                }} color='danger'>
-                    <FaRegTrashAlt />
-                    Supprimer
-                </Button>
-            </div>
+            {
+                hasPermission(["admin.data.rights.edit", "admin.data.rights.delete"]) && (
+                    <div className="w-full flex gap-10 ps-5 my-5 items-center justify-start">
+                        <Button visible={hasPermission("admin.data.rights.edit")} link={`/data/categories/edit/${right.id}`} color='success'>
+                            <FaEdit />
+                            Modifier
+                        </Button>
+                        <Button visible={hasPermission("admin.data.rights.delete")} onClick={() => {
+                            showAlert(`Voulez-vous vraiment supprimer le droit "${right.name}" ?`, () => {
+
+                                mutation.mutate({ param: right.id });
+                            });
+                        }} color='danger'>
+                            <FaRegTrashAlt />
+                            Supprimer
+                        </Button>
+                    </div>
+                )
+            }
             {
                 isLoading ? (
                     <div className="flex-1 flex justify-center items-center">

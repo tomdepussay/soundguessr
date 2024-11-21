@@ -7,7 +7,7 @@ interface AuthContextType {
     loading: boolean;
     login: (token: string) => void;
     logout: () => void;
-    hasPermission: (permission: string) => boolean;
+    hasPermission: (permission: string[] | string) => boolean;
 }
 
 interface AuthProviderProps {
@@ -19,7 +19,7 @@ export const AuthContext = createContext<AuthContextType>({
     loading: true,
     login: () => {},
     logout: () => {},
-    hasPermission: (permission: string) => { return false; }
+    hasPermission: (permission: string | string[]) => { return false; }
 });
 
 const useFetchUserData = (setUser: (user: User | null) => void, setLoading: (loading: boolean) => void) => {
@@ -66,8 +66,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUser(null);
     };
 
-    const hasPermission = (permission: string) => {
-        return (user?.permissions.includes(permission) || user?.profileId === 1) || false;
+    const hasPermission = (permissions: string | string[]) => {
+        if (typeof permissions === 'string') {
+            permissions = [permissions];
+        }
+        return permissions.some(permission => user?.permissions.includes(permission) || user?.profileId === 1) || false;
     }
 
     return (
