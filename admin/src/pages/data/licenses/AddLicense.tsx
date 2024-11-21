@@ -196,7 +196,7 @@ function AddLicense(){
     return (
         <Form>
             <FormRow>
-                <Input label="Titre" error={error.title} name="title" value={license.title} setValue={handleChangeInput} required />
+                <Input label="Titre" error={error.title} name="title" value={license.title} setValue={handleChangeInput} focus required />
                 {
                     !isLoading && (
                         <Select 

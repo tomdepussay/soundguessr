@@ -16,9 +16,11 @@ import { DataContext } from '@/services/DataContext';
 import { AlertContext } from '@services/AlertContext';
 import { MdAdd } from "react-icons/md";
 import toast from 'react-hot-toast';
+import { AuthContext } from '@/services/AuthContext';
 
 function Profiles() {
 
+    const { hasPermission } = useContext(AuthContext);
     const { setCurrentPage } = useContext(DataContext);
     const { showAlert, hideAlert } = useContext(AlertContext);
     const [page, setPage] = useState(1);
@@ -84,7 +86,7 @@ function Profiles() {
         setCurrentPage({
             title: "Gestion des profils",
             Buttons: [
-                <Button link={"/data/profiles/add"} color="success">
+                <Button visible={hasPermission("admin.data.profiles.add")} link={"/data/profiles/add"} color="success">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <MdAdd />
                         <span className='hidden md:block'>
@@ -144,13 +146,13 @@ function Profiles() {
                                         </TableCell>
                                         <TableCell important border>
                                             <div className="flex gap-2 justify-start items-center">
-                                                <Button link={`/data/profiles/${profile.id}`} color="info">
+                                                <Button visible={hasPermission("admin.data.profiles.details")} link={`/data/profiles/${profile.id}`} color="info">
                                                     <FaEye />
                                                 </Button>
-                                                <Button link={`/data/profiles/edit/${profile.id}`} color='success'>
+                                                <Button visible={hasPermission("admin.data.profiles.edit")} link={`/data/profiles/edit/${profile.id}`} color='success'>
                                                     <FaEdit />
                                                 </Button>
-                                                <Button onClick={() => {
+                                                <Button visible={hasPermission("admin.data.profiles.delete")} onClick={() => {
                                                     showAlert(`Voulez-vous vraiment supprimer le profil "${profile.name}" ?`, () => {
                                                         
                                                         mutation.mutate({ param: profile.id });
@@ -158,7 +160,7 @@ function Profiles() {
                                                 }} color='danger'>
                                                     <FaRegTrashAlt />
                                                 </Button>
-                                                <Button link={`/data/profiles/rights/${profile.id}`} color="warning">
+                                                <Button visible={hasPermission("admin.data.profiles.rights")} link={`/data/profiles/rights/${profile.id}`} color="warning">
                                                     <FaArrowsAltH />
                                                 </Button>
                                             </div>

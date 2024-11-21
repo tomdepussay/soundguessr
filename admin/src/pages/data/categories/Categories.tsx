@@ -17,9 +17,11 @@ import { AlertContext } from '@services/AlertContext';
 import { MdAdd } from "react-icons/md";
 import toast from 'react-hot-toast';
 import { IoMdSwitch } from "react-icons/io";
+import { AuthContext } from '@/services/AuthContext';
 
 function Categories() {
 
+    const { hasPermission } = useContext(AuthContext);
     const { setCurrentPage } = useContext(DataContext);
     const { showAlert, hideAlert } = useContext(AlertContext);
     const [page, setPage] = useState(1);
@@ -85,7 +87,7 @@ function Categories() {
         setCurrentPage({
             title: "Gestion des catégories",
             Buttons: [
-                <Button link={"/data/categories/add"} color="success">
+                <Button visible={hasPermission("admin.data.categories.add")} link={"/data/categories/add"} color="success">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <MdAdd />
                         <span className='hidden md:block'>
@@ -149,13 +151,13 @@ function Categories() {
                                         </TableCell>
                                         <TableCell important border>
                                             <div className="flex gap-2 justify-start items-center">
-                                                <Button link={`/data/categories/${category.id}`} color="info">
+                                                <Button visible={hasPermission("admin.data.categories.details")} link={`/data/categories/${category.id}`} color="info">
                                                     <FaEye />
                                                 </Button>
-                                                <Button link={`/data/categories/edit/${category.id}`} color='success'>
+                                                <Button visible={hasPermission("admin.data.categories.edit")} link={`/data/categories/edit/${category.id}`} color='success'>
                                                     <FaEdit />
                                                 </Button>
-                                                <Button onClick={() => {
+                                                <Button visible={hasPermission("admin.data.categories.delete")} onClick={() => {
                                                     showAlert(`Voulez-vous vraiment supprimer la catégorie "${category.name}" et ses licences ?`, () => {
                                                         
                                                         mutation.mutate({ param: category.id });
@@ -163,7 +165,7 @@ function Categories() {
                                                 }} color='danger'>
                                                     <FaRegTrashAlt />
                                                 </Button>
-                                                <Button onClick={() => {
+                                                <Button visible={hasPermission("admin.data.categories.active")} onClick={() => {
                                                     const message = category.isActive ? `Voulez-vous vraiment désactiver la catégorie "${category.name}" ?` : `Voulez-vous vraiment activer la catégorie "${category.name}" ?`;
                                                     showAlert(message, () => {
                                                         mutationActive.mutate({ param: category.id })

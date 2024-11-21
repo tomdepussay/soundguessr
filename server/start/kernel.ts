@@ -43,9 +43,5 @@ router.use([
  * the routes or the routes group.
  */
 export const middleware = router.named({
-  admin: () => import('#middleware/admin_middleware'),
   auth: () => import('#middleware/auth_middleware'),
-  // isAdmin: () => import('#middleware/is_admin_middleware'),
-  // IsConnectedMiddleware: () => import('#middleware/is_connected_middleware'),
-  // IsAdminMiddleware: () => import('#middleware/is_admin_middleware'),
 })

@@ -33,6 +33,7 @@ export default class extends BaseSchema {
       { name: "Ajouter un profil", code: "admin.data.profiles.add", created_at: new Date(), updated_at: new Date() },
       { name: "Modifier un profil", code: "admin.data.profiles.edit", created_at: new Date(), updated_at: new Date() },
       { name: "Supprimer un profil", code: "admin.data.profiles.delete", created_at: new Date(), updated_at: new Date() },
+      { name: "Affecter des droits", code: "admin.data.profiles.affected", created_at: new Date(), updated_at: new Date() },
       { name: "Droits", code: "admin.data.rights", created_at: new Date(), updated_at: new Date() },
       { name: "Ajouter un droit", code: "admin.data.rights.add", created_at: new Date(), updated_at: new Date() },
       { name: "Modifier un droit", code: "admin.data.rights.edit", created_at: new Date(), updated_at: new Date() },

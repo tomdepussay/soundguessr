@@ -154,7 +154,7 @@ function EditRight(){
                     <Input label="ID" name="ID" value={right.id} disabled />
                 </FormRow>
                 <FormRow>
-                    <Input label="Nom" error={error.name} name="name" value={right.name} setValue={handleChangeInput} required />  
+                    <Input label="Nom" error={error.name} name="name" value={right.name} setValue={handleChangeInput} focus required />  
                     <Input label="Code" error={error.code} name="code" value={right.code} setValue={handleChangeInput} required />
                 </FormRow>
             </Form>          

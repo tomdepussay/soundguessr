@@ -47,6 +47,7 @@ router
     router.post("/login", [AuthController, "login"])
     router.post("/register", [AuthController, "register"])
     router.get("/user", [AuthController, "user"])
+    router.post("/permission", [AuthController, "permission"])
   })
   .prefix('/auth')
 
@@ -126,6 +127,7 @@ router
         router.patch("/:id", [ProfilesController, "update"])
         router.delete("/:id", [ProfilesController, "delete"])
         router.get("/rights/:id", [ProfilesController, "rights"])
+        router.post("/rights/:id", [ProfilesController, "rightsAffected"])
       })
       .prefix("/profiles")
 
@@ -142,5 +144,5 @@ router
       .prefix("rights")
   })
   .use(
-    middleware.admin()
+    middleware.auth()
   )

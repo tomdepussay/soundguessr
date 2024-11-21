@@ -9,9 +9,10 @@ interface InputProps {
     placeholder?: string;
     disabled?: boolean;
     error?: string;
+    focus?: boolean;
 }
 
-function Input({ label, name, type = "text", status = "idle", required = false, value, setValue, placeholder = "Taper ici", disabled = false, error = "" }: InputProps){
+function Input({ label, name, type = "text", status = "idle", required = false, value, setValue, placeholder = "Taper ici", disabled = false, error = "", focus = false }: InputProps){
     return (
         <div className={`flex flex-col gap-1`}>
             <label className="text-white select-none text-md font-semibold pl-1" htmlFor={name}>
@@ -28,6 +29,7 @@ function Input({ label, name, type = "text", status = "idle", required = false, 
                 name={name}
                 id={name}
                 value={value}
+                autoFocus={focus}
                 onChange={(e) => setValue && setValue(e)}
                 placeholder={placeholder}
                 className={`p-2 rounded-lg bg-slate-900 shadow-md text-white outline-none focus:shadow-inner ${error !== "" ? "border-red-500 border-2" : ""} ${status !== "idle" || disabled ? 'cursor-not-allowed' : 'cursor-text'}`}

@@ -17,9 +17,11 @@ import { AlertContext } from '@services/AlertContext';
 import { MdAdd } from "react-icons/md";
 import toast from 'react-hot-toast';
 import { IoMdSwitch } from "react-icons/io";
+import { AuthContext } from '@/services/AuthContext';
 
 function Licenses() {
 
+    const { hasPermission } = useContext(AuthContext);
     const { setCurrentPage } = useContext(DataContext);
     const { showAlert, hideAlert } = useContext(AlertContext);
     const [page, setPage] = useState(1);
@@ -85,7 +87,7 @@ function Licenses() {
         setCurrentPage({
             title: "Gestion des licences",
             Buttons: [
-                <Button link={"/data/licenses/add"} color="success">
+                <Button visible={hasPermission("admin.data.licenses.add")} link={"/data/licenses/add"} color="success">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <MdAdd />
                         <span className='hidden md:block'>
@@ -161,13 +163,13 @@ function Licenses() {
                                         </TableCell>
                                         <TableCell important border>
                                             <div className="flex gap-2 justify-start items-center">
-                                                <Button link={`/data/licenses/${license.id}`} color="info">
+                                                <Button visible={hasPermission("admin.data.licenses.details")} link={`/data/licenses/${license.id}`} color="info">
                                                     <FaEye />
                                                 </Button>
-                                                <Button link={`/data/licenses/edit/${license.id}`} color='success'>
+                                                <Button visible={hasPermission("admin.data.licenses.edit")} link={`/data/licenses/edit/${license.id}`} color='success'>
                                                     <FaEdit />
                                                 </Button>
-                                                <Button onClick={() => {
+                                                <Button visible={hasPermission("admin.data.licenses.delete")} onClick={() => {
                                                     showAlert(`Voulez-vous vraiment supprimer la licence "${license.title}" et ses sons ?`, () => {
                                                         
                                                         mutation.mutate({ param: license.id });
@@ -175,7 +177,7 @@ function Licenses() {
                                                 }} color='danger'>
                                                     <FaRegTrashAlt />
                                                 </Button>
-                                                <Button onClick={() => {
+                                                <Button visible={hasPermission("admin.data.licenses.active")} onClick={() => {
                                                     const message = license.isActive ? `Voulez-vous vraiment désactiver la licence "${license.title}" ?` : `Voulez-vous vraiment activer la licence "${license.title}" ?`;
                                                     showAlert(message, () => {
                                                         mutationActive.mutate({ param: license.id })

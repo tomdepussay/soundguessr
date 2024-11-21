@@ -52,9 +52,13 @@ interface ButtonProps {
     onClick?: (e: React.FormEvent<HTMLButtonElement>) => void;
     type?: 'button' | 'submit' | 'reset';
     link?: string;
+    visible?: boolean;
 }
 
-function Button({ children, color = "default", disabled = false, status = "idle", icon, onClick, type = "button", link }: ButtonProps){
+function Button({ children, color = "default", disabled = false, status = "idle", icon, onClick, type = "button", link, visible = true }: ButtonProps){
+    
+    if(!visible) return null;
+    
     if(link){
         return <Link 
                     to={link} 

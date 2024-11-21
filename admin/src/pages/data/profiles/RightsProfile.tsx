@@ -4,6 +4,7 @@ import { DataContext } from "@/services/DataContext";
 import useFetch from "@/services/useFetch";
 import useMutation from "@/services/useMutation";
 import React, { useState, useEffect, useContext } from "react";
+import toast from "react-hot-toast";
 import { FaArrowLeft, FaArrowsAltH } from "react-icons/fa";
 import { useParams } from "react-router-dom";
 
@@ -23,7 +24,7 @@ interface Right {
     code: string;
     name: string;
     affected: boolean;
-    before: string[];
+    before: number[];
 }
 
 function RightsProfile() {
@@ -39,7 +40,7 @@ function RightsProfile() {
     const [maxColumn, setMaxColumn] = useState<number>(0);
     const [selected, setSelected] = useState<{
         level: number,
-        codes: string[]
+        codes: number[]
     }>({
         level: -1,
         codes: []
@@ -48,7 +49,7 @@ function RightsProfile() {
         level: 0,
         value: null
     }]);
-    const [rights, setRights] = useState<number[]>();
+    const [rights, setRights] = useState<number[]>([]);
 
     const { data, isLoading } = useFetch({ 
         name: "profile", 
@@ -70,24 +71,13 @@ function RightsProfile() {
         method: "POST",
         success: (data) => {
             let rights = [];
+            let before = [];
+            for(let code of selected.codes){
+                before.push(code);
+            }
+
             for(let right of data.rights){
-                let before = [];
-                let liste = right.code.split(".");
-                if(liste.length > 1){
-                    for(let i = 0; i < liste.length - 1; i++){
-                        let str = "";
-                        for(let j = 0; j < i + 1; j++){
-                            if(str != ""){
-                                str += ".";
-                            }
-                            str += liste[j];
-                        }
-                        before.push(str);
-                    }
-                    right.before = before;
-                } else {
-                    right.before = [];
-                }
+                right.before = before;
                 rights.push(right);
             }
 
@@ -102,8 +92,37 @@ function RightsProfile() {
         }
     })
 
+    const mutateSubmit = useMutation({
+        url: `profiles/rights/${id}`,
+        method: "POST",
+        success: (data) => {
+            if(data.success){
+                toast.success(data.message);
+                setStatus("success");
+                setTimeout(() => {
+                    window.location.href = "/data/profiles";
+                }, 1000)
+            } else {
+                toast.error(data.message);
+                setStatus("error");
+            }
+        },
+        error: (err) => {
+            console.log("Erreur lors de l'affectation des droits ", err);
+            toast.error("Erreur lors de l'affectation des droits");
+        }
+    })
+
     const handleSubmmit = () => {
         setStatus("loading");
+
+        setRights((prevRights) => {
+            mutateSubmit.mutate({ body: {
+                rights: prevRights
+            } })
+            
+            return prevRights;
+        })
     }
 
     useEffect(() => {
@@ -131,13 +150,9 @@ function RightsProfile() {
     }, [dataRightsProfile])
 
     useEffect(() => {
-        console.log(selected)
-    }, [selected])
-
-    useEffect(() => {
         mutate.mutate({
             body: {
-                right: selected.codes.length > 0 ? selected.codes[selected.codes.length - 1] : undefined
+                rightId: selected.codes.length > 0 ? selected.codes[selected.codes.length - 1] : undefined
             }
         })
     }, [selected])
@@ -180,22 +195,22 @@ function RightsProfile() {
                                                 <li 
                                                     key={right.id}
                                                     className={`text-white select-none p-2 text-lg mb-2 rounded-xl cursor-pointer 
-                                                        ${selected.codes.includes(right.code) ? 
+                                                        ${selected.codes.includes(right.id) ? 
                                                         (
-                                                            rights && rights.includes(right.id) ?
+                                                            rights.includes(right.id) ?
                                                             "bg-green-600/60 hover:bg-green-500/60" :
                                                             "bg-slate-900/70"
                                                         ) : 
                                                         (
-                                                            rights && rights.includes(right.id) ? 
+                                                            rights.includes(right.id) ? 
                                                             "bg-green-500/60 hover:bg-green-600/60" :
                                                             "hover:bg-slate-900/70"
                                                         )}`} 
                                                     onClick={() => {
-                                                        if(!selected.codes.includes(right.code)){
+                                                        if(!selected.codes.includes(right.id)){
                                                             setSelected({
                                                                 level: index,
-                                                                codes : right.before.length > 0 ? [...right.before, right.code] : [right.code]
+                                                                codes : right.before.length > 0 ? [...right.before, right.id] : [right.id]
                                                             })
 
                                                             setCols((prevCol: any) => 
@@ -204,6 +219,23 @@ function RightsProfile() {
                                                                 )
                                                             )
                                                         }
+                                                    }}
+                                                    onDoubleClick={() => {
+                                                        setRights((prevRights) => {
+                                                            if (prevRights.includes(right.id)) {
+                                                                return prevRights.filter(id => id !== right.id);
+                                                            } else {
+                                                                let rightsId = [];
+
+                                                                for(let right of selected.codes){
+                                                                    if(!prevRights.includes(right)){
+                                                                        rightsId.push(right);
+                                                                    }
+                                                                }
+
+                                                                return [...prevRights, ...rightsId];
+                                                            }
+                                                        })
                                                     }}
                                                 >
                                                     {right.name}

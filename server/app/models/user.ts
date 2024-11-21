@@ -4,6 +4,7 @@ import { BaseModel, column, manyToMany } from '@adonisjs/lucid/orm'
 import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 import Right from './right.js'
 import * as relations from '@adonisjs/lucid/types/relations'
+import db from '@adonisjs/lucid/services/db'
 
 export default class User extends BaseModel {
   @column({ isPrimary: true })
@@ -17,9 +18,6 @@ export default class User extends BaseModel {
 
   @column({ serializeAs: null, columnName: 'password' })
   declare password: string
-
-  @column({ columnName: 'is_admin' })
-  declare isAdmin: boolean
 
   @column({ columnName: 'picture' })
   declare picture: string
@@ -59,4 +57,21 @@ export default class User extends BaseModel {
     type: 'auth_token',
     tokenSecretLength: 40,
   })
+
+  public static async hasPermission(permission: string, profileId: number){
+    let hasRight = false;
+    
+    // Vérification si la permission est présente pour le profil de l'utilisateur
+    const profileHasPermission = await db
+        .query()
+        .from("profiles_rights")
+        .leftJoin("rights", "rights.id", "profiles_rights.right_id")
+        .select("*")
+        .where("rights.code", permission)
+        .where("profiles_rights.profile_id", profileId)
+    
+    if(profileHasPermission.length === 0){
+        hasRight = true;
+    }
+  }
 }

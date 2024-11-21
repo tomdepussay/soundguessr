@@ -234,7 +234,7 @@ function EditSound(){
                     <Input label="Chemin d'accès" name="path" value={sound.path} disabled />
                 </FormRow>
                 <FormRow>
-                    <Input label="Titre" error={error.title} name="title" value={sound.title} setValue={handleChangeInput} required />
+                    <Input label="Titre" error={error.title} name="title" value={sound.title} setValue={handleChangeInput} focus required />
                     <Input label="URL" error={error.url} name="url" value={sound.url} setValue={handleChangeInput} required />
                     <Input type="number" error={error.order} label="Ordre" name="order" value={sound.order} setValue={handleChangeInput} required />
                 </FormRow>

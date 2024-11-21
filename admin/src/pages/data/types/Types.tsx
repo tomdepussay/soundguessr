@@ -17,9 +17,11 @@ import { AlertContext } from '@services/AlertContext';
 import { MdAdd } from "react-icons/md";
 import toast from 'react-hot-toast';
 import { IoMdSwitch } from "react-icons/io";
+import { AuthContext } from '@/services/AuthContext';
 
 function Types() {
 
+    const { hasPermission } = useContext(AuthContext);
     const { setCurrentPage } = useContext(DataContext);
     const { showAlert, hideAlert } = useContext(AlertContext);
     const [page, setPage] = useState(1);
@@ -85,7 +87,7 @@ function Types() {
         setCurrentPage({
             title: "Gestion des types",
             Buttons: [
-                <Button link={"/data/types/add"} color="success">
+                <Button visible={hasPermission("admin.data.types.add")} link={"/data/types/add"} color="success">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <MdAdd />
                         <span className='hidden md:block'>
@@ -149,13 +151,13 @@ function Types() {
                                         </TableCell>
                                         <TableCell important border>
                                             <div className="flex gap-2 justify-start items-center">
-                                                <Button link={`/data/types/${type.id}`} color="info">
+                                                <Button visible={hasPermission("admin.data.types.details")} link={`/data/types/${type.id}`} color="info">
                                                     <FaEye />
                                                 </Button>
-                                                <Button link={`/data/types/edit/${type.id}`} color='success'>
+                                                <Button visible={hasPermission("admin.data.types.edit")} link={`/data/types/edit/${type.id}`} color='success'>
                                                     <FaEdit />
                                                 </Button>
-                                                <Button onClick={() => {
+                                                <Button visible={hasPermission("admin.data.types.delete")} onClick={() => {
                                                     showAlert(`Voulez-vous vraiment supprimer le type "${type.name}" et ses sons ?`, () => {
                                                         
                                                         mutation.mutate({ param: type.id });
@@ -163,7 +165,7 @@ function Types() {
                                                 }} color='danger'>
                                                     <FaRegTrashAlt />
                                                 </Button>
-                                                <Button onClick={() => {
+                                                <Button visible={hasPermission("admin.data.types.active")} onClick={() => {
                                                     const message = type.isActive ? `Voulez-vous vraiment désactiver le type "${type.name}" ?` : `Voulez-vous vraiment activer le type "${type.name}" ?`;
                                                     showAlert(message, () => {
                                                         mutationActive.mutate({ param: type.id })

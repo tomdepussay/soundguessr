@@ -5,14 +5,14 @@ export default class extends BaseSchema {
 
   async up() {
     this.schema.alterTable(this.tableName, (table) => {
-      table.integer('profile_id').unsigned().references('id').inTable('profiles').onDelete('CASCADE')
+      table.dropColumn('is_admin')
     })
   }
 
   async down() {
+    // Si vous avez besoin de restaurer la colonne dans le rollback, vous pouvez la recréer ici
     this.schema.alterTable(this.tableName, (table) => {
-      table.dropForeign(['profile_id'])
-      table.dropColumn('profile_id')
+      table.boolean('is_admin').defaultTo(false) // Assurez-vous que le type correspond à ce qu'il était avant
     })
   }
 }

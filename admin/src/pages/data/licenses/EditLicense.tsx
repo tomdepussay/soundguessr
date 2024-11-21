@@ -228,7 +228,7 @@ function EditLicense(){
                     <Input label="Chemin d'accès" name="path" value={license.path} disabled />
                 </FormRow>
                 <FormRow>
-                    <Input label="Titre" error={error.title} name="title" value={license.title} setValue={handleChangeInput} required />   
+                    <Input label="Titre" error={error.title} name="title" value={license.title} setValue={handleChangeInput} focus required />   
                     <Select 
                         label="Categorie" 
                         name="categoryId" 

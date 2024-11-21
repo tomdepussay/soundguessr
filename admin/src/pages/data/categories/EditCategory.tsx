@@ -146,7 +146,7 @@ function EditCategory(){
                     <Input label="ID" name="ID" value={category.id} disabled />
                 </FormRow>
                 <FormRow>
-                    <Input label="Nom" error={error.name} name="name" value={category.name} setValue={handleChangeInput} required />  
+                    <Input label="Nom" error={error.name} name="name" value={category.name} setValue={handleChangeInput} focus required />  
                     <Boolean label="Actif" name="isActive" value={category.isActive} setValue={() => setCategory({
                         ...category,
                         isActive: !category.isActive

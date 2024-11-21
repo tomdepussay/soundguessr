@@ -18,6 +18,7 @@ import { AlertContext } from '@services/AlertContext';
 import { MdAdd } from "react-icons/md";
 import toast from 'react-hot-toast';
 import { IoMdSwitch } from "react-icons/io";
+import { AuthContext } from '@/services/AuthContext';
 
 const FilterModes: {mode: string, label: string}[] = [
     {
@@ -32,6 +33,7 @@ const FilterModes: {mode: string, label: string}[] = [
 
 function Sounds() {
 
+    const { hasPermission } = useContext(AuthContext);
     const { setCurrentPage } = useContext(DataContext);
     const { showAlert, hideAlert } = useContext(AlertContext);
     const [page, setPage] = useState(1);
@@ -98,7 +100,7 @@ function Sounds() {
         setCurrentPage({
             title: "Gestion des sons",
             Buttons: [
-                <Button link={"/data/sounds/add"} color="success">
+                <Button visible={hasPermission("admin.data.sounds.add")} link={"/data/sounds/add"} color="success">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <MdAdd />
                         <span className='hidden md:block'>
@@ -165,13 +167,13 @@ function Sounds() {
                                         </TableCell>
                                         <TableCell important border>
                                             <div className="flex gap-2 justify-start items-center">
-                                                <Button link={`/data/sounds/${sound.id}`} color="info">
+                                                <Button visible={hasPermission("admin.data.sounds.details")} link={`/data/sounds/${sound.id}`} color="info">
                                                     <FaEye />
                                                 </Button>
-                                                <Button link={`/data/sounds/edit/${sound.id}`} color='success'>
+                                                <Button visible={hasPermission("admin.data.sounds.edit")} link={`/data/sounds/edit/${sound.id}`} color='success'>
                                                     <FaEdit />
                                                 </Button>
-                                                <Button onClick={() => {
+                                                <Button visible={hasPermission("admin.data.sounds.delete")} onClick={() => {
                                                     showAlert(`Voulez-vous vraiment supprimer le son "${sound.title}" ?`, () => {
                                                         
                                                         mutation.mutate({ param: sound.id });
@@ -179,7 +181,7 @@ function Sounds() {
                                                 }} color='danger'>
                                                     <FaRegTrashAlt />
                                                 </Button>
-                                                <Button onClick={() => {
+                                                <Button visible={hasPermission("admin.data.sounds.active")} onClick={() => {
                                                     const message = sound.isActive ? `Voulez-vous vraiment désactiver le son "${sound.title}" ?` : `Voulez-vous vraiment activer le son "${sound.title}" ?`;
                                                     showAlert(message, () => {
                                                         mutationActive.mutate({ param: sound.id })

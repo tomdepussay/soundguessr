@@ -1,4 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from './AuthContext';
 import Layout from '@components/Layout';
 import DataLayout from '@components/DataLayout';
 import AuthGuard from '@services/AuthGuard';
@@ -44,10 +46,13 @@ import EditRight from '@/pages/data/rights/EditRight';
 import RightsProfile from '@/pages/data/profiles/RightsProfile';
 
 function Router(){
+
+    const { hasPermission } = useContext(AuthContext);
+
     return (
         <Routes>
 
-            <Route element={<AuthLoyout />} >
+            <Route element={<AuthLoyout />}>
                 <Route path='login' element={<Login />} />
             </Route>
 
@@ -55,73 +60,191 @@ function Router(){
                 <AuthGuard redirectTo="/login">
                     <Layout />
                 </AuthGuard>
-            } >
+            }>
 
-                <Route index element={<Dashboard />} />
-                <Route path="dashboard" element={<Dashboard />} />
+                <Route path='/' element={<Dashboard />} />
 
-                <Route element={<DataLayout />} path="data">
-                    <Route path='categories'>
-                        <Route index element={<Categories />} />
-                        <Route path={`:id`} element={<DetailsCategory />} />
-                        <Route path={`add`} element={<AddCategory />} />
-                        <Route path={`edit/:id`} element={<EditCategory />} />
-                    </Route>
+                {
+                    hasPermission("admin") && ( 
+                        <>
+                            <Route path="dashboard" element={<Dashboard />} />
 
-                    <Route path='licenses'>
-                        <Route index element={<Licenses />} />
-                        <Route path={`:id`} element={<DetailsLicense />} />
-                        <Route path={`add`} element={<AddLicense />} />
-                        <Route path={`edit/:id`} element={<EditLicense />} />
-                        
-                    </Route>
+                            {
+                                hasPermission("admin.data") && (
+                                <Route element={<DataLayout />} path="data">
+                                    {
+                                        hasPermission("admin.data.categories") && (
+                                            <Route path='categories'>
+                                                <Route index element={<Categories />} />
+                                                {
+                                                    hasPermission("admin.data.categories.details") && (
+                                                        <Route path={`:id`} element={<DetailsCategory />} />
+                                                    )
+                                                }
+                                                {
+                                                    hasPermission("admin.data.categories.add") && (
+                                                        <Route path={`add`} element={<AddCategory />} />
+                                                    )
+                                                }
+                                                {
+                                                    hasPermission("admin.data.categories.edit") && (
+                                                        <Route path={`edit/:id`} element={<EditCategory />} />
+                                                    )
+                                                }
+                                            </Route>
+                                        )
+                                    }
 
-                    <Route path='sounds'>
-                        <Route index element={<Sounds />} />
-                        <Route path={`:id`} element={<DetailsSound />} />
-                        <Route path={`add`} element={<AddSound />} />
-                        <Route path={`edit/:id`} element={<EditSound />} />
-                    </Route>
+                                    {
+                                        hasPermission("admin.data.licenses") && (
+                                            <Route path='licenses'>
+                                                <Route index element={<Licenses />} />
+                                                {
+                                                    hasPermission("admin.data.licenses.details") && (
+                                                        <Route path={`:id`} element={<DetailsLicense />} />
+                                                    )
+                                                }
+                                                {
+                                                    hasPermission("admin.data.licenses.add") && (
+                                                        <Route path={`add`} element={<AddLicense />} />
+                                                    )
+                                                }
+                                                {
+                                                    hasPermission("admin.data.licenses.edit") && (
+                                                        <Route path={`edit/:id`} element={<EditLicense />} />
+                                                    )
+                                                }
+                                            </Route>
+                                        )
+                                    }
 
-                    <Route path='types'>
-                        <Route index element={<Types />} />
-                        <Route path={`:id`} element={<DetailsType />} />
-                        <Route path={`add`} element={<AddType />} />
-                        <Route path={`edit/:id`} element={<EditType />} />                        
-                    </Route>
+                                    {
+                                        hasPermission("admin.data.sounds") && (
+                                            <Route path='sounds'>
+                                                <Route index element={<Sounds />} />
+                                                {
+                                                    hasPermission("admin.data.sounds.details") && (
+                                                        <Route path={`:id`} element={<DetailsSound />} />
+                                                    )
+                                                }
+                                                {
+                                                    hasPermission("admin.data.sounds.add") && (
+                                                        <Route path={`add`} element={<AddSound />} />
+                                                    )
+                                                }
+                                                {
+                                                    hasPermission("admin.data.sounds.edit") && (
+                                                        <Route path={`edit/:id`} element={<EditSound />} />
+                                                    )
+                                                }
+                                            </Route>
+                                        )
+                                    }
+                                    
+                                    {
+                                        hasPermission("admin.data.types") && (
+                                            <Route path='types'>
+                                                <Route index element={<Types />} />
+                                                {
+                                                    hasPermission("admin.data.types.details") && (
+                                                        <Route path={`:id`} element={<DetailsType />} />
+                                                    )
+                                                }
+                                                {
+                                                    hasPermission("admin.data.types.add") && (
+                                                        <Route path={`add`} element={<AddType />} />
+                                                    )
+                                                }
+                                                {
+                                                    hasPermission("admin.data.types.edit") && (
+                                                        <Route path={`edit/:id`} element={<EditType />} />
+                                                    )
+                                                }
+                                            </Route>
+                                        )
+                                    }
 
-                    <Route path='questions'>
-                        <Route index element={<Questions />} />
-                        <Route path='add' element={<div>Ajouter une question</div>} />
-                    </Route>
+                                    {/* <Route path='questions'>
+                                        <Route index element={<Questions />} />
+                                        <Route path='add' element={<div>Ajouter une question</div>} />
+                                    </Route> */}
 
-                    <Route path="profiles">
-                        <Route index element={<Profiles />} />
-                        <Route path={`:id`} element={<DetailsProfile />} />
-                        <Route path={`add`} element={<AddProfile />} />
-                        <Route path={`edit/:id`} element={<EditProfile />} /> 
-                        <Route path={`rights/:id`} element={<RightsProfile />} />
-                    </Route>
+                                    {
+                                        hasPermission("admin.data.profiles") && (
+                                            <Route path="profiles">
+                                                <Route index element={<Profiles />} />
+                                                {
+                                                    hasPermission("admin.data.profiles.details") && (
+                                                        <Route path={`:id`} element={<DetailsProfile />} />
+                                                    )
+                                                }
+                                                {
+                                                    hasPermission("admin.data.profiles.add") && (
+                                                        <Route path={`add`} element={<AddProfile />} />
+                                                    )
+                                                }
+                                                {
+                                                    hasPermission("admin.data.profiles.edit") && (
+                                                        <Route path={`edit/:id`} element={<EditProfile />} />
+                                                    )
+                                                }
+                                                {
+                                                    hasPermission("admin.data.profiles.rights") && (
+                                                        <Route path={`rights/:id`} element={<RightsProfile />} />
+                                                    )
+                                                }
+                                            </Route>
+                                        )
+                                    }
+                                    
+                                    {
+                                        hasPermission("admin.data.rights") && (
+                                            <Route path="rights">
+                                                <Route index element={<Rights />} />
+                                                {
+                                                    hasPermission("admin.data.rights.details") && (
+                                                        <Route path={`:id`} element={<DetailsRight />} />
+                                                    )
+                                                }
+                                                {
+                                                    hasPermission("admin.data.rights.add") && (
+                                                        <Route path={`add`} element={<AddRight />} />
+                                                    )
+                                                }
+                                                {
+                                                    hasPermission("admin.data.rights.edit") && (
+                                                        <Route path={`edit/:id`} element={<EditRight />} />
+                                                    )
+                                                }
+                                            </Route>
+                                        )
+                                    }
 
-                    <Route path="rights">
-                        <Route index element={<Rights />} />
-                        <Route path={`:id`} element={<DetailsRight />} />
-                        <Route path={`add`} element={<AddRight />} />
-                        <Route path={`edit/:id`} element={<EditRight />} /> 
-                    </Route>
+                                    {/* <Route path='networks'>
+                                        <Route index element={<Networks />} />
+                                        <Route path='add' element={<div>Ajouter un réseau social</div>} />
+                                    </Route> */}
+                                </Route>
+                                )
+                            }
 
-                    <Route path='networks'>
-                        <Route index element={<Networks />} />
-                        <Route path='add' element={<div>Ajouter un réseau social</div>} />
-                    </Route>
-                </Route>
+                            {
+                                hasPermission("admin.users") && (
+                                <Route path="users" element={<Users />} />
+                                )
+                            }
 
-                <Route path="users" element={<Users />} />
-                <Route path="games" element={<Games />} />
+                            {
+                                hasPermission("admin.games") && (
+                                <Route path="games" element={<Games />} />
+                                )
+                            }
 
 
+                        </>
+                    )
+                }
                 <Route path="*" element={<div>404</div>} />
-
             </Route>
         </Routes>
     )

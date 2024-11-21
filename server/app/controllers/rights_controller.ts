@@ -116,8 +116,18 @@ export default class RightsController {
     }
 
     public async level({ request, response }: HttpContext){
-        const id = request.param("id");
-        const { right } = request.all()
+        const { rightId } = request.all()
+        let right = undefined;
+
+        if(rightId !== undefined){
+            const rightQuery = await db
+                .query()
+                .from("rights")
+                .select("code")
+                .where("rights.id", rightId)
+            
+            right = rightQuery[0].code;
+        }
 
         const query = db
         .query()

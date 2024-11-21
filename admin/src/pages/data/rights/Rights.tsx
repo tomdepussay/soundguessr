@@ -17,9 +17,11 @@ import { AlertContext } from '@services/AlertContext';
 import { MdAdd } from "react-icons/md";
 import toast from 'react-hot-toast';
 import { IoMdSwitch } from "react-icons/io";
+import { AuthContext } from '@/services/AuthContext';
 
 function Rights() {
 
+    const { hasPermission } = useContext(AuthContext);
     const { setCurrentPage } = useContext(DataContext);
     const { showAlert, hideAlert } = useContext(AlertContext);
     const [page, setPage] = useState(1);
@@ -67,7 +69,7 @@ function Rights() {
         setCurrentPage({
             title: "Gestion des droits",
             Buttons: [
-                <Button link={"/data/rights/add"} color="success">
+                <Button visible={hasPermission("admin.data.rights.add")} link={"/data/rights/add"} color="success">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <MdAdd />
                         <span className='hidden md:block'>
@@ -123,13 +125,13 @@ function Rights() {
                                         </TableCell>
                                         <TableCell important border>
                                             <div className="flex gap-2 justify-start items-center">
-                                                <Button link={`/data/rights/${right.id}`} color="info">
+                                                <Button visible={hasPermission("admin.data.rights.details")} link={`/data/rights/${right.id}`} color="info">
                                                     <FaEye />
                                                 </Button>
-                                                <Button link={`/data/rights/edit/${right.id}`} color='success'>
+                                                <Button visible={hasPermission("admin.data.rights.edit")} link={`/data/rights/edit/${right.id}`} color='success'>
                                                     <FaEdit />
                                                 </Button>
-                                                <Button onClick={() => {
+                                                <Button visible={hasPermission("admin.data.rights.delete")} onClick={() => {
                                                     showAlert(`Voulez-vous vraiment supprimer le droit "${right.name}" ?`, () => {
                                                         
                                                         mutation.mutate({ param: right.id });

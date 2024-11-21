@@ -5,6 +5,8 @@ import DropdownItem from "./DropdownItem";
 import { MdBalance, MdGroup, MdMonitor, MdGames, MdOutlineSlideshow, MdContentCut, MdMusicNote, MdCategory, MdOutlineQuestionMark, MdCompareArrows, MdMenu } from "react-icons/md";
 import { FaDatabase, FaUsers, FaShare } from "react-icons/fa";
 import { BiCategory } from "react-icons/bi";
+import { useContext } from "react";
+import { AuthContext } from "@/services/AuthContext";
 
 interface NavProps {
     open: boolean;
@@ -13,6 +15,7 @@ interface NavProps {
 
 function Nav({ open, setOpen }: NavProps) {
 
+    const { hasPermission } = useContext(AuthContext);
     const toggleMenu = () => setOpen(!open);
     const closeMenu = () => setOpen(false);
 
@@ -34,29 +37,29 @@ function Nav({ open, setOpen }: NavProps) {
 
                 <Dropdown link={"/"} title="Tableau de bord" onClick={closeMenu} icon={<MdMonitor />} />
 
-                <Dropdown title="Gestion des données" icon={<FaDatabase />}>
-                    <DropdownItem link={"/data/categories"} onClick={closeMenu} icon={<BiCategory />}>
+                <Dropdown title="Gestion des données" icon={<FaDatabase />} visible={hasPermission("admin.data")}>
+                    <DropdownItem link={"/data/categories"} onClick={closeMenu} icon={<BiCategory />} visible={hasPermission("admin.data.categories")}>
                         Catégories
                     </DropdownItem>
-                    <DropdownItem link={"/data/licenses"} onClick={closeMenu} icon={<MdOutlineSlideshow />}>
+                    <DropdownItem link={"/data/licenses"} onClick={closeMenu} icon={<MdOutlineSlideshow />} visible={hasPermission("admin.data.licenses")}>
                         Licences
                     </DropdownItem>
-                    <DropdownItem link={"/data/sounds"} onClick={closeMenu} icon={<MdMusicNote />}>
+                    <DropdownItem link={"/data/sounds"} onClick={closeMenu} icon={<MdMusicNote />} visible={hasPermission("admin.data.sounds")}>
                         Sons
                     </DropdownItem>
-                    <DropdownItem link={"/data/types"} onClick={closeMenu} icon={<MdCategory />}>
+                    <DropdownItem link={"/data/types"} onClick={closeMenu} icon={<MdCategory />} visible={hasPermission("admin.data.types")}>
                         Types
                     </DropdownItem>
-                    <DropdownItem link={"/data/questions"} onClick={closeMenu} icon={<MdOutlineQuestionMark />}>
+                    <DropdownItem link={"/data/questions"} onClick={closeMenu} icon={<MdOutlineQuestionMark />} visible={hasPermission("admin.data.questions")}>
                         Questions
                     </DropdownItem>
-                    <DropdownItem link={"/data/profiles"} onClick={closeMenu} icon={<MdGroup />}>
+                    <DropdownItem link={"/data/profiles"} onClick={closeMenu} icon={<MdGroup />} visible={hasPermission("admin.data.profiles")}>
                         Profils
                     </DropdownItem>
-                    <DropdownItem link={"/data/rights"} onClick={closeMenu} icon={<MdBalance />}>
+                    <DropdownItem link={"/data/rights"} onClick={closeMenu} icon={<MdBalance />} visible={hasPermission("admin.data.rights")}>
                         Droits
                     </DropdownItem>
-                    <DropdownItem link={"/data/networks"} onClick={closeMenu} icon={<FaShare />}>
+                    <DropdownItem link={"/data/networks"} onClick={closeMenu} icon={<FaShare />} visible={hasPermission("admin.data.networks")}>
                         Réseaux Sociaux
                     </DropdownItem>
                 </Dropdown>
@@ -65,9 +68,9 @@ function Nav({ open, setOpen }: NavProps) {
 
                 </Dropdown> */}
 
-                <Dropdown link={"/users"} onClick={closeMenu} title="Utilisateurs" icon={<FaUsers />} />
+                <Dropdown link={"/users"} onClick={closeMenu} title="Utilisateurs" icon={<FaUsers />} visible={hasPermission("admin.users")} />
 
-                <Dropdown link={"/games"} onClick={closeMenu} title="Parties" icon={<MdGames />} />
+                <Dropdown link={"/games"} onClick={closeMenu} title="Parties" icon={<MdGames />} visible={hasPermission("admin.data.games")} />
 
                 <Link to={"/"} className="mt-auto mb-0 bg-slate-500 w-full h-14 flex justify-center gap-2 items-center px-4 text-slate-900 opacity-90 hover:opacity-100">
                     Retour au site

@@ -188,14 +188,62 @@ export default class ProfilesController {
         const rightsResult = await db.
             query()
             .from("profiles_rights")
-            .select("id")
+            .select("right_id")
             .where("profile_id", id);
         
-        const rights = rightsResult.map((right) => (right.id));
+        const rights = rightsResult.map((right) => (right.right_id));
 
         return response.status(200).json({
             success: true,
             rights
         })
+    }
+
+    public async rightsAffected({ request, response }: HttpContext){
+        const id = request.param("id")
+        const { rights } = request.all();
+        let good = true;
+
+        const trx = await db.transaction()
+
+        const deleteQuery = await trx
+            .query()
+            .from("profiles_rights")
+            .delete()
+            .where("profile_id", "IN", rights);
+
+        for(let right of rights){
+            if(good){
+                const insert = await trx
+                    .table("profiles_rights")
+                    .returning("id")
+                    .insert({
+                        profile_id: id,
+                        right_id: right
+                    })
+
+                if(!insert){
+                    good = false
+                    break;
+                }
+            } else {
+                await trx.rollback()
+            }
+        }
+
+        if(good){
+            await trx.commit()
+            return response.status(200).json({
+                success: true,
+                message: "Modification des droits du profil terminée"
+            })
+        } else {
+            await trx.rollback()
+            return response.status(404).json({
+                success: false,
+                message: "Une erreur est survenue lors de l'attribution des droits"
+            })
+        }
+
     }
 }

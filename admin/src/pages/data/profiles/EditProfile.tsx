@@ -152,7 +152,7 @@ function EditProfile(){
                     <Input label="ID" name="ID" value={profile.id} disabled />
                 </FormRow>
                 <FormRow>
-                    <Input label="Nom" error={error.name} name="name" value={profile.name} setValue={handleChangeInput} required />  
+                    <Input label="Nom" error={error.name} name="name" value={profile.name} setValue={handleChangeInput} focus required />  
                     <Input label="Description" error={error.description} name="description" value={profile.description ? profile.description : ""} setValue={handleChangeInput} />
                 </FormRow>
             </Form>          

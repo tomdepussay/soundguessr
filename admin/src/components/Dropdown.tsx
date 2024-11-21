@@ -9,9 +9,10 @@ interface DropdownProps {
     icon: React.ReactNode;
     children?: React.ReactNode;
     onClick?: () => void;
+    visible?: boolean;
 }
 
-function Dropdown({ link, title, icon, children, onClick }: DropdownProps){
+function Dropdown({ link, title, icon, children, onClick, visible }: DropdownProps){
 
     const [isOpen, setIsOpen] = useState(true);
     const navigate = useNavigate();
@@ -24,6 +25,8 @@ function Dropdown({ link, title, icon, children, onClick }: DropdownProps){
             setIsOpen(!isOpen);
         }
     }
+
+    if(!visible) return null;
 
     return (
         <div className="relative">

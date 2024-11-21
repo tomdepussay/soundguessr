@@ -145,7 +145,7 @@ function EditType(){
                     <Input label="ID" name="ID" value={type.id} disabled />
                 </FormRow>
                 <FormRow>
-                    <Input label="Nom" error={error.name} name="name" value={type.name} setValue={handleChangeInput} required />  
+                    <Input label="Nom" error={error.name} name="name" value={type.name} setValue={handleChangeInput} focus required />  
                     <Boolean label="Actif" name="isActive" value={type.isActive} setValue={() => setType({
                         ...type,
                         isActive: !type.isActive
