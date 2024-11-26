@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MdArrowDropDown, MdArrowDropUp } from "react-icons/md";
+import { useLocalStorage } from "@uidotdev/usehooks";
 
 
 interface DropdownProps {
@@ -14,7 +15,10 @@ interface DropdownProps {
 
 function Dropdown({ link, title, icon, children, onClick, visible }: DropdownProps){
 
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useLocalStorage(
+        `dropdown-${title}`,
+        children ? false : undefined
+    );
     const navigate = useNavigate();
 
     const handleClick = () => {
@@ -33,7 +37,7 @@ function Dropdown({ link, title, icon, children, onClick, visible }: DropdownPro
             <button 
                 aria-label={`Ouvrir le menu ${title}`}
                 onClick={handleClick} 
-                className="w-full font-semibold p-3 flex justify-start gap-2 items-center px-4 text-white text-opacity-70 hover:text-opacity-100"
+                className="w-full font-semibold p-3 flex justify-start gap-5 items-center px-4 text-white text-opacity-70 hover:text-opacity-100"
             >
                 {icon}
                 {title}
@@ -42,7 +46,9 @@ function Dropdown({ link, title, icon, children, onClick, visible }: DropdownPro
                     isOpen ? <MdArrowDropUp /> : <MdArrowDropDown />
                 }
             </button>
-            <div className={`bg-slate-800 z-10 ${isOpen ? "block" : "hidden"}`}>
+            <div className={`bg-slate-800 z-10 overflow-hidden transition-all duration-300 transform ${
+                isOpen ? "max-h-screen opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-2"
+            }`}>
                 {children}
             </div>
         </div>

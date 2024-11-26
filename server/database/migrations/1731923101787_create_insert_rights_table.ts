@@ -14,6 +14,7 @@ export default class extends BaseSchema {
       { name: "Modifier une catégorie", code: "admin.data.categories.edit", created_at: new Date(), updated_at: new Date() },
       { name: "Supprimer une catégorie", code: "admin.data.categories.delete", created_at: new Date(), updated_at: new Date() },
       { name: "Activer/Désactiver une catégorie", code: "admin.data.categories.active", created_at: new Date(), updated_at: new Date() },
+      { name: "Détails d'une catégorie", code: "admin.data.categories.details", created_at: new Date(), updated_at: new Date() },
       { name: "Licences", code: "admin.data.licenses", created_at: new Date(), updated_at: new Date() },
       { name: "Ajouter une licence", code: "admin.data.licenses.add", created_at: new Date(), updated_at: new Date() },
       { name: "Modifier une licence", code: "admin.data.licenses.edit", created_at: new Date(), updated_at: new Date() },
