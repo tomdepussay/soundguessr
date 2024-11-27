@@ -17,7 +17,7 @@ import LicensesController from '#controllers/licenses_controller'
 import SoundsController from '#controllers/sounds_controller'
 import NetworksController from '#controllers/networks_controller'
 import QuestionsController from '#controllers/questions_controller'
-import ProfilesController from '#controllers/profiles_controller'
+import RolesController from '#controllers/roles_controller'
 import RightsController from '#controllers/rights_controller'
 
 // Utiliser le middleware IsConnected :
@@ -47,7 +47,7 @@ router
     router.post("/login", [AuthController, "login"])
     router.post("/register", [AuthController, "register"])
     router.get("/user", [AuthController, "user"])
-    router.post("/permission", [AuthController, "permission"])
+    // router.post("/permission", [AuthController, "permission"])
   })
   .prefix('/auth')
 
@@ -120,16 +120,16 @@ router
 
     router
       .group(() => {
-        router.get("/", [ProfilesController, "index"])
-        router.get("/add", [ProfilesController, "add"])
-        router.get("/:id", [ProfilesController, "show"])
-        router.put("/", [ProfilesController, "create"])
-        router.patch("/:id", [ProfilesController, "update"])
-        router.delete("/:id", [ProfilesController, "delete"])
-        router.get("/rights/:id", [ProfilesController, "rights"])
-        router.post("/rights/:id", [ProfilesController, "rightsAffected"])
+        router.get("/", [RolesController, "index"])
+        // router.get("/add", [RolesController, "add"])
+        router.get("/:id", [RolesController, "show"])
+        router.put("/", [RolesController, "create"])
+        router.patch("/:id", [RolesController, "update"])
+        router.delete("/:id", [RolesController, "delete"])
+        // router.get("/rights/:id", [RolesController, "rights"])
+        // router.post("/rights/:id", [RolesController, "rightsAffected"])
       })
-      .prefix("/profiles")
+      .prefix("/roles")
 
 
     router

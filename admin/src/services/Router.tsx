@@ -35,15 +35,16 @@ import Networks from '@pages/data/networks/Networks';
 
 import Users from '@pages/Users';
 import Games from '@pages/Games';
-import Profiles from '@/pages/data/profiles/Profiles';
-import DetailsProfile from '@/pages/data/profiles/DetailsProfile';
-import AddProfile from '@/pages/data/profiles/AddProfile';
-import EditProfile from '@/pages/data/profiles/EditProfile';
+
+import Roles from '@/pages/data/roles/Roles';
+import DetailsRole from '@/pages/data/roles/DetailsRole';
+import AddRole from '@/pages/data/roles/AddRole';
+import EditRole from '@/pages/data/roles/EditRole';
+
 import Rights from '@/pages/data/rights/Rights';
 import DetailsRight from '@/pages/data/rights/DetailsRight';
 import AddRight from '@/pages/data/rights/AddRight';
 import EditRight from '@/pages/data/rights/EditRight';
-import RightsProfile from '@/pages/data/profiles/RightsProfile';
 
 function Router(){
 
@@ -170,29 +171,29 @@ function Router(){
                                     </Route> */}
 
                                     {
-                                        hasPermission("admin.data.profiles") && (
-                                            <Route path="profiles">
-                                                <Route index element={<Profiles />} />
+                                        hasPermission("admin.data.roles") && (
+                                            <Route path="roles">
+                                                <Route index element={<Roles />} />
                                                 {
-                                                    hasPermission("admin.data.profiles.details") && (
-                                                        <Route path={`:id`} element={<DetailsProfile />} />
+                                                    hasPermission("admin.data.roles.details") && (
+                                                        <Route path={`:id`} element={<DetailsRole />} />
                                                     )
                                                 }
                                                 {
-                                                    hasPermission("admin.data.profiles.add") && (
-                                                        <Route path={`add`} element={<AddProfile />} />
+                                                    hasPermission("admin.data.roles.add") && (
+                                                        <Route path={`add`} element={<AddRole />} />
                                                     )
                                                 }
                                                 {
-                                                    hasPermission("admin.data.profiles.edit") && (
-                                                        <Route path={`edit/:id`} element={<EditProfile />} />
+                                                    hasPermission("admin.data.roles.edit") && (
+                                                        <Route path={`edit/:id`} element={<EditRole />} />
                                                     )
                                                 }
-                                                {
-                                                    hasPermission("admin.data.profiles.rights") && (
+                                                {/* {
+                                                    hasPermission("admin.data.roles.affect") && (
                                                         <Route path={`rights/:id`} element={<RightsProfile />} />
                                                     )
-                                                }
+                                                } */}
                                             </Route>
                                         )
                                     }

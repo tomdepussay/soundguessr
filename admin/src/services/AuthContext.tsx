@@ -70,7 +70,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         if (typeof permissions === 'string') {
             permissions = [permissions];
         }
-        return permissions.some(permission => user?.permissions.includes(permission) || user?.profileId === 1) || false;
+        return permissions.some(permission => user?.permissions.includes(permission) || user?.roleId === 1) || false;
     }
 
     return (

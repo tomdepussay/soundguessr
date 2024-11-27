@@ -16,14 +16,14 @@ export default class AuthController {
                 if(user.isActive){
                     const token = await User.accessTokens.create(user)
 
-                    const profileId = user.profileId;
+                    const roleId = user.roleId;
 
                     const permissions = await db
                         .query()
-                        .from("profiles_rights")
-                        .leftJoin("rights", "profiles_rights.right_id", "rights.id")
+                        .from("roles_rights")
+                        .leftJoin("rights", "roles_rights.right_id", "rights.id")
                         .select("rights.code")
-                        .where("profiles_rights.profile_id", profileId)
+                        .where("roles_rights.role_id", roleId)
                     
                     const permissionsArray = permissions.map((permission: any) => permission.code)
 
@@ -70,21 +70,21 @@ export default class AuthController {
 
     public async user({ auth }: HttpContext){
         const userConnected = await auth.authenticate()
-        const user: { id: number, username: string, email: string, profileId: number, picture: string, permissions: string[] } = {
+        const user: { id: number, username: string, email: string, roleId: number, picture: string, permissions: string[] } = {
             id: userConnected.id,
             username: userConnected.username,
             email: userConnected.email,
-            profileId: userConnected.profileId,
+            roleId: userConnected.roleId,
             picture: userConnected.picture,
             permissions: []
         }
 
         const permissions = await db
             .query()
-            .from("profiles_rights")
-            .leftJoin("rights", "profiles_rights.right_id", "rights.id")
+            .from("roles_rights")
+            .leftJoin("rights", "roles_rights.right_id", "rights.id")
             .select("rights.code")
-            .where("profiles_rights.profile_id", user.profileId)
+            .where("roles_rights.role_id", user.roleId)
         
         const permissionsArray = permissions.map((permission: any) => permission.code)
 
@@ -96,15 +96,15 @@ export default class AuthController {
         }
     }    
 
-    public async permission({ request, response, auth }: HttpContext){
-        const { permission } = request.all();
-        const user = await auth.authenticate()
-        const profileId = user.profileId
+    // public async permission({ request, response, auth }: HttpContext){
+    //     const { permission } = request.all();
+    //     const user = await auth.authenticate()
+    //     const roleId = user.roleId
 
-        return response.status(200).json({
-            success: true,
-            hasRight: User.hasPermission(permission, profileId)
-        })
+    //     return response.status(200).json({
+    //         success: true,
+    //         hasRight: User.hasPermission(permission, roleId)
+    //     })
             
-    }
+    // }
 }

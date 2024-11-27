@@ -18,7 +18,7 @@ import { MdAdd } from "react-icons/md";
 import toast from 'react-hot-toast';
 import { AuthContext } from '@/services/AuthContext';
 
-function Profiles() {
+function Roles() {
 
     const { hasPermission } = useContext(AuthContext);
     const { setCurrentPage } = useContext(DataContext);
@@ -28,14 +28,14 @@ function Profiles() {
     const [total, setTotal] = useState(0);
     const [search, setSearch] = useState("");
     const debouncedSearch = useDebounce(search, 500);
-    const [profiles, setProfiles] = useState<Profile[]>([]);
+    const [roles, setRoles] = useState<Role[]>([]);
 
-    const { data, isLoading, refetch } = useFetch({ name: ["profiles", { page, debouncedSearch }], 
-        url: `profiles?page=${page}&search=${debouncedSearch}` 
+    const { data, isLoading, refetch } = useFetch({ name: ["roles", { page, debouncedSearch }], 
+        url: `roles?page=${page}&search=${debouncedSearch}` 
     });
 
     const mutation = useMutation({
-        url: `profiles`,
+        url: `roles`,
         method: "DELETE",
         success: (data) => {
             if(data.success){
@@ -47,34 +47,16 @@ function Profiles() {
             }
         },
         error: (error: any) => {
-            toast.error("Erreur lors de la suppression du profils");
-            console.error("Erreur lors de la suppression du profils", error);
+            toast.error("Erreur lors de la suppression du rôle");
+            console.error("Erreur lors de la suppression du rôle", error);
         }
     })
 
-    const mutationActive = useMutation({
-        url: `categories/active`,
-        method: "PATCH",
-        success: (data) => {
-            if(data.success){
-                hideAlert();
-                toast.success(data.message);
-                refetch();
-            } else {
-                toast.error(data.message);
-            }
-        },
-        error: (error: any) => {
-            toast.error("Erreur lors de la modification de la catégorie");
-            console.error("Erreur lors de la modification de la catégorie", error);
-        }
-    });
-
     useEffect(() => {
         if(data){
-            setProfiles(data.profiles.data);
-            setTotalPages(data.profiles.meta.lastPage);
-            setTotal(data.profiles.meta.total);
+            setRoles(data.roles.data);
+            setTotalPages(data.roles.meta.lastPage);
+            setTotal(data.roles.meta.total);
         }
     }, [data]);
 
@@ -84,13 +66,13 @@ function Profiles() {
 
     useEffect(() => {
         setCurrentPage({
-            title: "Gestion des profils",
+            title: "Gestion des rôles",
             Buttons: [
-                <Button label='Ajouter un profil' visible={hasPermission("admin.data.profiles.add")} link={"/data/profiles/add"} color="success">
+                <Button label='Ajouter un rôle' visible={hasPermission("admin.data.roles.add")} link={"/data/roles/add"} color="success">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <MdAdd />
                         <span className='hidden md:block'>
-                            Ajouter un profil
+                            Ajouter un rôle
                         </span>
                     </span>
                 </Button>
@@ -109,9 +91,9 @@ function Profiles() {
             />
 
             {
-                profiles.length === 0 && !isLoading ? (
+                roles.length === 0 && !isLoading ? (
                     <div className="flex justify-center items-center h-64 text-white font-semibold">
-                        <p className="text-2xl">Aucune profil trouvé.</p>
+                        <p className="text-2xl">Aucune rôle trouvé.</p>
                     </div>
                 ) : isLoading ? (
                     <div className="flex-1 flex justify-center items-center">
@@ -120,7 +102,7 @@ function Profiles() {
                 ) : (
                     <Table>
                         <TableCaption>
-                            {total} profil(s) sur {totalPages} page(s)
+                            {total} rôle(s) sur {totalPages} page(s)
                         </TableCaption>
                         <TableHeader>
                             <TableCell important>Nom</TableCell>
@@ -130,37 +112,37 @@ function Profiles() {
                         </TableHeader>
 
                         {
-                            profiles.map((profile, index) => (
+                            roles.map((role, index) => (
                                 <TableBody key={index} index={index}>
-                                    <TableRow key={profile.id} index={index}>
-                                        <TableCell important>{profile.name}</TableCell>
+                                    <TableRow key={role.id} index={index}>
+                                        <TableCell important>{role.name}</TableCell>
                                         <TableCell border>
                                             {
-                                                profile.description ? profile.description : "Aucune description"
+                                                role.description ? role.description : "Aucune description"
                                             }
                                         </TableCell>
                                         <TableCell border>
                                             {
-                                                profile.users_count
+                                                role.users_count
                                             }
                                         </TableCell>
                                         <TableCell important border>
                                             <div className="flex gap-2 justify-start items-center">
-                                                <Button label='Voir les détails du profil' visible={hasPermission("admin.data.profiles.details")} link={`/data/profiles/${profile.id}`} color="info">
+                                                <Button label='Voir les détails du rôle' visible={hasPermission("admin.data.roles.details")} link={`/data/roles/${role.id}`} color="info">
                                                     <FaEye />
                                                 </Button>
-                                                <Button label='Modifier le profil' visible={hasPermission("admin.data.profiles.edit")} link={`/data/profiles/edit/${profile.id}`} color='success'>
+                                                <Button label='Modifier le rôle' visible={hasPermission("admin.data.roles.edit")} link={`/data/roles/edit/${role.id}`} color='success'>
                                                     <FaEdit />
                                                 </Button>
-                                                <Button label='Supprimer le profil' visible={hasPermission("admin.data.profiles.delete")} onClick={() => {
-                                                    showAlert(`Voulez-vous vraiment supprimer le profil "${profile.name}" ?`, () => {
+                                                <Button label='Supprimer le rôle' visible={hasPermission("admin.data.roles.delete")} onClick={() => {
+                                                    showAlert(`Voulez-vous vraiment supprimer le rôle "${role.name}" ?`, () => {
                                                         
-                                                        mutation.mutate({ param: profile.id });
+                                                        mutation.mutate({ param: role.id });
                                                     });
                                                 }} color='danger'>
                                                     <FaRegTrashAlt />
                                                 </Button>
-                                                <Button label='Affecter des droits au profil' visible={hasPermission("admin.data.profiles.rights")} link={`/data/profiles/rights/${profile.id}`} color="warning">
+                                                <Button label='Affecter des droits au rôle' visible={hasPermission("admin.data.roles.rights")} link={`/data/roles/rights/${role.id}`} color="warning">
                                                     <FaArrowsAltH />
                                                 </Button>
                                             </div>
@@ -176,4 +158,4 @@ function Profiles() {
     )
 }
 
-export default Profiles;
+export default Roles;

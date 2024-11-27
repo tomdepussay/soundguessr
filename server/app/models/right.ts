@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column, manyToMany } from '@adonisjs/lucid/orm'
-import Profile from './profile.js'
+import Role from './role.js'
 import * as relations from '@adonisjs/lucid/types/relations'
 import User from './user.js'
 
@@ -14,10 +14,10 @@ export default class Right extends BaseModel {
   @column({ columnName: 'code' })
   declare code: string
 
-  @manyToMany(() => Profile, {
-    pivotTable: 'profiles_rights'
+  @manyToMany(() => Role, {
+    pivotTable: 'roles_rights'
   })
-  public profiles!: relations.ManyToMany<typeof Profile>
+  public roles!: relations.ManyToMany<typeof Role>
 
   @manyToMany(() => User, {
     pivotTable: 'users_rights'

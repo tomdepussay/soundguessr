@@ -28,8 +28,8 @@ export default class User extends BaseModel {
   @column({ columnName: 'is_active' })
   declare isActive: boolean
 
-  @column({ columnName: 'profile_id'})
-  declare profileId: number
+  @column({ columnName: 'role_id'})
+  declare roleId: number
 
   @manyToMany(() => Right, {
     pivotTable: 'users_rights'
@@ -57,21 +57,4 @@ export default class User extends BaseModel {
     type: 'auth_token',
     tokenSecretLength: 40,
   })
-
-  public static async hasPermission(permission: string, profileId: number){
-    let hasRight = false;
-    
-    // Vérification si la permission est présente pour le profil de l'utilisateur
-    const profileHasPermission = await db
-        .query()
-        .from("profiles_rights")
-        .leftJoin("rights", "rights.id", "profiles_rights.right_id")
-        .select("*")
-        .where("rights.code", permission)
-        .where("profiles_rights.profile_id", profileId)
-    
-    if(profileHasPermission.length === 0){
-        hasRight = true;
-    }
-  }
 }

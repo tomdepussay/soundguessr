@@ -3,7 +3,7 @@ import { DateTime } from 'luxon'
 import Right from './right.js'
 import * as relations from '@adonisjs/lucid/types/relations'
 
-export default class Profile extends BaseModel {
+export default class Role extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
@@ -14,7 +14,7 @@ export default class Profile extends BaseModel {
   declare description: string | null
 
   @manyToMany(() => Right, {
-    pivotTable: 'profiles_rights'
+    pivotTable: 'roles_rights'
   })
   public rights!: relations.ManyToMany<typeof Right>
 

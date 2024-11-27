@@ -15,54 +15,54 @@ import Form from "@components/Form";
 import FormRow from "@components/FormRow";
 import { AuthContext } from "@/services/AuthContext";
 
-interface Profile {
+interface Role {
     id: number;
     name: string;
     description: string;
 }
 
-function DetailsProfile(){
+function DetailsRole(){
 
     const { hasPermission } = useContext(AuthContext);
     const { id } = useParams();
     const { showAlert, hideAlert } = useContext(AlertContext);
     const { setCurrentPage } = useContext(DataContext);
-    const [profile, setProfile] = useState<Profile>({
+    const [role, setRole] = useState<Role>({
         id: 0,
         name: "",
         description: ""
     });
     const navigate = useNavigate();
     const { data, isLoading } = useFetch({ 
-        name: "profiles", 
-        url: `profiles/${id}` 
+        name: "roles", 
+        url: `roles/${id}` 
     });
 
     const mutation = useMutation({
-        url: `profiles`,
+        url: `roles`,
         method: "DELETE",
         success: (data) => {
             if(data.success){
                 toast.success(data.message);
                 hideAlert();
                 setTimeout(() => {
-                    navigate("/data/profiles");
+                    navigate("/data/roles");
                 }, 1000);
             } else {
                 toast.error(data.message);
             }
         },
         error: (error: any) => {
-            toast.error("Une erreur s'est produite lors de la suppression du profil");
-            console.error("Erreur lors de la suppression du profil", error);
+            toast.error("Une erreur s'est produite lors de la suppression du rôle");
+            console.error("Erreur lors de la suppression du rôle", error);
         }
     })
 
     useEffect(() => {
         setCurrentPage({
-            title: "Détails du profil",
+            title: "Détails du rôle",
             Buttons: [
-                <Button label="Retour" link={"/data/profiles"} color="danger">
+                <Button label="Retour" link={"/data/roles"} color="danger">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <FaArrowLeft />
                         Retour
@@ -74,23 +74,23 @@ function DetailsProfile(){
 
     useEffect(() => {
         if(data){
-            setProfile(data.profile);
+            setRole(data.role);
         }
     }, [data]);
 
     return (
         <div className="w-full h-fit">
             {
-                hasPermission(["admin.data.profiles.edit", "admin.data.profiles.delete"]) && (
+                hasPermission(["admin.data.roles.edit", "admin.data.roles.delete"]) && (
                     <div className="w-full flex gap-10 ps-5 my-5 items-center justify-start">
-                        <Button label="Modifier le profil" visible={hasPermission("admin.data.profiles.edit")} link={`/data/categories/edit/${profile.id}`} color='success'>
+                        <Button label="Modifier le rôle" visible={hasPermission("admin.data.roles.edit")} link={`/data/categories/edit/${role.id}`} color='success'>
                             <FaEdit />
                             Modifier
                         </Button>
-                        <Button label="Supprimer le profil" visible={hasPermission("admin.data.profiles.edit")} onClick={() => {
-                            showAlert(`Voulez-vous vraiment supprimer le profil "${profile.name}" ?`, () => {
+                        <Button label="Supprimer le rôle" visible={hasPermission("admin.data.roles.edit")} onClick={() => {
+                            showAlert(`Voulez-vous vraiment supprimer le rôle "${role.name}" ?`, () => {
 
-                                mutation.mutate({ param: profile.id });
+                                mutation.mutate({ param: role.id });
                             });
                         }} color='danger'>
                             <FaRegTrashAlt />
@@ -110,8 +110,8 @@ function DetailsProfile(){
                             <Input label="ID" name="ID" value={id} disabled />
                         </FormRow>
                         <FormRow>
-                            <Input label="Nom" name="name" value={profile.name} disabled />
-                            <Input label="Description" name="description" value={profile.description} disabled />
+                            <Input label="Nom" name="name" value={role.name} disabled />
+                            <Input label="Description" name="description" value={role.description} disabled />
                         </FormRow>
                     </Form>
                 )
@@ -121,4 +121,4 @@ function DetailsProfile(){
     )
 }
 
-export default DetailsProfile;
+export default DetailsRole;

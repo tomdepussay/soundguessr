@@ -5,11 +5,11 @@ vine.messagesProvider = new SimpleMessagesProvider({
     "description.string": "La description n'est pas une chaîne de caractères.",
 })
 
-const profileValidator = vine.compile(
+const roleValidator = vine.compile(
     vine.object({
         name: vine.string(),
         description: vine.string().optional()
     })
 )
 
-export { profileValidator }
+export { roleValidator }

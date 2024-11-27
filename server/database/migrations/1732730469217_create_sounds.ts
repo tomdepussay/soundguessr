@@ -10,6 +10,8 @@ export default class extends BaseSchema {
       table.string('url').notNullable()
       table.string('path').notNullable()
       table.integer('order').notNullable()
+      table.integer("before").notNullable().defaultTo(0)
+      table.integer("after").notNullable().defaultTo(0)
       table.boolean('is_active').defaultTo(true)
       table.integer('license_id').unsigned().references('licenses.id').onDelete('CASCADE')
       table.integer('type_id').unsigned().references('types.id').onDelete('CASCADE')

@@ -12,14 +12,14 @@ export default class RightsController {
 
         const rights = await db
             .query()
-            .leftJoin("profiles_rights", "profiles_rights.right_id", "rights.id")
-            .leftJoin("profiles", "profiles.id", "profiles_rights.profile_id")
+            .leftJoin("roles_rights", "roles_rights.right_id", "rights.id")
+            .leftJoin("roles", "roles.id", "roles_rights.role_id")
             .from("rights")
             .select(
                 "rights.id",
                 "rights.name",
                 "rights.code",
-                db.raw("COUNT(profiles.id) as profiles_count")
+                db.raw("COUNT(roles.id) as roles_count")
             )
             .where("rights.name", "like", `%${search}%`)
             .groupBy("rights.id")

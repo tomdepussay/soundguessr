@@ -4,20 +4,18 @@ import Button from "@components/Button";
 import Input from "@components/Input";
 import Boolean from "@components/Boolean";
 import Select from "@components/Select";
-import File from "@components/File";
 import { FaArrowLeft } from "react-icons/fa";
 import useFetch from "@services/useFetch";
-import { MdEdit } from "react-icons/md";
+import { MdAdd } from "react-icons/md";
 import toast from "react-hot-toast";
 import useMutation from "@services/useMutation";
 import Form from "@components/Form";
 import FormRow from "@components/FormRow";
-import { useParams } from "react-router-dom";
+import File from "@components/File";
 
-interface Profile {
-    id: number;
+interface Role {
     name: string;
-    description: string | null;
+    description: string;
 }
 
 type ErrorKeys = 'name' | 'description';
@@ -27,48 +25,39 @@ interface ErrorState {
     description: string;
 }
 
-function EditProfile(){
+function AddRole(){
 
-    const { id } = useParams();
     const { setCurrentPage } = useContext(DataContext);
-    const [profile, setProfile] = useState<Profile>({
-        id: 0,
+    const [role, setRole] = useState<Role>({
         name: "",
-        description: null
+        description: ""
     });
-    const [name, setName] = useState<string>("");
     const [error, setError] = useState<ErrorState>({
         name: "",
         description: ""
     });
     const [status, setStatus] = useState("idle");
 
-    const { data, isLoading } = useFetch({ 
-        name: "profile", 
-        url: `profiles/${id}`
-    });
-
     const mutate = useMutation({
-        url: `profiles/${id}`,
-        method: "PATCH",
+        url: "roles",
+        method: "PUT",
         success: (data: any) => {
             if(data.success){
                 setStatus("success");
                 toast.success(data.message);
                 setTimeout(() => {
-                    window.location.href = "/data/profiles";
+                    window.location.href = "/data/roles";
                 }, 1000);
             } else {
-                setStatus("error");
                 toast.error(data.message);
+                setStatus("error");
             }
         },
         error: (error: string) => {
-            toast.error("Une erreur s'est produite lors de la modification du profil");
+            toast.error("Une erreur s'est produite lors de l'ajout du rôle");
             console.log(error);
         }
     })
-
 
     const handleErrors = (name: string) => {
         if (error[name as ErrorKeys] !== "") {
@@ -84,8 +73,8 @@ function EditProfile(){
         const { name, value } = e.target;
         handleErrors(name);
     
-        setProfile({
-            ...profile,
+        setRole({
+            ...role,
             [name]: value
         });
     };
@@ -95,13 +84,13 @@ function EditProfile(){
 
         let newError: Partial<ErrorState> = {};
 
-        if (profile.name === "") {
+        if (role.name === "") {
             newError.name = "Le nom est obligatoire";
-        } else if (profile.name.length > 255) {
+        } else if (role.name.length > 255) {
             newError.name = "Le nom ne doit pas dépasser 255 caractères";
         }
 
-        if (profile.description && profile.description.length > 255) {
+        if (role.description.length > 255) {
             newError.description = "La description ne doit pas dépasser 255 caractères";
         }
 
@@ -114,50 +103,39 @@ function EditProfile(){
             return;
         }
 
-        toast.loading("Modification du profil en cours...");
+        toast.loading("Ajout du rôle en cours...");
 
-        mutate.mutate({ body: profile });
+        mutate.mutate({ body: role });
+        
     };
 
     useEffect(() => {
-        if(data && data.success){
-            setProfile(data.profile);
-            setName(data.profile.name);
-        }
-    }, [data]);
-
-    useEffect(() => {
         setCurrentPage({
-            title: `Modifier le profil : ${name}`,
+            title: "Ajouter un rôle",
             Buttons: [
-                <Button label="Retour" link={"/data/profiles"} color="danger">
+                <Button label="Retour" link={"/data/roles"} color="danger">
                     <span className="text-xl flex justify-center items-center gap-2">
                         <FaArrowLeft />
                         Retour
                     </span>
                 </Button>,
-                <Button label="Modifier le profil" onClick={handleSubmit} color="success" status={status} icon={<MdEdit />}>
+                <Button label="Ajouter un rôle" onClick={handleSubmit} color="success" status={status} icon={<MdAdd />}>
                     <span className="text-xl flex justify-center items-center gap-2">
-                        Modifier
+                        Ajouter
                     </span>
                 </Button>
             ]
         });
-    }, [status, name, profile]);
+    }, [status, role, error]);
 
     return (
-        !isLoading && (
-            <Form>
-                <FormRow>
-                    <Input label="ID" name="ID" value={profile.id} disabled />
-                </FormRow>
-                <FormRow>
-                    <Input label="Nom" error={error.name} name="name" value={profile.name} setValue={handleChangeInput} focus required />  
-                    <Input label="Description" error={error.description} name="description" value={profile.description ? profile.description : ""} setValue={handleChangeInput} />
-                </FormRow>
-            </Form>          
-        )
+        <Form>
+            <FormRow>
+                <Input label="Nom" error={error.name} name="name" value={role.name} setValue={handleChangeInput} focus required />
+                <Input label="Description" error={error.description} name="description" value={role.description} setValue={handleChangeInput} />
+            </FormRow>
+        </Form>
     )
 }
 
-export default EditProfile;
+export default AddRole;

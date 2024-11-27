@@ -52,8 +52,8 @@ function Nav({ open, setOpen }: NavProps) {
                     <DropdownItem link={"/data/questions"} onClick={closeMenu} icon={<MdOutlineQuestionMark size={20} />} visible={hasPermission("admin.data.questions")}>
                         Questions
                     </DropdownItem>
-                    <DropdownItem link={"/data/profiles"} onClick={closeMenu} icon={<MdGroup size={20} />} visible={hasPermission("admin.data.profiles")}>
-                        Profils
+                    <DropdownItem link={"/data/roles"} onClick={closeMenu} icon={<MdGroup size={20} />} visible={hasPermission("admin.data.roles")}>
+                        Rôles
                     </DropdownItem>
                     <DropdownItem link={"/data/rights"} onClick={closeMenu} icon={<MdBalance size={20} />} visible={hasPermission("admin.data.rights")}>
                         Droits

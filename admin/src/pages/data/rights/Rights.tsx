@@ -108,7 +108,7 @@ function Rights() {
                         <TableHeader>
                             <TableCell important>Nom</TableCell>
                             <TableCell important>Code</TableCell>
-                            <TableCell>Nb profils</TableCell>
+                            <TableCell>Nb rôles</TableCell>
                             <TableCell important></TableCell>
                         </TableHeader>
 
@@ -120,7 +120,7 @@ function Rights() {
                                         <TableCell border>{right.code}</TableCell>
                                         <TableCell border>
                                             {
-                                                right.profiles_count
+                                                right.roles_count
                                             }
                                         </TableCell>
                                         <TableCell important border>
