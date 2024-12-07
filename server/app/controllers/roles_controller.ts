@@ -49,20 +49,36 @@ export default class RolesController {
         })
     }
 
-    // public async add({ request, response }: HttpContext){
+    public async add({ request, response }: HttpContext){
+        const id = request.input("id")
         
-    //     const maxColumnResult = await db
-    //         .query()
-    //         .from("rights")
-    //         .select(db.raw('max(length(rights.code) - length(replace(rights.code, ".", "")) + 1) as max_elements'));
+        const maxColumnResult = await db
+            .query()
+            .from("rights")
+            .select(db.raw('max(length(rights.code) - length(replace(rights.code, ".", "")) + 1) as max_elements'));
         
-    //     const maxColumn = maxColumnResult[0].max_elements
+        const maxColumn = maxColumnResult[0].max_elements
+
+        const rightsAffected = await db
+            .query()
+            .from("roles_rights")
+            .select("right_id")
+            .where("role_id", id);
+
+        const rightsAffectedArray = rightsAffected.map((right) => (right.right_id))
+
+        const rights = await db
+            .query()
+            .from("rights")
+            .select("id", "name", "code", "parent_id AS parentId")
         
-    //     return response.status(200).json({
-    //         success: true,
-    //         maxColumn
-    //     })
-    // }
+        return response.status(200).json({
+            success: true,
+            maxColumn,
+            rightsAffected: rightsAffectedArray,
+            rights
+        })
+    }
 
     public async create({ request, response }: HttpContext){
         const { name, description } = await roleValidator.validate(request.all())
@@ -131,68 +147,41 @@ export default class RolesController {
         })
     }
 
-    // public async rights({ request, response }: HttpContext){
-    //     const id = request.param("id");
+    public async affect({ request, response }: HttpContext){
+        const id = request.param("id")
+        const { rights } = request.all();
 
-    //     const rightsResult = await db.
-    //         query()
-    //         .from("profiles_rights")
-    //         .select("right_id")
-    //         .where("profile_id", id);
-        
-    //     const rights = rightsResult.map((right) => (right.right_id));
+        const trx = await db.transaction()
 
-    //     return response.status(200).json({
-    //         success: true,
-    //         rights
-    //     })
-    // }
+        try {
+            await trx
+                .query()
+                .from("roles_rights")
+                .delete()
+                .where("role_id", id);
 
-    // public async rightsAffected({ request, response }: HttpContext){
-    //     const id = request.param("id")
-    //     const { rights } = request.all();
-    //     let good = true;
+            for(let right of rights){
+                await trx
+                    .table("roles_rights")
+                    .insert({
+                        role_id: id,
+                        right_id: right
+                    })
+            }
 
-    //     const trx = await db.transaction()
+            await trx.commit()
 
-    //     const deleteQuery = await trx
-    //         .query()
-    //         .from("profiles_rights")
-    //         .delete()
-    //         .where("profile_id", id);
-
-    //     for(let right of rights){
-    //         if(good){
-    //             const insert = await trx
-    //                 .table("profiles_rights")
-    //                 .returning("id")
-    //                 .insert({
-    //                     profile_id: id,
-    //                     right_id: right
-    //                 })
-
-    //             if(!insert){
-    //                 good = false
-    //                 break;
-    //             }
-    //         } else {
-    //             await trx.rollback()
-    //         }
-    //     }
-
-    //     if(good){
-    //         await trx.commit()
-    //         return response.status(200).json({
-    //             success: true,
-    //             message: "Modification des droits du profil terminée"
-    //         })
-    //     } else {
-    //         await trx.rollback()
-    //         return response.status(404).json({
-    //             success: false,
-    //             message: "Une erreur est survenue lors de l'attribution des droits"
-    //         })
-    //     }
-
-    // }
+            return response.status(200).json({
+                success: true,
+                message: "Affectation des droits du rôle terminée"
+            })
+            
+        } catch(e){
+            await trx.rollback()
+            return response.status(404).json({
+                success: false,
+                message: "Une erreur est survenue lors de l'attribution des droits"
+            })
+        }
+    }
 }

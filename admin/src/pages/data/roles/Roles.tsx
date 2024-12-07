@@ -142,7 +142,7 @@ function Roles() {
                                                 }} color='danger'>
                                                     <FaRegTrashAlt />
                                                 </Button>
-                                                <Button label='Affecter des droits au rôle' visible={hasPermission("admin.data.roles.rights")} link={`/data/roles/rights/${role.id}`} color="warning">
+                                                <Button label='Affecter des droits au rôle' visible={hasPermission("admin.data.roles.affect")} link={`/data/roles/affect/${role.id}`} color="warning">
                                                     <FaArrowsAltH />
                                                 </Button>
                                             </div>

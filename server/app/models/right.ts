@@ -14,6 +14,9 @@ export default class Right extends BaseModel {
   @column({ columnName: 'code' })
   declare code: string
 
+  @column({ columnName: "parent_id" })
+  declare parentId: number | null
+
   @manyToMany(() => Role, {
     pivotTable: 'roles_rights'
   })

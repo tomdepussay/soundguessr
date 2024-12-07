@@ -107,7 +107,7 @@ function Rights() {
                         </TableCaption>
                         <TableHeader>
                             <TableCell important>Nom</TableCell>
-                            <TableCell important>Code</TableCell>
+                            <TableCell important>Code</TableCell>   
                             <TableCell>Nb rôles</TableCell>
                             <TableCell important></TableCell>
                         </TableHeader>

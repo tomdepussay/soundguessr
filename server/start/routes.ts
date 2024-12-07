@@ -121,13 +121,12 @@ router
     router
       .group(() => {
         router.get("/", [RolesController, "index"])
-        // router.get("/add", [RolesController, "add"])
+        router.get("/add", [RolesController, "add"])
         router.get("/:id", [RolesController, "show"])
         router.put("/", [RolesController, "create"])
         router.patch("/:id", [RolesController, "update"])
         router.delete("/:id", [RolesController, "delete"])
-        // router.get("/rights/:id", [RolesController, "rights"])
-        // router.post("/rights/:id", [RolesController, "rightsAffected"])
+        router.post("/affect/:id", [RolesController, "affect"])        // router.post("/rights/:id", [RolesController, "rightsAffected"])
       })
       .prefix("/roles")
 

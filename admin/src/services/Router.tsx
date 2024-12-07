@@ -40,6 +40,7 @@ import Roles from '@/pages/data/roles/Roles';
 import DetailsRole from '@/pages/data/roles/DetailsRole';
 import AddRole from '@/pages/data/roles/AddRole';
 import EditRole from '@/pages/data/roles/EditRole';
+import AffectRole from '@/pages/data/roles/AffectRole';
 
 import Rights from '@/pages/data/rights/Rights';
 import DetailsRight from '@/pages/data/rights/DetailsRight';
@@ -189,11 +190,11 @@ function Router(){
                                                         <Route path={`edit/:id`} element={<EditRole />} />
                                                     )
                                                 }
-                                                {/* {
+                                                {
                                                     hasPermission("admin.data.roles.affect") && (
-                                                        <Route path={`rights/:id`} element={<RightsProfile />} />
+                                                        <Route path={`affect/:id`} element={<AffectRole />} />
                                                     )
-                                                } */}
+                                                }
                                             </Route>
                                         )
                                     }

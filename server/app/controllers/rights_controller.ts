@@ -61,7 +61,19 @@ export default class RightsController {
             })
         }     
 
-        const right = await Right.create({ name, code })
+        let parentRight = null;
+        if(code.includes(".")){
+            const parentCode = code.split(".").slice(0, -1).join(".")
+            parentRight = await Right.findBy("code", parentCode);
+            if(!parentRight){
+                return response.status(400).json({
+                    success: false,
+                    message: "Le droit parent n'existe pas."
+                })
+            }
+        } 
+
+        const right = await Right.create({ name, code, parentId: parentRight?.id })
 
         return response.status(201).json({
             success: true,
