@@ -7,6 +7,7 @@ import { useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { FaArrowLeft, FaArrowsAltH } from "react-icons/fa";
 import { useParams } from "react-router-dom";
+import clsx from "clsx";
 
 interface Role {
     id: number;
@@ -145,7 +146,15 @@ function Affect() {
                         <Loader big />
                     </div>
                 ) : (
-                    <div className={`grid ${"grid-cols-" + maxColumn} gap-3 h-full`}>
+                    <div className={clsx(
+                        "grid gap-3 h-full",
+                        maxColumn === 1 ? "grid-cols-1" :
+                        maxColumn === 2 ? "grid-cols-2" :
+                        maxColumn === 3 ? "grid-cols-3" :
+                        maxColumn === 4 ? "grid-cols-4" :
+                        maxColumn === 5 ? "grid-cols-5" :
+                        maxColumn === 6 && "grid-cols-6"
+                    )}>
                         {
                             Array.from({ length: maxColumn }).map((_, index) => (
                                 <div key={index} className="bg-slate-900/40 rounded-2xl shadow-lg p-2">

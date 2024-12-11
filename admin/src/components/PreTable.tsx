@@ -6,8 +6,8 @@ interface PreTableProps {
     search: string;
     setSearch: (event: React.ChangeEvent<HTMLInputElement>) => void;
     filterMode?: string;
-    setFilterMode?: (mode: string) => void;
-    filterModes?: {mode: string, label: string}[];
+    setFilterMode?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+    filterModes?: Group[];
     page: number;
     setPage: (page: number) => void
     totalPages: number;

@@ -88,6 +88,7 @@ function AddSound(){
     })
 
     const handleErrors = (name: string) => {
+        setStatus("idle");
         if (error[name as ErrorKeys] !== "") {
             setError({
                 ...error,
@@ -107,13 +108,12 @@ function AddSound(){
         });
     };
 
-    const handleChangeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const { name, value } = e.target;
+    const handleChangeSelect = ({ name, value }: {name: string, value: number}) => {
         handleErrors(name);
     
         setSound({
             ...sound,
-            [name]: parseInt(value)
+            [name]: value
         });
     }
 

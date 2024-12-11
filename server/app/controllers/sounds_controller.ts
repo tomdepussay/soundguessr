@@ -2,7 +2,7 @@ import License from '#models/license';
 import Type from '#models/type';
 import { soundValidator } from '#validators/sound'
 import type { HttpContext } from '@adonisjs/core/http'
-import ytdl from 'ytdl-core';
+import ytdl from '@distube/ytdl-core';
 import app from '@adonisjs/core/services/app';
 import Sound from '#models/sound';
 import fs from 'fs';
@@ -125,6 +125,15 @@ export default class SoundsController {
         })
     }
 
+    public async getInfo(url: string){
+        try {
+            const infos = await ytdl.getBasicInfo(url);
+            return infos;
+        } catch (e) {
+            return null;
+        }
+    }
+
     public async create({ request, response }: HttpContext){
         const { title, url, before = 0, after = 0, order, isActive, licenseId, typeId } = await soundValidator.validate(request.all())
 
@@ -155,7 +164,11 @@ export default class SoundsController {
             })
         }
 
-        if (!url || !ytdl.validateURL(url)) {
+        const clearUrl = url.split("&")[0];
+
+        const infos = await this.getInfo(clearUrl);
+
+        if (!clearUrl || !infos) {
             return response.status(400).json({
                 success: false,
                 message: "L'url n'est pas valide."
@@ -163,10 +176,6 @@ export default class SoundsController {
         }
 
         try {
-
-            const clearUrl = url.split("&")[0];
-            
-            const infos = await ytdl.getInfo(clearUrl);
             const totalDuration = parseInt(infos.videoDetails.lengthSeconds);
             
             const fileName = `${license.categoryId}_${license.id}_${order}_${new Date().getTime()}.mp3`;
@@ -176,42 +185,33 @@ export default class SoundsController {
             let command = `ytdlp.exe -x --audio-format mp3 -o ${pathTemp} ${clearUrl}`;
 
             execSync(command);
-
-            try {
                 
-                let command_cut = `ffmpeg -ss ${before} -to ${totalDuration - after} -i ${pathTemp} -c copy -loglevel quiet -hide_banner ${path}`;
+            let command_cut = `ffmpeg -ss ${before} -to ${totalDuration - after} -i ${pathTemp} -c copy -loglevel quiet -hide_banner ${path}`;
 
-                execSync(command_cut);
+            execSync(command_cut);
 
-                fs.unlinkSync(pathTemp);
+            fs.unlinkSync(pathTemp);
 
-                const sound = await Sound.create({
-                    title,
-                    url: clearUrl,
-                    path: fileName,
-                    order,
-                    isActive,
-                    licenseId,
-                    typeId,
-                    before,
-                    after
-                })
+            const sound = await Sound.create({
+                title,
+                url: clearUrl,
+                path: fileName,
+                order,
+                isActive,
+                licenseId,
+                typeId,
+                before,
+                after
+            })
 
-                return response.status(201).json({
-                    success: true,
-                    message: "Le son a été ajouté",
-                    sound
-                })
-
-            } catch (err) {
-                fs.unlinkSync(pathTemp);
-                return response.status(400).json({
-                    success: false,
-                    message: "Une erreur est survenue."
-                });
-            }
+            return response.status(201).json({
+                success: true,
+                message: "Le son a été ajouté",
+                sound
+            })
         
         } catch (e) {
+            console.error(e);
             return response.status(400).json({
                 success: false,
                 message: "Une erreur est survenue."

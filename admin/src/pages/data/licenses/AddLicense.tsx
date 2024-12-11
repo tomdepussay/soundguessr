@@ -92,13 +92,12 @@ function AddLicense(){
         });
     };
 
-    const handleChangeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const { name, value } = e.target;
+    const handleChangeSelect = ({ name, value }: {name: string, value: number}) => {
         handleErrors(name);
     
         setLicense({
             ...license,
-            [name]: parseInt(value)
+            [name]: value
         });
     }
 
@@ -170,6 +169,7 @@ function AddLicense(){
 
     useEffect(() => {
         if(data && data.success){
+            console.log(data.categories);
             setCategories(data.categories);
         }
     }, [data]);

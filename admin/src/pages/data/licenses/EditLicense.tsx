@@ -107,13 +107,12 @@ function EditLicense(){
         });
     };
 
-    const handleChangeSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const { name, value } = e.target;
+    const handleChangeSelect = ({ name, value }: {name: string, value: number}) => {
         handleErrors(name);
     
         setLicense({
             ...license,
-            [name]: parseInt(value)
+            [name]: value
         });
     }
 

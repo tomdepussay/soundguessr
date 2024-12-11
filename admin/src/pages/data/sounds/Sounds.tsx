@@ -20,16 +20,32 @@ import toast from 'react-hot-toast';
 import { IoMdSwitch } from "react-icons/io";
 import { AuthContext } from '@/services/AuthContext';
 
-const FilterModes: {mode: string, label: string}[] = [
+// const FilterModes: {mode: string, label: string}[] = [
+//     {
+//         mode: "title",
+//         label: "Titre du son"
+//     },
+//     {
+//         mode: "license",
+//         label: "Titre de la licence"
+//     }
+// ];
+
+const filters: Group[] = [
     {
-        mode: "title",
-        label: "Titre du son"
-    },
-    {
-        mode: "license",
-        label: "Titre de la licence"
+        label: "Filtres",
+        options: [
+            {
+                value: "title",
+                label: "Titre du son"
+            },
+            {
+                value: "license",
+                label: "Titre de la licence"
+            }
+        ]
     }
-];
+]
 
 function Sounds() {
 
@@ -41,7 +57,7 @@ function Sounds() {
     const [total, setTotal] = useState(0);
     const [search, setSearch] = useState("");
     const debouncedSearch = useDebounce(search, 500);
-    const [filterMode, setFilterMode] = useState("none");
+    const [filterMode, setFilterMode] = useState("title");
     const [sounds, setSounds] = useState<Sound[]>([]);
 
     const { data, isLoading, refetch } = useFetch({ name: ["sounds", { page, debouncedSearch }], 
@@ -119,7 +135,7 @@ function Sounds() {
                 setSearch={(e: React.ChangeEvent<HTMLInputElement>) => {setSearch(e.target.value);}} 
                 filterMode={filterMode}
                 setFilterMode={setFilterMode}
-                filterModes={FilterModes}
+                filterModes={filters}
                 page={page}
                 setPage={setPage}
                 totalPages={totalPages}
