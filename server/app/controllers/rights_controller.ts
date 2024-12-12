@@ -3,6 +3,7 @@ import env from '#start/env'
 import db from '@adonisjs/lucid/services/db'
 import Right from '#models/right'
 import { rightValidator } from '#validators/right'
+import OptionsByGroup from '#services/optionsByGroups'
 
 export default class RightsController {
     public async index({ request, response }: HttpContext){
@@ -32,27 +33,49 @@ export default class RightsController {
         })
     }
 
-    public async show({ request, response }: HttpContext){
-        const id = request.param("id")
-
-        const right = await Right.query().where("id", id).first()
-
-        if(!right){
+    public async show({ request, response }: HttpContext) {
+        const id = request.param('id');
+    
+        const right = await Right.query()
+            .where("id", id)
+            .preload("roles")
+            .first();
+    
+        if (!right) {
             return response.status(404).json({
                 success: false,
                 message: "Ce droit n'existe pas."
-            })
+            });
         }
-
+    
         return response.status(200).json({
             success: true,
             right
+        });
+    }
+
+    public async add({ response }: HttpContext){
+        const query = await db
+            .query()
+            .from("roles")
+            .select(
+                "id as value",
+                "name as label",
+                db.raw("'Rôles' as groupLabel")
+            )
+            .orderBy("id", "asc")
+
+        const roles = OptionsByGroup(query);
+
+        return response.status(200).json({
+            success: true,
+            roles
         })
     }
 
     public async create({ request, response }: HttpContext){
-        const { name, code } = await rightValidator.validate(request.all())
-
+        const { name, code, roles } = await rightValidator.validate(request.all())
+        
         const existingRight = await Right.findBy("code", code);
         if(existingRight){
             return response.status(400).json({
@@ -75,6 +98,10 @@ export default class RightsController {
 
         const right = await Right.create({ name, code, parentId: parentRight?.id })
 
+        if(roles.length > 0){
+            await right.related("roles").attach(roles)
+        }
+
         return response.status(201).json({
             success: true,
             message: "Le droit a été créé.",
@@ -84,7 +111,7 @@ export default class RightsController {
 
     public async update({ request, response }: HttpContext){
         const id = request.param("id")
-        const { name, code } = await rightValidator.validate(request.all())
+        const { name, code, roles } = await rightValidator.validate(request.all())
 
         const right = await Right.findBy("id", id);
 
@@ -99,6 +126,8 @@ export default class RightsController {
         right.code = code
 
         await right.save()
+
+        await right.related("roles").sync(roles)
 
         return response.status(200).json({
             success: true,

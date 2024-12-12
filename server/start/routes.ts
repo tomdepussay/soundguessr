@@ -126,7 +126,7 @@ router
         router.put("/", [RolesController, "create"])
         router.patch("/:id", [RolesController, "update"])
         router.delete("/:id", [RolesController, "delete"])
-        router.post("/affect/:id", [RolesController, "affect"])        // router.post("/rights/:id", [RolesController, "rightsAffected"])
+        router.post("/affect/:id", [RolesController, "affect"])
       })
       .prefix("/roles")
 
@@ -134,11 +134,12 @@ router
     router
       .group(() => {
         router.get("/", [RightsController, "index"])
+        router.get("/add", [RightsController, "add"])
         router.get("/:id", [RightsController, "show"])
         router.put("/", [RightsController, "create"])
         router.patch("/:id", [RightsController, "update"])
         router.delete("/:id", [RightsController, "delete"])
-        router.post("/level", [RightsController, "level"]);
+        router.post("/level", [RightsController, "level"])
       })
       .prefix("rights")
   })

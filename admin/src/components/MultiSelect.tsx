@@ -1,20 +1,20 @@
 import clsx from "clsx";
 import SelectReact from "react-select";
 
-interface SelectProps {
+interface MultiSelectProps {
     label?: string;
     name: string;
     groups: Group[];
     required?: boolean;
     status?: string;
-    value?: string | number;
+    value?: Option[];
     setValue?: (event: any) => void;
     disabled?: boolean;
     placeholder?: string;
     error?: string;
 }
 
-function Select({ label, name, groups, required = false, status = "idle", value, setValue, disabled = false, placeholder = "Sélectionner une valeur", error = "" }: SelectProps){
+function MultiSelect({ label, name, groups, required = false, status = "idle", value, setValue, disabled = false, placeholder = "Sélectionner une valeur", error = "" }: MultiSelectProps){
     return (
         <div className="flex-1 flex flex-col gap-1">
             {
@@ -43,15 +43,17 @@ function Select({ label, name, groups, required = false, status = "idle", value,
                         isFocused && "bg-blue-600"
                     ),
                     groupHeading: () => "text-white font-semibold text-md mt-2 mb-0",
-                    placeholder: () => "text-slate-100/60"
+                    placeholder: () => "text-slate-100/60",
+                    multiValue: () => "bg-blue-600 text-white rounded-lg p-1 mx-1",
+                    multiValueLabel: () => "text-white",
+                    multiValueRemove: () => "text-white hover:bg-blue-700 rounded-lg p-1",
                 }}
                 placeholder={placeholder}
                 unstyled
+                isMulti
                 classNamePrefix="react-select" 
                 isDisabled={status !== "idle" || disabled}
-                value={
-                    groups.find((group) => group.options.some((option) => option.value === value))
-                }
+                value={value}
                 onChange={(newValue) => {
                     setValue && setValue({
                         name: name,
@@ -66,4 +68,4 @@ function Select({ label, name, groups, required = false, status = "idle", value,
     )
 }
 
-export default Select;
+export default MultiSelect;

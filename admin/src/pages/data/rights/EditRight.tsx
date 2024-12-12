@@ -3,7 +3,7 @@ import { DataContext } from "@/services/DataContext";
 import Button from "@components/Button";
 import Input from "@components/Input";
 import Boolean from "@components/Boolean";
-import Select from "@components/Select";
+import MultiSelect from "@components/MultiSelect";
 import File from "@components/File";
 import { FaArrowLeft } from "react-icons/fa";
 import useFetch from "@services/useFetch";
@@ -18,6 +18,7 @@ interface Right {
     id: number;
     name: string;
     code: string;
+    roles: Option[];
 }
 
 type ErrorKeys = 'name' | 'code';
@@ -34,8 +35,10 @@ function EditRight(){
     const [right, setRight] = useState<Right>({
         id: 0,
         name: "",
-        code: ""
+        code: "",
+        roles: []
     });
+    const [roles, setRoles] = useState<Group[]>([]);
     const [name, setName] = useState<string>("");
     const [error, setError] = useState<ErrorState>({
         name: "",
@@ -46,6 +49,11 @@ function EditRight(){
     const { data, isLoading } = useFetch({ 
         name: "rights", 
         url: `rights/${id}`
+    });
+
+    const { data: dataRoles, isLoading: isLoadingRoles } = useFetch({
+        name: "rightsAdd",
+        url: "rights/add"
     });
 
     const mutate = useMutation({
@@ -79,6 +87,13 @@ function EditRight(){
           setStatus("idle");
         }
     };
+
+    const handleChangeSelect = ({ name, value }: {name: string, value: number}) => {
+        setRight({
+            ...right,
+            [name]: value
+        });
+    }
 
     const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -118,15 +133,40 @@ function EditRight(){
 
         toast.loading("Modification du droit en cours...");
 
-        mutate.mutate({ body: right });
+        mutate.mutate({ body: {
+            name: right.name,
+            code: right.code,
+            roles: right.roles.map((role: Option) => role.value)
+        } });
     };
 
     useEffect(() => {
-        if(data && data.success){
-            setRight(data.right);
+        if(data && dataRoles && dataRoles.success && data.success){
+            const roles = data.right.roles.map((role: any) => role.id);
+            const rolesList: Option[] = [];
+            roles.forEach((role: number) => {
+                dataRoles.roles.forEach((group: Group) => {
+                    const option = group.options.find((option: Option) => option.value === role);
+                    if(option){
+                        rolesList.push(option);
+                    }
+                })     
+            })
+
+            setRight({
+                ...data.right,
+                roles: rolesList
+            })
+
             setName(data.right.name);
         }
     }, [data]);
+
+    useEffect(() => {
+        if(dataRoles && dataRoles.success){
+            setRoles(dataRoles.roles);
+        }
+    })
 
     useEffect(() => {
         setCurrentPage({
@@ -148,7 +188,7 @@ function EditRight(){
     }, [status, name, right]);
 
     return (
-        !isLoading && (
+        !isLoading && !isLoadingRoles && right && (
             <Form>
                 <FormRow>
                     <Input label="ID" name="ID" value={right.id} disabled />
@@ -156,6 +196,14 @@ function EditRight(){
                 <FormRow>
                     <Input label="Nom" error={error.name} name="name" value={right.name} setValue={handleChangeInput} focus required />  
                     <Input label="Code" error={error.code} name="code" value={right.code} setValue={handleChangeInput} required />
+                    <MultiSelect 
+                        label="Rôle(s)"
+                        placeholder="Sélectionner un ou plusieurs rôles"
+                        name="roles"
+                        value={right.roles}
+                        setValue={handleChangeSelect}
+                        groups={roles}
+                    />
                 </FormRow>
             </Form>          
         )

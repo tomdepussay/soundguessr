@@ -2,8 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { DataContext } from "@/services/DataContext";
 import Button from "@components/Button";
 import Input from "@components/Input";
-import Boolean from "@components/Boolean";
-import Select from "@components/Select";
+import MultiSelect from "@components/MultiSelect";
 import { FaArrowLeft } from "react-icons/fa";
 import useFetch from "@services/useFetch";
 import { MdAdd } from "react-icons/md";
@@ -16,6 +15,7 @@ import File from "@components/File";
 interface Right {
     name: string;
     code: string;
+    roles: Option[];
 }
 
 type ErrorKeys = 'name' | 'code';
@@ -30,13 +30,20 @@ function AddRight(){
     const { setCurrentPage } = useContext(DataContext);
     const [right, setRight] = useState<Right>({
         name: "",
-        code: ""
+        code: "",
+        roles: []
     });
+    const [roles, setRoles] = useState<Group[]>([]);
     const [error, setError] = useState<ErrorState>({
         name: "",
         code: ""
     });
     const [status, setStatus] = useState("idle");
+
+    const { data, isLoading } = useFetch({
+        name: "rights",
+        url: "rights/add"
+    });
 
     const mutate = useMutation({
         url: "rights",
@@ -68,6 +75,13 @@ function AddRight(){
           setStatus("idle");
         }
     };
+
+    const handleChangeSelect = ({ name, value }: {name: string, value: number}) => {
+        setRight({
+            ...right,
+            [name]: value
+        });
+    }
 
     const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -106,10 +120,20 @@ function AddRight(){
         }
 
         toast.loading("Ajout du droit en cours...");
-
-        mutate.mutate({ body: right });
+        
+        mutate.mutate({ body: {
+            name: right.name,
+            code: right.code,
+            roles: right.roles.map((role) => role.value)
+        }});
         
     };
+
+    useEffect(() => {
+        if(data && data.success){
+            setRoles(data.roles);
+        }
+    }, [data]);
 
     useEffect(() => {
         setCurrentPage({
@@ -135,6 +159,14 @@ function AddRight(){
             <FormRow>
                 <Input label="Nom" error={error.name} name="name" value={right.name} setValue={handleChangeInput} focus required />
                 <Input label="Code" error={error.code} name="code" value={right.code} setValue={handleChangeInput} required />
+                <MultiSelect 
+                    label="Rôle(s)"
+                    placeholder="Sélectionner un ou plusieurs rôles"
+                    name="roles"
+                    value={right.roles}
+                    setValue={handleChangeSelect}
+                    groups={roles}
+                />
             </FormRow>
         </Form>
     )

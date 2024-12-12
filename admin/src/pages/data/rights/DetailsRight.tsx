@@ -14,6 +14,7 @@ import { AlertContext } from "@/services/AlertContext";
 import Form from "@components/Form";
 import FormRow from "@components/FormRow";
 import { AuthContext } from "@/services/AuthContext";
+import MultiSelect from "@/components/MultiSelect";
 
 interface Right {
     id: number;
@@ -112,6 +113,14 @@ function DetailsRight(){
                         <FormRow>
                             <Input label="Nom" name="name" value={right.name} disabled />
                             <Input label="Code" name="code" value={right.code} disabled />
+                            <MultiSelect 
+                                disabled
+                                label="Rôle(s)"
+                                placeholder="Sélectionner un ou plusieurs rôles"
+                                name="roles"
+                                value={right.roles}
+                                groups={roles}
+                            />
                         </FormRow>
                     </Form>
                 )

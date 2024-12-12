@@ -169,7 +169,6 @@ function AddLicense(){
 
     useEffect(() => {
         if(data && data.success){
-            console.log(data.categories);
             setCategories(data.categories);
         }
     }, [data]);
