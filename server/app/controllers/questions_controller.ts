@@ -3,7 +3,6 @@ import { questionValidator } from '#validators/question'
 import Question from '#models/question'
 import Type from "#models/type"
 import env from '#start/env'
-import app from '@adonisjs/core/services/app'
 
 export default class QuestionsController {
 

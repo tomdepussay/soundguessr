@@ -22,8 +22,7 @@ interface License {
     picture: string;
     top100: boolean;
     isActive: boolean;
-    categoryId: number;
-    category: string;
+    category: Option;
 }
 
 function DetailsLicense(){
@@ -39,8 +38,7 @@ function DetailsLicense(){
         picture: "",
         top100: false,
         isActive: false,
-        categoryId: 0,
-        category: ""
+        category: { label: "", value: 0 }
     });
     const navigate = useNavigate();
     const { data, isLoading } = useFetch({ 
@@ -84,7 +82,10 @@ function DetailsLicense(){
 
     useEffect(() => {
         if(data){
-            setLicense(data.license);
+            setLicense({
+                ...data.license,
+                category: { label: data.license.category, value: data.license.categoryId }
+            });
         }
     }, [data]);
 

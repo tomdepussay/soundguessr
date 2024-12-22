@@ -17,7 +17,7 @@ interface License {
     title: string;
     top100: boolean;
     isActive: boolean;
-    categoryId: number;
+    categoryId: Option;
 }
 
 type ErrorKeys = 'title' | 'categoryId' | 'file';
@@ -35,7 +35,7 @@ function AddLicense(){
         title: "",
         top100: true,
         isActive: true,
-        categoryId: 0
+        categoryId: { label: "", value: 0 }
     });
     const [file, setFile] = useState<File | null>(null);
     const [error, setError] = useState<ErrorState>({
@@ -137,7 +137,7 @@ function AddLicense(){
             newError.title = "Le titre ne doit pas dépasser 255 caractères";
         }
 
-        if (license.categoryId === 0) {
+        if (license.categoryId.value === 0) {
             newError.categoryId = "La catégorie est obligatoire";
         }
 
@@ -160,7 +160,7 @@ function AddLicense(){
         formData.append("title", license.title);
         formData.append("top100", license.top100.toString());
         formData.append("isActive", license.isActive.toString());
-        formData.append("categoryId", license.categoryId.toString());
+        formData.append("categoryId", license.categoryId.value);
         formData.append("file", file as Blob);
 
         mutate.mutate({ body: formData });
