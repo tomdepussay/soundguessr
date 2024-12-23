@@ -21,14 +21,14 @@ interface License {
     picture: string;
     top100: boolean;
     isActive: boolean;
-    categoryId: number;
+    category: Option;
 }
 
-type ErrorKeys = 'title' | 'categoryId' | 'file';
+type ErrorKeys = 'title' | 'category' | 'file';
 
 interface ErrorState {
     title: string;
-    categoryId: string;
+    category: string;
     file: string;
 }
 
@@ -43,12 +43,12 @@ function EditLicense(){
         picture: "",
         top100: true,
         isActive: true,
-        categoryId: 0
+        category: { label: "", value: 0 }
     });
     const [title, setTitle] = useState<string>("");
     const [error, setError] = useState<ErrorState>({
         title: "",
-        categoryId: "",
+        category: "",
         file: ""
     });
     const [file, setFile] = useState<File | null>(null);
@@ -152,8 +152,8 @@ function EditLicense(){
             newError.title = "Le titre ne doit pas dépasser 255 caractères";
         }
 
-        if (license.categoryId === 0) {
-            newError.categoryId = "La catégorie est obligatoire";
+        if (license.category.value === 0) {
+            newError.category = "La catégorie est obligatoire";
         }
 
         if (Object.keys(newError).length > 0) {
@@ -171,7 +171,7 @@ function EditLicense(){
 
             const formData = new FormData();
             formData.append("title", prevLicense.title);
-            formData.append("categoryId", prevLicense.categoryId.toString());
+            formData.append("categoryId", prevLicense.category.value.toString());
             formData.append("top100", prevLicense.top100.toString());
             formData.append("isActive", prevLicense.isActive.toString());
             
@@ -195,7 +195,10 @@ function EditLicense(){
 
     useEffect(() => {
         if(licenseData && licenseData.success){
-            setLicense(licenseData.license);
+            setLicense({
+                ...licenseData.license,
+                category: { label: licenseData.license.category, value: licenseData.license.categoryId }
+            });
             setTitle(licenseData.license.title);
         }
     }, [licenseData]);
@@ -230,11 +233,11 @@ function EditLicense(){
                     <Input label="Titre" error={error.title} name="title" value={license.title} setValue={handleChangeInput} focus required />   
                     <Select 
                         label="Categorie" 
-                        name="categoryId" 
-                        error={error.categoryId} 
+                        name="category" 
+                        error={error.category} 
                         groups={categories} 
                         placeholder="Sélectionner une catégorie" 
-                        value={license.categoryId} 
+                        value={license.category} 
                         setValue={handleChangeSelect} 
                         required 
                     />

@@ -123,14 +123,16 @@ function DetailsLicense(){
                         </FormRow>
                         <FormRow>
                             <Input label="Titre" name="title" value={license.title} disabled />
-                            <Select label="Categorie" name="category" groups={[
-                                {
-                                    label: "1",
-                                    options: [
-                                        { label: license.category, value: license.categoryId }
-                                    ]
-                                }
-                            ]} value={license.categoryId} disabled />
+                            <Select 
+                                label="Categorie" 
+                                name="category" 
+                                groups={[{
+                                    label: license.category.label,
+                                    options: [license.category]
+                                }]}
+                                value={license.category} 
+                                disabled 
+                            />
                         </FormRow>
                         <FormRow>
                             <Boolean label="Top 100" name="top100" value={license.top100} disabled />

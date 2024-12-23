@@ -13,7 +13,7 @@ function Alert({ message, onClick, hideAlert }: AlertProps){
         <div className="w-screen h-screen absolute top-0 left-0 d-flex justify-center items-center">
             <div className="w-full h-full bg-black bg-opacity-50 absolute top-0 left-0 z-50"></div>
             <div className="relative z-50 w-full h-full flex justify-center items-center">
-                <div className="w-1/3 bg-slate-800 rounded-3xl shadow-lg p-12">
+                <div className="w-4/5 lg:w-2/5 bg-slate-800 rounded-3xl shadow-lg p-12">
                     <div className="w-full text-white text-center text-xl font-semibold">
                         {message}
                     </div>

@@ -7,7 +7,7 @@ interface SelectProps {
     groups: Group[];
     required?: boolean;
     status?: string;
-    value?: string | number;
+    value?: Option;
     setValue?: (event: any) => void;
     disabled?: boolean;
     placeholder?: string;
@@ -50,7 +50,9 @@ function Select({ label, name, groups, required = false, status = "idle", value,
                 classNamePrefix="react-select" 
                 isDisabled={status !== "idle" || disabled}
                 value={
-                    groups.find((group) => group.options.some((option) => option.value === value))
+                    groups
+                        .flatMap(group => group.options)
+                        .find(option => option.value === value?.value)
                 }
                 onChange={(newValue) => {
                     setValue && setValue({

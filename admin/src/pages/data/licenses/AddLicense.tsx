@@ -17,14 +17,14 @@ interface License {
     title: string;
     top100: boolean;
     isActive: boolean;
-    categoryId: Option;
+    category: Option;
 }
 
-type ErrorKeys = 'title' | 'categoryId' | 'file';
+type ErrorKeys = 'title' | 'category' | 'file';
 
 interface ErrorState {
     title: string;
-    categoryId: string;
+    category: string;
     file: string;
 }
 
@@ -35,12 +35,12 @@ function AddLicense(){
         title: "",
         top100: true,
         isActive: true,
-        categoryId: { label: "", value: 0 }
+        category: { label: "", value: 0 }
     });
     const [file, setFile] = useState<File | null>(null);
     const [error, setError] = useState<ErrorState>({
         title: "",
-        categoryId: "",
+        category: "",
         file: ""
     });
     const [status, setStatus] = useState("idle");
@@ -137,8 +137,8 @@ function AddLicense(){
             newError.title = "Le titre ne doit pas dépasser 255 caractères";
         }
 
-        if (license.categoryId.value === 0) {
-            newError.categoryId = "La catégorie est obligatoire";
+        if (license.category.value === 0) {
+            newError.category = "La catégorie est obligatoire";
         }
 
         if(!file){
@@ -160,7 +160,7 @@ function AddLicense(){
         formData.append("title", license.title);
         formData.append("top100", license.top100.toString());
         formData.append("isActive", license.isActive.toString());
-        formData.append("categoryId", license.categoryId.value);
+        formData.append("categoryId", license.category.value);
         formData.append("file", file as Blob);
 
         mutate.mutate({ body: formData });
@@ -200,11 +200,11 @@ function AddLicense(){
                     !isLoading && (
                         <Select 
                             label="Categorie" 
-                            name="categoryId" 
-                            error={error.categoryId} 
+                            name="category" 
+                            error={error.category} 
                             groups={categories} 
                             placeholder="Sélectionner une catégorie" 
-                            value={license.categoryId} 
+                            value={license.category} 
                             setValue={handleChangeSelect} 
                             required 
                         />
