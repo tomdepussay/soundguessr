@@ -25,10 +25,8 @@ interface Sound {
     isActive: boolean;
     before: number;
     after: number;
-    licenseId: number;
-    license: string;
-    typeId: number;
-    type: string;
+    license: Option;
+    type: Option;
 }
 
 function DetailsSound(){
@@ -47,10 +45,8 @@ function DetailsSound(){
         isActive: false,
         before: 0,
         after: 0,
-        licenseId: 0,
-        license: "",
-        typeId: 0,
-        type: ""
+        license: { label: "", value: 0 },
+        type: { label: "", value: 0 }
     });
     const navigate = useNavigate();
     const { data, isLoading } = useFetch({ 
@@ -94,7 +90,19 @@ function DetailsSound(){
 
     useEffect(() => {
         if(data){
-            setSound(data.sound);
+            setSound({
+                id: data.id,
+                title: data.title,
+                url: data.url,
+                path: data.path,
+                audio: data.audio,
+                order: data.order,
+                isActive: data.isActive,
+                before: data.before,
+                after: data.after,
+                license: { label: data.license, value: data.licenseId },
+                type: { label: data.type, value: data.typeId }
+            });
         }
     }, [data]);
 
@@ -141,22 +149,8 @@ function DetailsSound(){
                             <Input label="Rogner à la fin" name="after" value={sound.after} disabled />
                         </FormRow>
                         <FormRow>
-                            <Select label="Licence" name="licence" groups={[
-                                {
-                                    label: "1",
-                                    options: [
-                                        { label: sound.license, value: sound.licenseId }
-                                    ]
-                                }
-                            ]} value={sound.licenseId} disabled />
-                            <Select label="Type" name="type" groups={[
-                                {
-                                    label: "1",
-                                    options: [
-                                        { label: sound.license, value: sound.licenseId }
-                                    ]
-                                }
-                            ]} value={sound.typeId} disabled />
+                            <Select label="Licence" name="licence" groups={[{ label: "Licence", options: [sound.license]}]} value={sound.license} disabled />
+                            <Select label="Type" name="type" groups={[{ label: "Type", options: [sound.type]}]} value={sound.type} disabled />
                         </FormRow>
                         <FormRow>
                             <audio controls src={sound.audio}>

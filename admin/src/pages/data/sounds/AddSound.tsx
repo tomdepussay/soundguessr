@@ -19,11 +19,11 @@ interface Sound {
     isActive: boolean;
     before: number;
     after: number;
-    licenseId: number;
-    typeId: number;
+    license: Option;
+    type: Option;
 }
 
-type ErrorKeys = 'title' | 'url' | 'order' | 'before' | 'after' | 'licenseId' | 'typeId';
+type ErrorKeys = 'title' | 'url' | 'order' | 'before' | 'after' | 'license' | 'type';
 
 interface ErrorState {
   title: string;
@@ -31,8 +31,8 @@ interface ErrorState {
   order: string;
   before: string;
   after: string;
-  licenseId: string;
-  typeId: string;
+  license: string;
+  type: string;
 }
 
 function AddSound(){
@@ -45,8 +45,8 @@ function AddSound(){
         isActive: true,
         before: 0,
         after: 0,
-        licenseId: 0,
-        typeId: 0
+        license: { label: "", value: 0 },
+        type: { label: "", value: 0 }
     });
     const [error, setError] = useState<ErrorState>({
         title: "",
@@ -54,8 +54,8 @@ function AddSound(){
         order: "",
         before: "",
         after: "",
-        licenseId: "",
-        typeId: "",
+        license: "",
+        type: "",
     });
     const [status, setStatus] = useState("idle");
     const [licenses, setLicenses] = useState<Group[]>([]);
@@ -144,12 +144,12 @@ function AddSound(){
             newError.after = "La valeur doit être positive";
         }
 
-        if (sound.licenseId === 0) {
-            newError.licenseId = "La licence est obligatoire";
+        if (sound.license.value === 0) {
+            newError.license = "La licence est obligatoire";
         }
 
-        if (sound.typeId === 0) {
-            newError.typeId = "Le type est obligatoire";
+        if (sound.type.value === 0) {
+            newError.type = "Le type est obligatoire";
         }
 
         if (Object.keys(newError).length > 0) {
@@ -163,7 +163,16 @@ function AddSound(){
 
         toast.loading("Ajout du son en cours...");
 
-        mutate.mutate({ body: sound });
+        mutate.mutate({ body: {
+            title: sound.title,
+            url: sound.url,
+            order: sound.order,
+            isActive: sound.isActive,
+            before: sound.before,
+            after: sound.after,
+            licenseId: sound.license.value,
+            typeId: sound.type.value
+        } });
         
     };
 
@@ -214,22 +223,21 @@ function AddSound(){
                         <>
                             <Select
                                 label="Licence" 
-                                name="licenseId" 
-                                error={error.licenseId} 
+                                name="license" 
+                                error={error.license} 
                                 groups={licenses} 
                                 placeholder="Sélectionner une licence" 
-                                value={sound.licenseId} 
+                                value={sound.license} 
                                 setValue={handleChangeSelect} 
                                 required 
-                                displayGroup
                             />
                             <Select 
                                 label="Type" 
-                                name="typeId" 
-                                error={error.typeId} 
+                                name="type" 
+                                error={error.type} 
                                 groups={types} 
                                 placeholder="Sélectionner un type" 
-                                value={sound.typeId} 
+                                value={sound.type} 
                                 setValue={handleChangeSelect} 
                                 required 
                             />
