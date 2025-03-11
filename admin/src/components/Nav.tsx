@@ -1,90 +1,29 @@
 'use client'
 
-import { Book, Folder, KeyRound, Monitor, Music, Network, Shield, SunSnow, UserRoundCog, Users, Zap, Gamepad, ChevronRight } from "lucide-react";
-import { Sidebar, SidebarContent, SidebarGroup, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarTrigger } from "@/src/components/ui/sidebar";
+import { ChevronRight, LogOut } from "lucide-react";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarTrigger } from "@/src/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/src/components/ui/collapsible";
 import Link from "next/link";
+import { JSX } from "react";
+import LogoutAction from "./logout-action";
 
-const nav = [
-    {
-        title: "Dashboard",
-        url: "/",
-        icon: Monitor,
-    },
-    {
-        title: "Droits",
-        url: "#",
-        icon: Shield,
-        items: [
-            {
-                title: "Roles",
-                url: "/roles",
-                icon: UserRoundCog
-            },
-            {
-                title: "Permissions",
-                url: "/permissions",
-                icon: KeyRound
-            }
-        ]
-    },
-    {
-        title: "Référentiels",
-        url: "#",
-        icon: Book,
-        items: [
-            {
-                title: "Catégories",
-                url: "/categories",
-                icon: Folder
-            },
-            {
-                title: "Networks",
-                url: "/networks",
-                icon: Network
-            }
-        ]
-    },
-    {
-        title: "Animes",
-        url: "#",
-        icon: Zap,
-        items: [
-            {
-                title: "Animes",
-                url: "/animes",
-                icon: Zap
-            },
-            {
-                title: "Saisons",
-                url: "/seasons",
-                icon: SunSnow
-            },
-            {
-                title: "Opening",
-                url: "/openings",
-                icon: Music
-            },
-            {
-                title: "Ending",
-                url: "/endings",
-                icon: Music
-            }
-        ]
-    },
-    {
-        title: "Utilisateurs",
-        url: "/users",
-        icon: Users
-    },
-    {
-        title: "Parties",
-        url: "/games",
-        icon: Gamepad
+interface NavItem {
+    title: string;
+    url: string;
+    icon?: JSX.Element;
+    items?: NavItem[];
+}
+
+interface NavProps {
+    navItems: NavItem[];
+}
+
+export default function Nav({ navItems = [] }: NavProps) {
+
+    const handleLogout = async () => {
+        await LogoutAction()
     }
-];
 
-export default function Nav(){
     return (
         <SidebarProvider>
             <Sidebar>
@@ -94,58 +33,74 @@ export default function Nav(){
                     </SidebarHeader>
                     <SidebarGroup>
                         <SidebarMenu>
-                            <Collapsible
-                                key="1"
-                                asChild
-                                defaultOpen={false}
-                                className="group/collapsible"
-                            >
-                                <SidebarMenuItem>
-                                    <Link href="/">
-                                        <SidebarMenuButton tooltip="Dashboard">
-                                            <Monitor />
-                                            <span>Dashboard</span>
-                                        </SidebarMenuButton>
-                                    </Link>
-                                </SidebarMenuItem>
-                            </Collapsible>
-                            <Collapsible
-                                key="2"
-                                asChild
-                                defaultOpen={false}
-                                className="group/collapsible"
-                            >
-                                <SidebarMenuItem>
-                                    <CollapsibleTrigger asChild>
-                                        <SidebarMenuButton tooltip={"Droits"}>
-                                            <Shield />
-                                            <span>Droits</span>
-                                            <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                                        </SidebarMenuButton>
-                                    </CollapsibleTrigger>
-                                    <CollapsibleContent>
-                                        <SidebarMenuSub>
-                                            <SidebarMenuSubItem key="1">
-                                                <SidebarMenuSubButton asChild>
-                                                    <Link href="/roles">
-                                                        <span>Roles</span>
+                            {
+                                navItems.map((item, index) => {
+                                    return <Collapsible
+                                        key={index}
+                                        asChild
+                                        defaultOpen={false}
+                                        className="group/collapsible"
+                                    >
+                                        <SidebarMenuItem>
+                                            {
+                                                item.items ? <>
+                                                    <CollapsibleTrigger asChild>
+                                                        <SidebarMenuButton className="cursor-pointer" tooltip={item.title}>
+                                                            {item.icon}
+                                                            <span>{item.title}</span>
+                                                            <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                                                        </SidebarMenuButton>
+                                                    </CollapsibleTrigger>
+                                                    <CollapsibleContent>
+                                                        <SidebarMenuSub>
+                                                            {
+                                                                item.items.map((subItem, index) => {
+                                                                    return <SidebarMenuSubItem key={index}>
+                                                                        <SidebarMenuSubButton className="cursor-pointer" asChild>
+                                                                            <Link href={subItem.url}>
+                                                                                <span>{subItem.title}</span>
+                                                                            </Link>
+                                                                        </SidebarMenuSubButton>
+                                                                    </SidebarMenuSubItem>
+                                                                })
+                                                            }
+                                                        </SidebarMenuSub>
+                                                    </CollapsibleContent>
+                                                </> : <>
+                                                    <Link href={item.url}>
+                                                        <SidebarMenuButton className="cursor-pointer" tooltip={item.title}>
+                                                            {item.icon}
+                                                            <span>{item.title}</span>
+                                                        </SidebarMenuButton>
                                                     </Link>
-                                                </SidebarMenuSubButton>
-                                            </SidebarMenuSubItem>
-                                            <SidebarMenuSubItem key="2">
-                                                <SidebarMenuSubButton asChild>
-                                                    <Link href="/permissions">
-                                                        <span>Permissions</span>
-                                                    </Link>
-                                                </SidebarMenuSubButton>
-                                            </SidebarMenuSubItem>
-                                        </SidebarMenuSub>
-                                      </CollapsibleContent>
-                                </SidebarMenuItem>
-                            </Collapsible>
+                                                </>
+                                            }
+                                        </SidebarMenuItem>
+
+                                    </Collapsible>
+                                })
+                            }
                         </SidebarMenu>
                     </SidebarGroup>
                 </SidebarContent>
+                <SidebarFooter>
+                    <SidebarGroup>
+                        <SidebarMenu>
+                            {/* <SidebarMenuItem>
+                                <SidebarMenuButton tooltip="Settings">
+                                    <UserRoundCog />
+                                    <span>Settings</span>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem> */}
+                            <SidebarMenuItem>
+                                <SidebarMenuButton onClick={handleLogout} className="cursor-pointer" tooltip="Deconnexion">
+                                    <LogOut />
+                                    <span>Deconnexion</span>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                        </SidebarMenu>
+                    </SidebarGroup>
+                </SidebarFooter>
             </Sidebar>
         </SidebarProvider>
     )

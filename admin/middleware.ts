@@ -10,8 +10,6 @@ export default async function middleware(req: NextRequest){
 
         const session = await verifySession()
 
-        console.log(session);
-        
         if(!session?.userId){
             return NextResponse.redirect(new URL("/login", req.nextUrl.origin).toString())
         }
