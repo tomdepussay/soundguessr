@@ -1,11 +1,13 @@
 'use client'
 
 import { ChevronRight, LogOut } from "lucide-react";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarTrigger } from "@/src/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarTrigger } from "@/src/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/src/components/ui/collapsible";
 import Link from "next/link";
 import { JSX } from "react";
 import LogoutAction from "./logout-action";
+import { Separator } from "./ui/separator";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "./ui/breadcrumb";
 
 interface NavItem {
     title: string;
@@ -25,8 +27,7 @@ export default function Nav({ navItems = [] }: NavProps) {
     }
 
     return (
-        <SidebarProvider>
-            <Sidebar>
+        <Sidebar>
                 <SidebarContent>
                     <SidebarHeader>
                         <h1 className="text-foreground text-2xl font-bold flex items-center justify-center h-10 mt-1 w-full">Soundguessr</h1>
@@ -86,12 +87,6 @@ export default function Nav({ navItems = [] }: NavProps) {
                 <SidebarFooter>
                     <SidebarGroup>
                         <SidebarMenu>
-                            {/* <SidebarMenuItem>
-                                <SidebarMenuButton tooltip="Settings">
-                                    <UserRoundCog />
-                                    <span>Settings</span>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem> */}
                             <SidebarMenuItem>
                                 <SidebarMenuButton onClick={handleLogout} className="cursor-pointer" tooltip="Deconnexion">
                                     <LogOut />
@@ -101,7 +96,6 @@ export default function Nav({ navItems = [] }: NavProps) {
                         </SidebarMenu>
                     </SidebarGroup>
                 </SidebarFooter>
-            </Sidebar>
-        </SidebarProvider>
+        </Sidebar>
     )
 }
