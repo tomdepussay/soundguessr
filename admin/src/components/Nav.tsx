@@ -1,13 +1,11 @@
 'use client'
 
-import { ChevronRight, LogOut } from "lucide-react";
+import { ChevronRight, LogOut, Menu } from "lucide-react";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarTrigger } from "@/src/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/src/components/ui/collapsible";
 import Link from "next/link";
 import { JSX } from "react";
 import LogoutAction from "./logout-action";
-import { Separator } from "./ui/separator";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "./ui/breadcrumb";
 
 interface NavItem {
     title: string;
@@ -27,10 +25,12 @@ export default function Nav({ navItems = [] }: NavProps) {
     }
 
     return (
-        <Sidebar>
+        <SidebarProvider>
+            <Sidebar>
                 <SidebarContent>
                     <SidebarHeader>
-                        <h1 className="text-foreground text-2xl font-bold flex items-center justify-center h-10 mt-1 w-full">Soundguessr</h1>
+                        <h1 className="text-foreground text-2xl font-bold flex items-center justify-center mt-1 h-10 w-full">Soundguessr</h1>
+                        <SidebarTrigger className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700" />
                     </SidebarHeader>
                     <SidebarGroup>
                         <SidebarMenu>
@@ -96,6 +96,7 @@ export default function Nav({ navItems = [] }: NavProps) {
                         </SidebarMenu>
                     </SidebarGroup>
                 </SidebarFooter>
-        </Sidebar>
+            </Sidebar>
+        </SidebarProvider>
     )
 }
