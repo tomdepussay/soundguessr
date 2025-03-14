@@ -1,7 +1,7 @@
 'use client'
 
 import { ChevronRight, LogOut, Menu } from "lucide-react";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarTrigger } from "@/src/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarTrigger, useSidebar } from "@/src/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/src/components/ui/collapsible";
 import Link from "next/link";
 import { JSX } from "react";
@@ -23,14 +23,13 @@ export default function Nav({ navItems = [] }: NavProps) {
     const handleLogout = async () => {
         await LogoutAction()
     }
-
     return (
         <SidebarProvider>
-            <Sidebar>
+            <Sidebar collapsible="icon">
                 <SidebarContent>
-                    <SidebarHeader>
-                        <h1 className="text-foreground text-2xl font-bold flex items-center justify-center mt-1 h-10 w-full">Soundguessr</h1>
-                        <SidebarTrigger className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700" />
+                    <SidebarHeader className="h-16 w-full d-flex flex-wrap items-center justify-center">
+                        <h1 className="text-foreground text-2xl font-bold group-data-[collapsible=icon]:hidden">Soundguessr</h1>
+                        <SidebarTrigger className="mt-0.5 p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700" />
                     </SidebarHeader>
                     <SidebarGroup>
                         <SidebarMenu>
