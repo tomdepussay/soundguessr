@@ -13,7 +13,7 @@ export default function Layout({
 }>) {
     return (
         <html lang="fr" className="h-full w-full">
-            <body className="bg-background text-foreground min-h-screen h-full">
+            <body className="bg-background text-foreground min-h-screen h-full ">
                 {children}
             </body>
         </html>

@@ -1,6 +1,4 @@
-import Header from "@/src/components/Header";
 import Nav from "@/src/components/Nav";
-import { SidebarInset, SidebarProvider } from "@/src/components/ui/sidebar";
 import { Book, Monitor, Shield, Users, Zap, Gamepad } from "lucide-react";
 
 const navItems = [
@@ -76,15 +74,13 @@ const navItems = [
 
 export default function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
-        <div className="flex h-full">
-            <div className="w-full flex h-screen">
-                <header>
-                    <Nav navItems={navItems} />
-                </header>
-                <main className="h-full w-full">
-                    Main
-                </main>
-            </div>
+        <div className="md:flex h-full md:h-screen">
+            <header>
+                <Nav navItems={navItems} />
+            </header>
+            <main className="h-full w-full">
+                {children}
+            </main>
         </div>
     )
 }

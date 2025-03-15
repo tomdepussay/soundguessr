@@ -1,7 +1,8 @@
 'use client'
 
-import { ChevronRight, LogOut, Menu } from "lucide-react";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarTrigger, useSidebar } from "@/src/components/ui/sidebar";
+import { useIsMobile } from "@/src/hooks/use-mobile"
+import { ChevronRight, LogOut } from "lucide-react";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarProvider, SidebarTrigger } from "@/src/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/src/components/ui/collapsible";
 import Link from "next/link";
 import { JSX } from "react";
@@ -19,6 +20,8 @@ interface NavProps {
 }
 
 export default function Nav({ navItems = [] }: NavProps) {
+
+    const isMobile = useIsMobile()    
 
     const handleLogout = async () => {
         await LogoutAction()
@@ -96,6 +99,15 @@ export default function Nav({ navItems = [] }: NavProps) {
                     </SidebarGroup>
                 </SidebarFooter>
             </Sidebar>
+            {
+                isMobile && (
+                    <div className="flex items-center justify-between h-12 w-full bg-sidebar border-b">
+                        <SidebarTrigger className="p-2 rounded-md" />
+                        <h1 className="text-2xl font-semibold">Soundguessr</h1>
+                        <SidebarTrigger className="p-2 rounded-md opacity-0" />
+                    </div>
+                )
+            }
         </SidebarProvider>
     )
 }
