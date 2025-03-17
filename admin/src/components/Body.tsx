@@ -9,7 +9,7 @@ export default function Body ({ children }: Readonly<{ children: React.ReactNode
     const { theme } = useContext(ThemeContext);
 
     return (
-        <body className={cn("bg-background text-foreground min-h-screen h-full", theme)}>
+        <body className={cn("bg-background text-foreground min-h-screen h-full md:flex md:h-screen", theme)}>
             {children}
         </body>
     );
