@@ -5,52 +5,91 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { Edit } from "lucide-react";
-import { useActionState } from "react";
-import { editRole } from "./action.edit";
+import { QueryClient, useMutation } from "@tanstack/react-query";
+import { z } from "zod";
+import { useState } from "react";
 
 type Role = {
     id_role: number;
     name: string;
 }
 
+const RoleSchema = z.object({
+    name: z.string().min(3, "Le nom doit faire au moins 3 caractères.")
+})
+
+const updateRole = async ({ id_role, name }: {id_role: number, name: string}) => {
+    const res = await fetch(`/api/roles/${id_role}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+            name
+        }),
+    });
+    if (!res.ok) throw new Error("Échec de la mise à jour");
+    return res.json();
+}
+
+const queryClient = new QueryClient();
+
 export function EditRoleForm({ role }: { role: Role }) {
 
-    const [state, action, pending] = useActionState(
-        (state: any, formData: any) => editRole(state, formData, role.id_role), 
-        null
-    );
+    const [errors, setErrors] = useState({
+        name: [] as string[]
+    })
 
-    const [state, action, pending] = useActionState(
-        (prevState, formData) => editRole(prevState, formData, role.id_role),
-        null
-    );
+    const { mutate, isPending } = useMutation({
+        mutationFn: updateRole,
+        onSuccess: () => {
+
+            queryClient.invalidateQueries({ queryKey: ["roles"] });
+        },
+    });
+
+    const submit = async (e: React.FormEvent) => {
+        console.log("submit")
+        e.preventDefault();
+
+        const formData = new FormData(e.target as HTMLFormElement);
+        const name = formData.get("name") as string;
+
+        const validationResult = RoleSchema.safeParse({ name });
+
+        if (!validationResult.success) {
+            setErrors({
+                name: validationResult.error.flatten().fieldErrors.name || []
+            })
+            return;
+        }
+
+        mutate({ id_role: role.id_role, name: validationResult.data.name });
+    }
 
     return (
-        <form action={action}>
-            <Dialog>
-                <DialogTrigger asChild>
-                    <Button>
-                        <Edit />
-                    </Button>
-                </DialogTrigger>
-                <DialogContent>
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button>
+                    <Edit />
+                </Button>
+            </DialogTrigger>
+            <DialogContent>
+                <form action="#" onSubmit={submit}>
                     <DialogHeader>
                         <DialogTitle>Modifier un rôle</DialogTitle>
                         <DialogDescription>Modification du rôle {role.name}</DialogDescription>
                     </DialogHeader>
                     <div className="flex flex-col gap-2">
                         <Label htmlFor="name">Nom :</Label>
-                        <Input type="text" name="name" id="name" defaultValue={role.name} required disabled={pending} />
-                        {state?.errors?.name && <p className="text-destructive">{state.errors.name}</p>}
+                        <Input type="text" name="name" id="name" defaultValue={role.name} required disabled={isPending} />
                     </div>
                     <DialogFooter>
-                        <Button type="submit">{ pending ? "Chargement..." : "Enregistrer" }</Button>
+                        <Button type="submit">{ isPending ? "Chargement..." : "Enregistrer" }</Button>
                         <DialogClose asChild>
-                            <Button type="button" variant="secondary" disabled={pending}>Annuler</Button>
+                            <Button type="button" variant="secondary" disabled={isPending}>Annuler</Button>
                         </DialogClose>
                     </DialogFooter>
-                </DialogContent>
-            </Dialog>
-        </form>
+                </form>
+            </DialogContent>
+        </Dialog>
     )
 }

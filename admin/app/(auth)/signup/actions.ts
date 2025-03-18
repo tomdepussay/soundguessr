@@ -42,7 +42,6 @@ export async function signup(state: any, formData: { get: (arg0: string) => any 
 
     if (!validationResult.success) {
         return {
-            // errors: validationResult.error.errors
             errors: validationResult.error.flatten().fieldErrors
         }
     }

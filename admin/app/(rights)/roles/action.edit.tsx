@@ -1,16 +1,36 @@
 "use server"
 
-import { PrismaClient } from "@prisma/client"
+import { QueryClient, useMutation } from "@tanstack/react-query"
 import { z } from "zod"
 
-const prisma = new PrismaClient()
+const queryClient = new QueryClient()
 
 const RoleSchema = z.object({
     name: z.string().min(3, "Le nom doit faire au moins 3 caractères.")
 })
 
-export async function editRole(state: any, formData: any, id_role: number){
+const updateRole = async ({ id_role, name }: {id_role: number, name: string}) => {
+    
+    const res = await fetch(`/api/roles/${id_role}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+            name
+        }),
+    });
+    if (!res.ok) throw new Error("Échec de la mise à jour");
+    return res.json();
+}
 
+const { mutate, isPending } = useMutation({
+    mutationFn: updateRole,
+    onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["roles"] });
+    },
+});
+
+export async function editRole(state: any, formData: any){
+    
     const validationResult = RoleSchema.safeParse({
         name: formData.get("name")
     });
@@ -21,10 +41,5 @@ export async function editRole(state: any, formData: any, id_role: number){
         }
     }
 
-    await prisma.roles.update({
-        where: { id_role },
-        data: {
-            name: validationResult.data.name
-        }
-    })
+    mutate({ id_role: id_role, name: validationResult.data.name });
 }
