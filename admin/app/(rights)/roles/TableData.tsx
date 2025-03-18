@@ -1,7 +1,8 @@
 "use client"
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/src/components/ui/table";
-import { EditRoleForm } from "./form.edit";
+import { EditRoleForm } from "./_form/edit";
+import { DeleteRoleForm } from "./_form/delete";
 import { Trash } from "lucide-react";
 import { Button } from "@/src/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
@@ -41,9 +42,10 @@ export default function TableData(){
                             <TableCell>{role.name}</TableCell>
                             <TableCell className="whitespace-nowrap flex gap-1">
                                 <EditRoleForm role={role} />
-                                <Button variant="destructive">
+                                <DeleteRoleForm role={role} />
+                                {/* <Button variant="destructive">
                                     <Trash />
-                                </Button>
+                                </Button> */}
                             </TableCell>
                         </TableRow>
                     ))

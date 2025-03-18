@@ -10,10 +10,30 @@ export async function GET() {
             select: {
                 id_role: true,
                 name: true
+            },
+            orderBy: {
+                id_role: "asc"
             }
         });
 
         return NextResponse.json(roles);
+    } catch (error) {
+        return NextResponse.json({ error: "Erreur de mise à jour" }, { status: 500 });
+    }
+}
+
+export async function POST(
+    req: Request
+){
+    const { name } = await req.json();
+
+    try {
+        const newRole = await prisma.roles.create({
+            data: { 
+                name 
+            },
+        });
+        return NextResponse.json(newRole);
     } catch (error) {
         return NextResponse.json({ error: "Erreur de mise à jour" }, { status: 500 });
     }

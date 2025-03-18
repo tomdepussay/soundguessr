@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { Edit } from "lucide-react";
-import { QueryClient, useMutation } from "@tanstack/react-query";
+import { useQueryClient , useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { useState } from "react";
 
@@ -18,7 +18,7 @@ const RoleSchema = z.object({
     name: z.string().min(3, "Le nom doit faire au moins 3 caractères.")
 })
 
-const updateRole = async ({ id_role, name }: {id_role: number, name: string}) => {
+const updateRole = async ({ id_role, name }: { id_role: number, name: string }) => {
     const res = await fetch(`/api/roles/${id_role}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -30,24 +30,22 @@ const updateRole = async ({ id_role, name }: {id_role: number, name: string}) =>
     return res.json();
 }
 
-const queryClient = new QueryClient();
 
 export function EditRoleForm({ role }: { role: Role }) {
 
-    const [errors, setErrors] = useState({
-        name: [] as string[]
-    })
+    const queryClient = useQueryClient();
+    const [open, setOpen] = useState(false);
+    const [errors, setErrors] = useState<{ name: string[] }>({ name: [] });
 
     const { mutate, isPending } = useMutation({
         mutationFn: updateRole,
         onSuccess: () => {
-
+            setOpen(false);
             queryClient.invalidateQueries({ queryKey: ["roles"] });
         },
     });
 
     const submit = async (e: React.FormEvent) => {
-        console.log("submit")
         e.preventDefault();
 
         const formData = new FormData(e.target as HTMLFormElement);
@@ -58,31 +56,36 @@ export function EditRoleForm({ role }: { role: Role }) {
         if (!validationResult.success) {
             setErrors({
                 name: validationResult.error.flatten().fieldErrors.name || []
-            })
+            });
             return;
         }
+
+        setErrors({ name: [] });
 
         mutate({ id_role: role.id_role, name: validationResult.data.name });
     }
 
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button>
+                <Button onClick={() => setOpen(true)}>
                     <Edit />
                 </Button>
             </DialogTrigger>
             <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Modifier un rôle</DialogTitle>
+                    <DialogDescription>Modification du rôle {role.name}</DialogDescription>
+                </DialogHeader>
                 <form action="#" onSubmit={submit}>
-                    <DialogHeader>
-                        <DialogTitle>Modifier un rôle</DialogTitle>
-                        <DialogDescription>Modification du rôle {role.name}</DialogDescription>
-                    </DialogHeader>
                     <div className="flex flex-col gap-2">
                         <Label htmlFor="name">Nom :</Label>
                         <Input type="text" name="name" id="name" defaultValue={role.name} required disabled={isPending} />
+                        {errors.name.length > 0 && (
+                            <p className="text-red-500 text-sm">{errors.name.join(", ")}</p>
+                        )}
                     </div>
-                    <DialogFooter>
+                    <DialogFooter className="mt-4">
                         <Button type="submit">{ isPending ? "Chargement..." : "Enregistrer" }</Button>
                         <DialogClose asChild>
                             <Button type="button" variant="secondary" disabled={isPending}>Annuler</Button>
