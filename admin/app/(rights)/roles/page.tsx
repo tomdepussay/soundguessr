@@ -1,7 +1,8 @@
 import { Button } from "@/src/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/src/components/ui/table";
-import { Edit, Plus, Trash } from "lucide-react";
+import { Plus, Trash } from "lucide-react";
 import { PrismaClient } from "@prisma/client";
+import { EditRoleForm } from "./form.edit";
 
 const prisma = new PrismaClient();
 
@@ -22,15 +23,19 @@ export default async function Page(){
 
     return (
         <div>
-            <div className="border-b p-3 w-full flex justify-between items-center">
-                <h2 className="text-lg font-semibold">Gestion des rôles</h2>
-                <Button className="bg-primary text-white">
+            <div className="p-4 w-full flex justify-between items-center">
+                <h2 className="text-xl font-bold">Rôles</h2>
+                <Button>
                     <Plus />
                     Ajouter un rôle
                 </Button>
             </div>
 
             <div className="p-4">
+                <Button variant="outline">
+                    <Plus />
+                    Ajouter un filtre
+                </Button>
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -46,9 +51,7 @@ export default async function Page(){
                                 <TableRow key={role.id_role}>
                                     <TableCell>{role.name}</TableCell>
                                     <TableCell className="whitespace-nowrap flex gap-1">
-                                        <Button>
-                                            <Edit />
-                                        </Button>
+                                        <EditRoleForm role={role} />
                                         <Button variant="destructive">
                                             <Trash />
                                         </Button>
