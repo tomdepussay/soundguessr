@@ -15,9 +15,11 @@ type Field = {
 
 type Filter = {
     name: string;
-    operation: "contains" | "equals" | "startsWith" | "endsWith" | null;
+    operator: Operator | null;
     value: string;
 }
+
+type Operator = "contains" | "equals" | "startsWith" | "endsWith";
 
 export function useFilters() {
     const [filters, setFilters] = useState<Filter[]>([]);
@@ -28,10 +30,10 @@ export function useFilters() {
             const existingFilter = prevFilters.find((filter) => filter.name === name);
             if (existingFilter) {
                 return prevFilters.map((filter) =>
-                    filter.name === name ? { name, operation: null, value: "" } : filter
+                    filter.name === name ? { name, operator: null, value: "" } : filter
                 );
             }
-            return [...prevFilters, { name, operation: null, value: "" }];
+            return [...prevFilters, { name, operator: null, value: "" }];
         });
     };
 
@@ -40,12 +42,28 @@ export function useFilters() {
         setFilters((prevFilters) => prevFilters.filter((filter) => filter.name !== name));
     };
 
+    const editFilterValue = (name: string, value: string) => {
+        setFilters((prevFilters) =>
+            prevFilters.map((filter) =>
+                filter.name === name ? { name, operator: filter.operator, value } : filter
+            )
+        );
+    }
+
+    const editFilterOperator = (name: string, operator: Operator) => {
+        setFilters((prevFilters) =>
+            prevFilters.map((filter) =>
+                filter.name === name ? { name, operator, value: filter.value } : filter
+            )
+        );
+    }
+
     // Réinitialiser tous les filtres
     const clearFilters = () => {
         setFilters([]);
     };
 
-    return { filters, addFilter, removeFilter, clearFilters };
+    return { filters, addFilter, removeFilter, editFilterValue, editFilterOperator, clearFilters };
 }
 
 export function FilterButton({ fields, addFilter }: { fields: Field[], addFilter: (name: string) => void }) {
@@ -74,33 +92,64 @@ export function FilterButton({ fields, addFilter }: { fields: Field[], addFilter
     )
 }
 
-export function Filters() {
+type FiltersProps = {
+    filters: Filter[];
+    removeFilter: (name: string) => void;
+    editFilterOperator: (name: string, operator: Operator) => void;
+    editFilterValue: (name: string, value: string) => void;
+}
+
+export function Filters({ filters, editFilterOperator, editFilterValue, removeFilter }: FiltersProps) {
+
+    const handleChangeSelect = (name: string, operator: string) => {
+        editFilterOperator(name, operator as Operator);
+    }
+
+    const handleChangeInput = (name: string, value: string) => {
+        editFilterValue(name, value);
+    }
+
+    if(filters.length === 0) return null;
+    
     return (
-        <Card>
+        <Card className="mb-4">
             <CardHeader>
                 <CardTitle>Filtres</CardTitle>
             </CardHeader>
-            <CardContent>
-                <div className="flex justify-stretch items-center gap-4">
-                    <p className="text-nowrap">Nom :</p>
-                    <Select>
-                        <SelectTrigger className="w-1/2">
-                            <SelectValue placeholder="Opération" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectItem value="1">Egal</SelectItem>
-                                <SelectItem value="2">Différent</SelectItem>
-                                <SelectItem value="3">Commence par</SelectItem>
-                                <SelectItem value="4">Se termine par</SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-                    <Input className="w-1/2" />
-                    <Button variant="outline">
-                        <Minus />
-                    </Button>
-                </div>
+            <CardContent className="flex flex-col gap-4">
+                {
+                    filters.map((filter) => (
+                        <div key={filter.name}>
+                            <p className="text-nowrap">{filter.name} :</p>
+                            <div className="flex gap-4 w-full">
+                                <Select onValueChange={(value) => handleChangeSelect(filter.name, value)}>
+                                    <SelectTrigger className="w-1/2">
+                                        <SelectValue placeholder="Opérateur">
+                                            {filter.operator ? filter.operator : "Opérateur"}
+                                        </SelectValue>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            <SelectItem value="equals">Egal</SelectItem>
+                                            <SelectItem value="contains">Contient</SelectItem>
+                                            <SelectItem value="startsWith">Commence par</SelectItem>
+                                            <SelectItem value="endsWith">Se termine par</SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                                <Input 
+                                    className="w-1/2" 
+                                    placeholder="Valeur" 
+                                    onChange={(e) => handleChangeInput(filter.name, e.target.value)} 
+                                    defaultValue={filter.value} 
+                                />
+                                <Button variant="outline" onClick={() => removeFilter(filter.name)}>
+                                    <Minus />
+                                </Button>
+                            </div>
+                        </div>
+                    ))
+                }
             </CardContent>
         </Card>
     )

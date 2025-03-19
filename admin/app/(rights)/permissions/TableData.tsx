@@ -44,7 +44,7 @@ export default function TableData(){
     const searchParams = useSearchParams();
     const router = useRouter();
     const [page, setPage] = useState(parseInt(searchParams.get("page") || "1", 10));
-    const { filters, addFilter, removeFilter } = useFilters();
+    const { filters, addFilter, editFilterValue, editFilterOperator, removeFilter } = useFilters();
     const { data, isLoading, error } = useQuery({ 
         queryKey: ["permissions", page], 
         queryFn: () => fetchPermissions(page) 
@@ -68,7 +68,7 @@ export default function TableData(){
         if(data.permissions && data.pages) return (
             <>
                 <div>
-                    <Filters filters={filters} />
+                    <Filters filters={filters} editFilterOperator={editFilterOperator} editFilterValue={editFilterValue} removeFilter={removeFilter} />
                 </div>
                 <div className="flex justify-between items-center p-2">
                     <FilterButton fields={fields} addFilter={addFilter} />
