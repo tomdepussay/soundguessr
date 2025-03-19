@@ -7,7 +7,7 @@ import { DeletePermissionForm } from "./_form/delete";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import Pagination from "@/src/components/Pagination";
-import { FilterButton, Filters, useFilters } from "@/src/components/filter";
+import { useFilters, FilterButton, Filters  } from "@/src/components/filter";
 
 type Permission = {
     id_permission: number;
@@ -44,7 +44,7 @@ export default function TableData(){
     const searchParams = useSearchParams();
     const router = useRouter();
     const [page, setPage] = useState(parseInt(searchParams.get("page") || "1", 10));
-    const { filters, addFilter, editFilterValue, editFilterOperator, removeFilter } = useFilters();
+    const { filters, addFilter, removeFilter, editFilterValue, editFilterOperator } = useFilters();
     const { data, isLoading, error } = useQuery({ 
         queryKey: ["permissions", page], 
         queryFn: () => fetchPermissions(page) 
@@ -68,7 +68,12 @@ export default function TableData(){
         if(data.permissions && data.pages) return (
             <>
                 <div>
-                    <Filters filters={filters} editFilterOperator={editFilterOperator} editFilterValue={editFilterValue} removeFilter={removeFilter} />
+                    <Filters
+                        filters={filters}
+                        removeFilter={removeFilter}
+                        editFilterValue={editFilterValue}
+                        editFilterOperator={editFilterOperator}
+                    />
                 </div>
                 <div className="flex justify-between items-center p-2">
                     <FilterButton fields={fields} addFilter={addFilter} />
