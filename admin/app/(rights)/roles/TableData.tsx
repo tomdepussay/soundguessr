@@ -3,8 +3,6 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/src/components/ui/table";
 import { EditRoleForm } from "./_form/edit";
 import { DeleteRoleForm } from "./_form/delete";
-import { Trash } from "lucide-react";
-import { Button } from "@/src/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 
 type Role = {
@@ -24,14 +22,13 @@ export default function TableData(){
 
     if(isLoading) return <p>Chargement...</p>
     if(error) return <p>Une erreur est survenue</p>
+    if(roles && roles.length === 0) return <p>Aucun rôle trouvé</p>
 
     if(roles) return (
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead>
-                        Nom
-                    </TableHead>
+                    <TableHead>Nom</TableHead>
                     <TableHead className="whitespace-nowrap w-1"></TableHead>
                 </TableRow>
             </TableHeader>
@@ -43,9 +40,6 @@ export default function TableData(){
                             <TableCell className="whitespace-nowrap flex gap-1">
                                 <EditRoleForm role={role} />
                                 <DeleteRoleForm role={role} />
-                                {/* <Button variant="destructive">
-                                    <Trash />
-                                </Button> */}
                             </TableCell>
                         </TableRow>
                     ))

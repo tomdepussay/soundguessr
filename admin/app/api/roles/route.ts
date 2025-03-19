@@ -18,7 +18,7 @@ export async function GET() {
 
         return NextResponse.json(roles);
     } catch (error) {
-        return NextResponse.json({ error: "Erreur de mise à jour" }, { status: 500 });
+        return NextResponse.json({ error: "Erreur lors de la récupération" }, { status: 500 });
     }
 }
 
@@ -35,6 +35,6 @@ export async function POST(
         });
         return NextResponse.json(newRole);
     } catch (error) {
-        return NextResponse.json({ error: "Erreur de mise à jour" }, { status: 500 });
+        return NextResponse.json({ error: "Erreur lors de la création" }, { status: 500 });
     }
 }

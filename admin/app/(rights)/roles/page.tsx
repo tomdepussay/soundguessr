@@ -1,5 +1,4 @@
 import TableData from "./TableData";
-import Filter from "./Filter";
 import { AddRoleForm } from "./_form/add";
 
 export default async function Page(){
@@ -11,7 +10,6 @@ export default async function Page(){
             </div>
 
             <div className="p-4">
-                <Filter />
                 <TableData />
             </div>
         </div>

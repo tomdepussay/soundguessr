@@ -9,16 +9,18 @@ import { useQueryClient , useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { useState } from "react";
 
-const RoleSchema = z.object({
-    name: z.string().min(3, "Le nom doit faire au moins 3 caractères.")
+const PermissionSchema = z.object({
+    name: z.string().min(3, "Le nom doit faire au moins 3 caractères."),
+    description: z.string().optional()
 })
 
-const addRole = async ({ name }: { name: string }) => {
-    const res = await fetch(`/api/roles`, {
+const addPermission = async ({ name, description }: { name: string, description: string | undefined }) => {
+    const res = await fetch(`/api/permissions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-            name
+            name,
+            description
         }),
     });
     if (!res.ok) throw new Error("Échec de l'ajout");
@@ -26,17 +28,17 @@ const addRole = async ({ name }: { name: string }) => {
 }
 
 
-export function AddRoleForm() {
+export function AddPermissionForm() {
 
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
-    const [errors, setErrors] = useState<{ name: string[] }>({ name: [] });
+    const [errors, setErrors] = useState<{ name: string[], description: string[] }>({ name: [], description: [] });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: addRole,
+        mutationFn: addPermission,
         onSuccess: () => {
             setOpen(false);
-            queryClient.invalidateQueries({ queryKey: ["roles"] });
+            queryClient.invalidateQueries({ queryKey: ["permissions"] });
         },
     });
 
@@ -45,19 +47,24 @@ export function AddRoleForm() {
 
         const formData = new FormData(e.target as HTMLFormElement);
         const name = formData.get("name") as string;
+        const description = formData.get("description") as string;
 
-        const validationResult = RoleSchema.safeParse({ name });
+        const validationResult = PermissionSchema.safeParse({ name, description });
 
         if (!validationResult.success) {
             setErrors({
-                name: validationResult.error.flatten().fieldErrors.name || []
+                name: validationResult.error.flatten().fieldErrors.name || [],
+                description: validationResult.error.flatten().fieldErrors.description || []
             });
             return;
         }
 
-        setErrors({ name: [] });
+        setErrors({ name: [], description: [] });
 
-        mutate({ name: validationResult.data.name });
+        mutate({ 
+            name: validationResult.data.name, 
+            description: validationResult.data.description 
+        });
     }
 
     return (
@@ -65,12 +72,12 @@ export function AddRoleForm() {
             <DialogTrigger asChild>
                 <Button onClick={() => setOpen(true)}>
                     <Plus />
-                    Ajouter un rôle
+                    Ajouter une permission
                 </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Ajouter un rôle</DialogTitle>
+                    <DialogTitle>Ajouter une permission</DialogTitle>
                 </DialogHeader>
                 <form className="flex flex-col gap-3" action="#" onSubmit={submit}>
                     <div className="flex flex-col gap-2">
@@ -78,6 +85,13 @@ export function AddRoleForm() {
                         <Input type="text" name="name" id="name" required disabled={isPending} />
                         {errors.name.length > 0 && (
                             <p className="text-red-500 text-sm">{errors.name.join(", ")}</p>
+                        )}
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <Label htmlFor="description">Description (optionnel) :</Label>
+                        <Input type="text" name="description" id="description" disabled={isPending} />
+                        {errors.description.length > 0 && (
+                            <p className="text-red-500 text-sm">{errors.description.join(", ")}</p>
                         )}
                     </div>
                     <DialogFooter>

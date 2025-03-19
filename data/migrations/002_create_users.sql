@@ -15,3 +15,5 @@ CREATE TRIGGER users_updated_at
 BEFORE UPDATE ON users
 FOR EACH ROW
 EXECUTE FUNCTION updated_at();
+
+INSERT INTO users (username, email, password, id_role) VALUES ('admin', 'admin@gmail.com', '$2b$12$CVie7NnR/WIDx/.g07eyK.0f9urFfDJYPIfzN3ct6El4231DX/y6K', 1);
