@@ -3,7 +3,14 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export async function GET() {
+export async function GET(
+    req: Request
+) {
+
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const max = 10;
+
     try {
 
         const permissions = await prisma.permissions.findMany({
@@ -14,10 +21,18 @@ export async function GET() {
             },
             orderBy: {
                 id_permission: "asc"
-            }
+            },
+            skip: (page - 1) * max,
+            take: max,
         });
 
-        return NextResponse.json(permissions);
+        const total = await prisma.permissions.count();
+        const pages = Math.ceil(total / max);
+
+        return NextResponse.json({
+            permissions,
+            pages
+        });
     } catch (error) {
         return NextResponse.json({ error: "Erreur de la récupération" }, { status: 500 });
     }
