@@ -14,13 +14,12 @@ type Permission = {
 type TableDataProps = {
     page: number;
     setPages: (pages: number) => void;
-    url: string;
 }
 
-export default function TableData({ page, setPages, url }: TableDataProps){
+export default function TableData({ page, setPages }: TableDataProps){
 
     const fetchPermissions = async () => {
-        const response = await fetch("/api/permissions?" + url);
+        const response = await fetch("/api/permissions?" + new URLSearchParams({ page: String(page) }));
         const data: {
             permissions: Permission[];
             pages: number;

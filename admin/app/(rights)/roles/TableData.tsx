@@ -28,6 +28,7 @@ export default function TableData(){
         <Table>
             <TableHeader>
                 <TableRow>
+                    <TableHead>#</TableHead>
                     <TableHead>Nom</TableHead>
                     <TableHead className="whitespace-nowrap w-1"></TableHead>
                 </TableRow>
@@ -36,6 +37,7 @@ export default function TableData(){
                 {
                     roles.map(role => (
                         <TableRow key={role.id_role}>
+                            <TableCell>{role.id_role}</TableCell>
                             <TableCell>{role.name}</TableCell>
                             <TableCell className="whitespace-nowrap flex gap-1">
                                 <EditRoleForm role={role} />

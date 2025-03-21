@@ -12,12 +12,10 @@ export default function Page(){
     const router = useRouter();
     const [page, setPage] = useState(parseInt(searchParams.get("page") || "1", 10));
     const [pages, setPages] = useState(0);
-    const [url, setUrl] = useState("");
     
     const handleParams = () => {
         const params = `page=${page}`;
         router.push(`?${params}`, { scroll: false });
-        setUrl(params);
     }
     
     useEffect(() => {
@@ -35,7 +33,7 @@ export default function Page(){
                 <div className="flex justify-between items-center p-2">
                     <Pagination page={page} setPage={setPage} pages={pages} />
                 </div>
-                <TableData page={page} setPages={setPages} url={url} />
+                <TableData page={page} setPages={setPages} />
             </div>
         </div>
     );
