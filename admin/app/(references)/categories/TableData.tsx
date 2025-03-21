@@ -37,47 +37,38 @@ export default function TableData({ page, setPages }: TableDataProps){
     });
 
     if(error) return <p>Une erreur est survenue</p>
+    if(isLoading) return <p>Chargement...</p>
     if(data && data.pages) {
         if(data.categories && data.categories.length === 0) return <p>Aucune catégorie trouvée</p>
 
         if(data.categories && data.pages) return (
-            <>
-                
-                {
-                    isLoading ? 
-                    <p>Chargement...</p> :
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>#</TableHead>
-                                <TableHead>Nom</TableHead>
-                                <TableHead>Actif</TableHead>
-                                <TableHead className="whitespace-nowrap w-1"></TableHead>
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>#</TableHead>
+                        <TableHead>Nom</TableHead>
+                        <TableHead>Actif</TableHead>
+                        <TableHead className="whitespace-nowrap w-1"></TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {
+                        data.categories.map(category => (
+                            <TableRow key={category.id_category}>
+                                <TableCell>{category.id_category}</TableCell>
+                                <TableCell>{category.name}</TableCell>
+                                <TableCell>
+                                    <Switch category={category} />
+                                </TableCell>
+                                <TableCell className="whitespace-nowrap flex gap-1">
+                                    <EditForm category={category} />
+                                    <DeleteForm category={category} />
+                                </TableCell>
                             </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {
-                                data.categories.map(category => (
-                                    <TableRow key={category.id_category}>
-                                        <TableCell>{category.id_category}</TableCell>
-                                        <TableCell>{category.name}</TableCell>
-                                        <TableCell>
-                                            {/* <Badge variant={category.is_active ? "default" : "destructive"}>
-                                                {category.is_active ? "Oui" : "Non"}
-                                            </Badge> */}
-                                            <Switch category={category} />
-                                        </TableCell>
-                                        <TableCell className="whitespace-nowrap flex gap-1">
-                                            <EditForm category={category} />
-                                            <DeleteForm category={category} />
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            }
-                        </TableBody>
-                    </Table>
-                }
-            </>
+                        ))
+                    }
+                </TableBody>
+            </Table>   
         )
     } 
 }

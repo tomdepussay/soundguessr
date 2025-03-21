@@ -1,8 +1,9 @@
 "use client"
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/src/components/ui/table";
-import { EditRoleForm } from "./_form/edit";
-import { DeleteRoleForm } from "./_form/delete";
+import { EditForm } from "./_form/edit";
+import { DeleteForm } from "./_form/delete";
+import { AssignForm } from "./_form/assign";
 import { useQuery } from "@tanstack/react-query";
 
 type Role = {
@@ -40,8 +41,9 @@ export default function TableData(){
                             <TableCell>{role.id_role}</TableCell>
                             <TableCell>{role.name}</TableCell>
                             <TableCell className="whitespace-nowrap flex gap-1">
-                                <EditRoleForm role={role} />
-                                <DeleteRoleForm role={role} />
+                                <AssignForm role={role} />
+                                <EditForm role={role} />
+                                <DeleteForm role={role} />
                             </TableCell>
                         </TableRow>
                     ))

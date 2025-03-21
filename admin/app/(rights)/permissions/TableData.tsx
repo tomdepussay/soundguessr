@@ -34,42 +34,36 @@ export default function TableData({ page, setPages }: TableDataProps){
     });
 
     if(error) return <p>Une erreur est survenue</p>
+    if(isLoading) return <p>Chargement...</p>
     if(data && data.pages) {
         if(data.permissions && data.permissions.length === 0) return <p>Aucune permission trouvée</p>
 
         if(data.permissions && data.pages) return (
-            <>
-                
-                {
-                    isLoading ? 
-                    <p>Chargement...</p> :
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>#</TableHead>
-                                <TableHead>Nom</TableHead>
-                                <TableHead className="hidden md:table-cell">Description</TableHead>
-                                <TableHead className="whitespace-nowrap w-1"></TableHead>
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead>#</TableHead>
+                        <TableHead>Nom</TableHead>
+                        <TableHead className="hidden md:table-cell">Description</TableHead>
+                        <TableHead className="whitespace-nowrap w-1"></TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {
+                        data.permissions.map(permission => (
+                            <TableRow key={permission.id_permission}>
+                                <TableCell>{permission.id_permission}</TableCell>
+                                <TableCell>{permission.name}</TableCell>
+                                <TableCell className="hidden md:table-cell">{permission.description ? permission.description : "Aucune description"}</TableCell>
+                                <TableCell className="whitespace-nowrap flex gap-1">
+                                    <EditForm permission={permission} />
+                                    <DeleteForm permission={permission} />
+                                </TableCell>
                             </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {
-                                data.permissions.map(permission => (
-                                    <TableRow key={permission.id_permission}>
-                                        <TableCell>{permission.id_permission}</TableCell>
-                                        <TableCell>{permission.name}</TableCell>
-                                        <TableCell className="hidden md:table-cell">{permission.description ? permission.description : "Aucune description"}</TableCell>
-                                        <TableCell className="whitespace-nowrap flex gap-1">
-                                            <EditForm permission={permission} />
-                                            <DeleteForm permission={permission} />
-                                        </TableCell>
-                                    </TableRow>
-                                ))
-                            }
-                        </TableBody>
-                    </Table>
-                }
-            </>
+                        ))
+                    }
+                </TableBody>
+            </Table>
         )
     } 
 }

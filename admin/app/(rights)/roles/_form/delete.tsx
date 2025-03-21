@@ -24,7 +24,7 @@ const deleteRole = async ({ id_role }: { id_role: number }) => {
 }
 
 
-export function DeleteRoleForm({ role }: { role: Role }) {
+export function DeleteForm({ role }: { role: Role }) {
 
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);

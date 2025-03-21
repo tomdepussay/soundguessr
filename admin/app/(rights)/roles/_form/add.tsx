@@ -29,7 +29,7 @@ const addRole = async ({ name }: { name: string }) => {
 }
 
 
-export function AddRoleForm() {
+export function AddForm() {
 
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);

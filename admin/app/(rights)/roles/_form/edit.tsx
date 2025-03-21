@@ -34,7 +34,7 @@ const updateRole = async ({ id_role, name }: { id_role: number, name: string }) 
 }
 
 
-export function EditRoleForm({ role }: { role: Role }) {
+export function EditForm({ role }: { role: Role }) {
 
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
