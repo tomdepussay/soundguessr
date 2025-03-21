@@ -8,7 +8,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader, Si
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/src/components/ui/collapsible";
 import Link from "next/link";
 import LogoutAction from "./logout-action";
-
+    
 interface NavItem {
     title: string;
     url: string;

@@ -94,7 +94,7 @@ export default async function Layout({
 
     const session = await verifySession()
     
-    if(!session?.userId) {
+    if(!session?.id_user) {
         return (
             <html lang="fr" className="h-full w-full">
                 <body className="h-full w-full flex flex-col items-center justify-center">

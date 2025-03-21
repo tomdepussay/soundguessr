@@ -30,9 +30,9 @@ export async function decrypt(session: any){
     }
 }
 
-export async function createSession(userId: number){
+export async function createSession(id_user: number){
     const expires = new Date(Date.now() + cookie.duration)
-    const session = await encrypt({ userId, expires })
+    const session = await encrypt({ id_user, expires })
 
     const cookieStore = await cookies();
     cookieStore.set(cookie.name, session, {...cookie.options, expires})
@@ -45,9 +45,9 @@ export async function verifySession(){
     const cookieValue = cookieStore.get(cookie.name)?.value
     const session = await decrypt(cookieValue)
 
-    if(!session) return null
+    if(!session || typeof session.id_user !== "number") return null
 
-    return { userId: session.userId }
+    return { id_user: session.id_user }
 }
 
 export async function deleteSession(){
