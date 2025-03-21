@@ -49,11 +49,11 @@ export function EditForm({ category }: { category: Category }) {
             idToast = toast.loading("Mise à jour en cours...", { type: "info" });
         },
         onError: () => {
-            toast.update(idToast, { render: "Échec de la mise à jour", type: "error", isLoading: false });
+            toast.update(idToast, { render: "Échec de la mise à jour", type: "error", isLoading: false, autoClose: 2000 });
         },
         onSuccess: () => {
             setOpen(false);
-            toast.update(idToast, { render: "Catégorie mise à jour", type: "success", isLoading: false });
+            toast.update(idToast, { render: "Catégorie mise à jour", type: "success", isLoading: false, autoClose: 2000 });
             queryClient.invalidateQueries({ queryKey: ["categories"] });
         },
     });

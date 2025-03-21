@@ -44,11 +44,11 @@ export function AddForm() {
             idToast = toast.loading("Ajout en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: "Échec de l'ajout", type: "error", isLoading: false });
+            toast.update(idToast, { render: "Échec de l'ajout", type: "error", isLoading: false, autoClose: 2000 });
         },
         onSuccess: () => {
             setOpen(false);
-            toast.update(idToast, { render: "Catégorie ajoutée", type: "success", isLoading: false });
+            toast.update(idToast, { render: "Catégorie ajoutée", type: "success", isLoading: false, autoClose: 2000 });
             queryClient.invalidateQueries({ queryKey: ["categories"] });
         },
     });

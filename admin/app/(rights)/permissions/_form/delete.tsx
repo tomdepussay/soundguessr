@@ -36,11 +36,11 @@ export function DeleteForm({ permission }: { permission: Permission }) {
             idToast = toast.loading("Suppression en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: "Échec de la suppression", type: "error", isLoading: false });
+            toast.update(idToast, { render: "Échec de la suppression", type: "error", isLoading: false, autoClose: 2000 });
         },
         onSuccess: () => {
             setOpen(false);
-            toast.update(idToast, { render: "Permission supprimée", type: "success", isLoading: false });
+            toast.update(idToast, { render: "Permission supprimée", type: "success", isLoading: false, autoClose: 2000 });
             queryClient.invalidateQueries({ queryKey: ["permissions"] });
         },
     });

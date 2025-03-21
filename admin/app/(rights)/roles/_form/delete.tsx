@@ -35,11 +35,11 @@ export function DeleteRoleForm({ role }: { role: Role }) {
             idToast = toast.loading("Suppression en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: "Échec de la suppression", type: "error", isLoading: false });
+            toast.update(idToast, { render: "Échec de la suppression", type: "error", isLoading: false, autoClose: 2000 });
         },
         onSuccess: () => {
             setOpen(false);
-            toast.update(idToast, { render: "Rôle supprimé", type: "success", isLoading: false });
+            toast.update(idToast, { render: "Rôle supprimé", type: "success", isLoading: false, autoClose: 2000 });
             queryClient.invalidateQueries({ queryKey: ["roles"] });
         },
     });
