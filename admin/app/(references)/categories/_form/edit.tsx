@@ -8,53 +8,53 @@ import { Edit } from "lucide-react";
 import { useQueryClient , useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { useState } from "react";
+import { Boolean } from "@/src/components/ui/boolean";
 import { Id, toast } from "react-toastify";
 
-type Permission = {
-    id_permission: number;
+type Category = {
+    id_category: number;
     name: string;
-    description: string | null;
+    is_active: boolean;
 }
 
 let idToast: Id;
 
-const PermissionSchema = z.object({
+const CategorySchema = z.object({
     name: z.string().min(3, "Le nom doit faire au moins 3 caractères."),
-    description: z.string().optional()
+    is_active: z.boolean()
 })
 
-const updatePermission = async ({ id_permission, name, description }: { id_permission: number, name: string, description: string | undefined }) => {
-    const res = await fetch(`/api/permissions/${id_permission}`, {
+const updateCategory = async ({ id_category, name, is_active }: { id_category: number, name: string, is_active: boolean }) => {
+    const res = await fetch(`/api/categories/${id_category}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
             name,
-            description
+            is_active
         }),
     });
     if (!res.ok) throw new Error("Échec de la mise à jour");
     return res.json();
 }
 
-
-export function EditForm({ permission }: { permission: Permission }) {
+export function EditForm({ category }: { category: Category }) {
 
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
-    const [errors, setErrors] = useState<{ name: string[], description: string[] }>({ name: [], description: [] });
+    const [errors, setErrors] = useState<{ name: string[], is_active: string[] }>({ name: [], is_active: [] });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: updatePermission,
+        mutationFn: updateCategory,
         onMutate: () => {
             idToast = toast.loading("Mise à jour en cours...", { type: "info" });
         },
-        onError: (error) => {
+        onError: () => {
             toast.update(idToast, { render: "Échec de la mise à jour", type: "error", isLoading: false });
         },
         onSuccess: () => {
             setOpen(false);
-            toast.update(idToast, { render: "Permission mise à jour", type: "success", isLoading: false });
-            queryClient.invalidateQueries({ queryKey: ["permissions"] });
+            toast.update(idToast, { render: "Catégorie mise à jour", type: "success", isLoading: false });
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
         },
     });
 
@@ -63,24 +63,24 @@ export function EditForm({ permission }: { permission: Permission }) {
 
         const formData = new FormData(e.target as HTMLFormElement);
         const name = formData.get("name") as string;
-        const description = formData.get("description") as string;
+        const is_active = formData.get("is_active") === "1" ? true : false;
 
-        const validationResult = PermissionSchema.safeParse({ name, description });
+        const validationResult = CategorySchema.safeParse({ name, is_active });
 
         if (!validationResult.success) {
             setErrors({
                 name: validationResult.error.flatten().fieldErrors.name || [],
-                description: validationResult.error.flatten().fieldErrors.description || []
+                is_active: validationResult.error.flatten().fieldErrors.is_active || []
             });
             return;
         }
 
-        setErrors({ name: [], description: [] });
+        setErrors({ name: [], is_active: [] });
 
         mutate({ 
-            id_permission: permission.id_permission, 
+            id_category: category.id_category,
             name: validationResult.data.name,
-            description: validationResult.data.description
+            is_active: validationResult.data.is_active
         });
     }
 
@@ -93,22 +93,22 @@ export function EditForm({ permission }: { permission: Permission }) {
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Modifier une permission</DialogTitle>
-                    <DialogDescription>Modification de la permission {permission.name}</DialogDescription>
+                    <DialogTitle>Modifier une catégorie</DialogTitle>
+                    <DialogDescription>Modification de la catégorie {category.name}</DialogDescription>
                 </DialogHeader>
                 <form className="flex flex-col gap-3" action="#" onSubmit={submit}>
                     <div className="flex flex-col gap-2">
                         <Label htmlFor="name">Nom :</Label>
-                        <Input type="text" name="name" id="name" defaultValue={permission.name} required disabled={isPending} />
+                        <Input type="text" name="name" id="name" defaultValue={category.name} required disabled={isPending} />
                         {errors.name.length > 0 && (
                             <p className="text-red-500 text-sm">{errors.name.join(", ")}</p>
                         )}
                     </div>
                     <div className="flex flex-col gap-2">
-                        <Label htmlFor="description">Description :</Label>
-                        <Input type="text" name="description" id="description" defaultValue={permission.description ?? ""} disabled={isPending} />
-                        {errors.description.length > 0 && (
-                            <p className="text-red-500 text-sm">{errors.description.join(", ")}</p>
+                        <Label htmlFor="is_active">Actif :</Label>
+                        <Boolean name="is_active" id="is_active" defaultValue={category.is_active} disabled={isPending} />
+                        {errors.is_active.length > 0 && (
+                            <p className="text-red-500 text-sm">{errors.is_active.join(", ")}</p>
                         )}
                     </div>
                     <DialogFooter>

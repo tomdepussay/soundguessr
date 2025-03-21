@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import TableData from "./TableData";
-import { AddPermissionForm } from "./_form/add";
+import { AddForm } from "./_form/add";
 import { useEffect, useState } from "react";
 import Pagination from "@/src/components/Pagination";
 
@@ -26,7 +26,7 @@ export default function Page(){
         <div>
             <div className="p-4 w-full flex justify-between items-center">
                 <h2 className="text-xl font-bold">Permissions</h2>
-                <AddPermissionForm />
+                <AddForm />
             </div>
 
             <div className="p-4">

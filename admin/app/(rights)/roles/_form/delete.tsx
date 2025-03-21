@@ -5,11 +5,14 @@ import { Trash } from "lucide-react";
 import { useQueryClient , useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/src/components/ui/alert-dialog";
+import { Id, toast } from "react-toastify";
 
 type Role = {
     id_role: number;
     name: string;
 }
+
+let idToast: Id;
 
 const deleteRole = async ({ id_role }: { id_role: number }) => {
     const res = await fetch(`/api/roles/${id_role}`, {
@@ -28,8 +31,15 @@ export function DeleteRoleForm({ role }: { role: Role }) {
 
     const { mutate, isPending } = useMutation({
         mutationFn: deleteRole,
+        onMutate: () => {
+            idToast = toast.loading("Suppression en cours...", { type: "info" });
+        },
+        onError: (error) => {
+            toast.update(idToast, { render: "Échec de la suppression", type: "error", isLoading: false });
+        },
         onSuccess: () => {
             setOpen(false);
+            toast.update(idToast, { render: "Rôle supprimé", type: "success", isLoading: false });
             queryClient.invalidateQueries({ queryKey: ["roles"] });
         },
     });

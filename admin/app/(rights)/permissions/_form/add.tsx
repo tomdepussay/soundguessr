@@ -8,6 +8,9 @@ import { Plus } from "lucide-react";
 import { useQueryClient , useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { useState } from "react";
+import { Id, toast } from "react-toastify";
+
+let idToast: Id;
 
 const PermissionSchema = z.object({
     name: z.string().min(3, "Le nom doit faire au moins 3 caractères."),
@@ -28,7 +31,7 @@ const addPermission = async ({ name, description }: { name: string, description:
 }
 
 
-export function AddPermissionForm() {
+export function AddForm() {
 
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
@@ -36,8 +39,15 @@ export function AddPermissionForm() {
 
     const { mutate, isPending } = useMutation({
         mutationFn: addPermission,
+        onMutate: () => {
+            idToast = toast.loading("Ajout en cours...", { type: "info" });
+        },
+        onError: (error) => {
+            toast.update(idToast, { render: "Échec de l'ajout", type: "error", isLoading: false });
+        },
         onSuccess: () => {
             setOpen(false);
+            toast.update(idToast, { render: "Permission ajoutée", type: "success", isLoading: false });
             queryClient.invalidateQueries({ queryKey: ["permissions"] });
         },
     });

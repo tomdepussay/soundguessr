@@ -8,20 +8,23 @@ import { Plus } from "lucide-react";
 import { useQueryClient , useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { useState } from "react";
+import { Boolean } from "@/src/components/ui/boolean";
 import { Id, toast } from "react-toastify";
+
+const CategorySchema = z.object({
+    name: z.string().min(3, "Le nom doit faire au moins 3 caractères."),
+    is_active: z.boolean()
+})
 
 let idToast: Id;
 
-const RoleSchema = z.object({
-    name: z.string().min(3, "Le nom doit faire au moins 3 caractères.")
-})
-
-const addRole = async ({ name }: { name: string }) => {
-    const res = await fetch(`/api/roles`, {
+const addCategory = async ({ name, is_active }: { name: string, is_active: boolean }) => {
+    const res = await fetch(`/api/categories`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-            name
+            name,
+            is_active
         }),
     });
     if (!res.ok) throw new Error("Échec de l'ajout");
@@ -29,14 +32,14 @@ const addRole = async ({ name }: { name: string }) => {
 }
 
 
-export function AddRoleForm() {
+export function AddForm() {
 
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
-    const [errors, setErrors] = useState<{ name: string[] }>({ name: [] });
+    const [errors, setErrors] = useState<{ name: string[], is_active: string[] }>({ name: [], is_active: [] });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: addRole,
+        mutationFn: addCategory,
         onMutate: () => {
             idToast = toast.loading("Ajout en cours...", { type: "info" });
         },
@@ -45,8 +48,8 @@ export function AddRoleForm() {
         },
         onSuccess: () => {
             setOpen(false);
-            toast.update(idToast, { render: "Rôle ajouté", type: "success", isLoading: false });
-            queryClient.invalidateQueries({ queryKey: ["roles"] });
+            toast.update(idToast, { render: "Catégorie ajoutée", type: "success", isLoading: false });
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
         },
     });
 
@@ -55,19 +58,24 @@ export function AddRoleForm() {
 
         const formData = new FormData(e.target as HTMLFormElement);
         const name = formData.get("name") as string;
+        const is_active = formData.get("is_active") === "1" ? true : false;
 
-        const validationResult = RoleSchema.safeParse({ name });
+        const validationResult = CategorySchema.safeParse({ name, is_active });
 
         if (!validationResult.success) {
             setErrors({
-                name: validationResult.error.flatten().fieldErrors.name || []
+                name: validationResult.error.flatten().fieldErrors.name || [],
+                is_active: validationResult.error.flatten().fieldErrors.is_active || []
             });
             return;
         }
 
-        setErrors({ name: [] });
+        setErrors({ name: [], is_active: [] });
 
-        mutate({ name: validationResult.data.name });
+        mutate({ 
+            name: validationResult.data.name, 
+            is_active: validationResult.data.is_active 
+        });
     }
 
     return (
@@ -75,12 +83,12 @@ export function AddRoleForm() {
             <DialogTrigger asChild>
                 <Button onClick={() => setOpen(true)}>
                     <Plus />
-                    Ajouter un rôle
+                    Ajouter une catégorie
                 </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Ajouter un rôle</DialogTitle>
+                    <DialogTitle>Ajouter une catégorie</DialogTitle>
                 </DialogHeader>
                 <form className="flex flex-col gap-3" action="#" onSubmit={submit}>
                     <div className="flex flex-col gap-2">
@@ -88,6 +96,13 @@ export function AddRoleForm() {
                         <Input type="text" name="name" id="name" required disabled={isPending} />
                         {errors.name.length > 0 && (
                             <p className="text-red-500 text-sm">{errors.name.join(", ")}</p>
+                        )}
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <Label htmlFor="is_active">Actif :</Label>
+                        <Boolean name="is_active" id="is_active" defaultValue={true} disabled={isPending} />
+                        {errors.is_active.length > 0 && (
+                            <p className="text-red-500 text-sm">{errors.is_active.join(", ")}</p>
                         )}
                     </div>
                     <DialogFooter>

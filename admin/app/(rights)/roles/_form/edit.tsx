@@ -8,11 +8,14 @@ import { Edit } from "lucide-react";
 import { useQueryClient , useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { useState } from "react";
+import { Id, toast } from "react-toastify";
 
 type Role = {
     id_role: number;
     name: string;
 }
+
+let idToast: Id;
 
 const RoleSchema = z.object({
     name: z.string().min(3, "Le nom doit faire au moins 3 caractères.")
@@ -39,8 +42,15 @@ export function EditRoleForm({ role }: { role: Role }) {
 
     const { mutate, isPending } = useMutation({
         mutationFn: updateRole,
+        onMutate: () => {
+            idToast = toast.loading("Mise à jour en cours...", { type: "info" });
+        },
+        onError: (error) => {
+            toast.update(idToast, { render: "Échec de la mise à jour", type: "error", isLoading: false });
+        },
         onSuccess: () => {
             setOpen(false);
+            toast.update(idToast, { render: "Rôle mis à jour", type: "success", isLoading: false });
             queryClient.invalidateQueries({ queryKey: ["roles"] });
         },
     });

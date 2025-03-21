@@ -5,6 +5,7 @@ import Providers from "@/src/components/Providers";
 import Nav from "@/src/components/Nav";
 import { Book, Monitor, Shield, Users, Zap, Gamepad } from "lucide-react";
 import { verifySession } from "@/src/lib/session";
+import { ToastContainer } from "react-toastify";
 
 export const metadata: Metadata = {
     title: "Admin - Soundguessr",
@@ -105,18 +106,23 @@ export default async function Layout({
         )
     } else {
         return (
-            <html lang="fr" className="h-full w-full">
-                <Providers>
-                    <Body>
-                        <header>
-                            <Nav navItems={navItems} />
-                        </header>
-                        <main className="h-full w-full">
-                            {children}
-                        </main>
-                    </Body>
-                </Providers>
-            </html>
+            <>
+                <html lang="fr" className="h-full w-full">
+                    <Providers>
+                        <Body>
+                            <header>
+                                <Nav navItems={navItems} />
+                            </header>
+                            <main className="h-full w-full">
+                                {children}
+                            </main>
+                        </Body>
+                    </Providers>
+                </html>
+                <ToastContainer
+                    position="bottom-right"
+                />
+            </>
         );
     }
 }

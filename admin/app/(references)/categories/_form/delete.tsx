@@ -7,16 +7,16 @@ import { useState } from "react";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/src/components/ui/alert-dialog";
 import { Id, toast } from "react-toastify";
 
-type Permission = {
-    id_permission: number;
+type Category = {
+    id_category: number;
     name: string;
-    description: string | null;
+    is_active: boolean;
 }
 
 let idToast: Id;
 
-const deletePermission = async ({ id_permission }: { id_permission: number }) => {
-    const res = await fetch(`/api/permissions/${id_permission}`, {
+const deleteCategory = async ({ id_category }: { id_category: number }) => {
+    const res = await fetch(`/api/categories/${id_category}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
     });
@@ -25,30 +25,30 @@ const deletePermission = async ({ id_permission }: { id_permission: number }) =>
 }
 
 
-export function DeleteForm({ permission }: { permission: Permission }) {
+export function DeleteForm({ category }: { category: Category }) {
 
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
 
     const { mutate, isPending } = useMutation({
-        mutationFn: deletePermission,
+        mutationFn: deleteCategory,
         onMutate: () => {
             idToast = toast.loading("Suppression en cours...", { type: "info" });
         },
-        onError: (error) => {
+        onError: () => {
             toast.update(idToast, { render: "Échec de la suppression", type: "error", isLoading: false });
         },
         onSuccess: () => {
             setOpen(false);
-            toast.update(idToast, { render: "Permission supprimée", type: "success", isLoading: false });
-            queryClient.invalidateQueries({ queryKey: ["permissions"] });
+            toast.update(idToast, { render: "Catégorie supprimée", type: "success", isLoading: false });
+            queryClient.invalidateQueries({ queryKey: ["categories"] });
         },
     });
 
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        mutate({ id_permission: permission.id_permission });
+        mutate({ id_category: category.id_category });
     }
 
     return (
@@ -60,8 +60,8 @@ export function DeleteForm({ permission }: { permission: Permission }) {
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Supprimer une permission</AlertDialogTitle>
-                    <AlertDialogDescription>Êtes-vous sûr de vouloir supprimer la permission {permission.name} ?</AlertDialogDescription>
+                    <AlertDialogTitle>Supprimer une catégorie</AlertDialogTitle>
+                    <AlertDialogDescription>Êtes-vous sûr de vouloir supprimer la catégorie {category.name} ?</AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel asChild>
