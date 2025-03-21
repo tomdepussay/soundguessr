@@ -15,9 +15,11 @@ export default function Pagination({ page, setPage, pages }: PaginationProps) {
            <Button onClick={() => setPage(page - 1)} disabled={page === 1} variant="outline">
                <ChevronLeft />
            </Button>
-           <Select defaultValue={String(page - 1)}>
+           <Select value={String(page - 1)} onValueChange={(value) => setPage(parseInt(value as string, 10) + 1)}>
                <SelectTrigger>
-                   <SelectValue placeholder="0" />
+                   <SelectValue placeholder="0">
+                        {page}
+                   </SelectValue>
                </SelectTrigger>
                <SelectContent>
                    <SelectGroup>
