@@ -6,12 +6,7 @@ import { useQueryClient , useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/src/components/ui/alert-dialog";
 import { Id, toast } from "react-toastify";
-
-type Permission = {
-    id_permission: number;
-    name: string;
-    description: string | null;
-}
+import { Permission } from "@/src/types/Permission";
 
 let idToast: Id;
 

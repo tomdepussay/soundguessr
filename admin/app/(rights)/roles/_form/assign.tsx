@@ -3,12 +3,10 @@ import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogT
 import { Label } from "@/src/components/ui/label";
 import { ArrowRightLeft } from "lucide-react";
 import { useState } from "react";
+import { Role } from "@/src/types/Role";
 
 type AssignFormProps = {
-    role: {
-        id_role: number;
-        name: string;
-    }
+    role: Role
 }
 
 export function AssignForm({ role }: AssignFormProps){

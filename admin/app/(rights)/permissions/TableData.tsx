@@ -4,12 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { EditForm } from "./_form/edit";
 import { DeleteForm } from "./_form/delete";
 import { useQuery } from "@tanstack/react-query";
-
-type Permission = {
-    id_permission: number;
-    name: string;
-    description: string | null;
-}
+import { Permission } from "@/src/types/Permission";
 
 type TableDataProps = {
     page: number;

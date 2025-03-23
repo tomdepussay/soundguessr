@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { verifySession } from "@/src/lib/session";
+import { User } from "@/src/types/User";
 
 const prisma = new PrismaClient();
 
@@ -17,7 +18,7 @@ export async function GET(
 
     try {
 
-        const user = await prisma.users.findUnique({
+        const user: User | null = await prisma.users.findUnique({
             select: {
                 id_user: true,
                 email: true,

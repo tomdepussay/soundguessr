@@ -9,11 +9,7 @@ import { useQueryClient , useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { useState } from "react";
 import { Id, toast } from "react-toastify";
-
-type Role = {
-    id_role: number;
-    name: string;
-}
+import { Role } from "@/src/types/Role";
 
 let idToast: Id;
 

@@ -1,54 +1,54 @@
 "use client"
 
 import { Button } from "@/src/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/src/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/src/components/ui/dialog";
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
-import { Edit } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useQueryClient , useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { useState } from "react";
 import { Boolean } from "@/src/components/ui/boolean";
 import { Id, toast } from "react-toastify";
-import { Category } from "@/src/types/Category";
-
-let idToast: Id;
 
 const CategorySchema = z.object({
     name: z.string().min(3, "Le nom doit faire au moins 3 caractères."),
     is_active: z.boolean()
 })
 
-const updateCategory = async ({ id_category, name, is_active }: { id_category: number, name: string, is_active: boolean }) => {
-    const res = await fetch(`/api/categories/${id_category}`, {
-        method: "PUT",
+let idToast: Id;
+
+const addCategory = async ({ name, is_active }: { name: string, is_active: boolean }) => {
+    const res = await fetch(`/api/categories`, {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
             name,
             is_active
         }),
     });
-    if (!res.ok) throw new Error("Échec de la mise à jour");
+    if (!res.ok) throw new Error("Échec de l'ajout");
     return res.json();
 }
 
-export function EditForm({ category }: { category: Category }) {
+
+export function AddForm() {
 
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
     const [errors, setErrors] = useState<{ name: string[], is_active: string[] }>({ name: [], is_active: [] });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: updateCategory,
+        mutationFn: addCategory,
         onMutate: () => {
-            idToast = toast.loading("Mise à jour en cours...", { type: "info" });
+            idToast = toast.loading("Ajout en cours...", { type: "info" });
         },
-        onError: () => {
-            toast.update(idToast, { render: "Échec de la mise à jour", type: "error", isLoading: false, autoClose: 2000 });
+        onError: (error) => {
+            toast.update(idToast, { render: "Échec de l'ajout", type: "error", isLoading: false, autoClose: 2000 });
         },
         onSuccess: () => {
             setOpen(false);
-            toast.update(idToast, { render: "Catégorie mise à jour", type: "success", isLoading: false, autoClose: 2000 });
+            toast.update(idToast, { render: "Catégorie ajoutée", type: "success", isLoading: false, autoClose: 2000 });
             queryClient.invalidateQueries({ queryKey: ["categories"] });
         },
     });
@@ -73,9 +73,8 @@ export function EditForm({ category }: { category: Category }) {
         setErrors({ name: [], is_active: [] });
 
         mutate({ 
-            id_category: category.id_category,
-            name: validationResult.data.name,
-            is_active: validationResult.data.is_active
+            name: validationResult.data.name, 
+            is_active: validationResult.data.is_active 
         });
     }
 
@@ -83,31 +82,31 @@ export function EditForm({ category }: { category: Category }) {
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button onClick={() => setOpen(true)}>
-                    <Edit />
+                    <Plus />
+                    Ajouter une catégorie
                 </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Modifier une catégorie</DialogTitle>
-                    <DialogDescription>Modification de la catégorie {category.name}</DialogDescription>
+                    <DialogTitle>Ajouter une catégorie</DialogTitle>
                 </DialogHeader>
                 <form className="flex flex-col gap-3" action="#" onSubmit={submit}>
                     <div className="flex flex-col gap-2">
                         <Label htmlFor="name">Nom :</Label>
-                        <Input type="text" name="name" id="name" defaultValue={category.name} required disabled={isPending} />
+                        <Input type="text" name="name" id="name" required disabled={isPending} />
                         {errors.name.length > 0 && (
                             <p className="text-red-500 text-sm">{errors.name.join(", ")}</p>
                         )}
                     </div>
                     <div className="flex flex-col gap-2">
                         <Label htmlFor="is_active">Actif :</Label>
-                        <Boolean name="is_active" id="is_active" defaultValue={category.is_active} disabled={isPending} />
+                        <Boolean name="is_active" id="is_active" defaultValue={true} disabled={isPending} />
                         {errors.is_active.length > 0 && (
                             <p className="text-red-500 text-sm">{errors.is_active.join(", ")}</p>
                         )}
                     </div>
                     <DialogFooter>
-                        <Button type="submit">{ isPending ? "Chargement..." : "Enregistrer" }</Button>
+                        <Button type="submit">{ isPending ? "Chargement..." : "Ajouter" }</Button>
                         <DialogClose asChild>
                             <Button type="button" variant="secondary" disabled={isPending}>Annuler</Button>
                         </DialogClose>

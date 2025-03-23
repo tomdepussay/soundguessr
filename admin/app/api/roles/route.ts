@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { Role } from "@/src/types/Role";
 
 const prisma = new PrismaClient();
 
 export async function GET() {
     try {
 
-        const roles = await prisma.roles.findMany({
+        const roles: Role[] = await prisma.roles.findMany({
             select: {
                 id_role: true,
                 name: true
@@ -28,7 +29,7 @@ export async function POST(
     const { name } = await req.json();
 
     try {
-        const newRole = await prisma.roles.create({
+        const newRole: Role = await prisma.roles.create({
             data: { 
                 name 
             },

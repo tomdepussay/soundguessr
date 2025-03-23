@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { Category } from "@/src/types/Category";
 
 const prisma = new PrismaClient();
 
@@ -13,11 +14,11 @@ export async function GET(
 
     try {
 
-        const categories = await prisma.categories.findMany({
+        const categories: Category[] = await prisma.categories.findMany({
             select: {
                 id_category: true,
+                is_active: true,
                 name: true,
-                is_active: true
             },
             orderBy: {
                 id_category: "asc"
@@ -44,7 +45,7 @@ export async function POST(
     const { name, is_active } = await req.json();
 
     try {
-        const newCategory = await prisma.categories.create({
+        const newCategory: Category = await prisma.categories.create({
             data: { 
                 name,
                 is_active

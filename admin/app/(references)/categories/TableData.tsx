@@ -5,13 +5,7 @@ import { EditForm } from "./_form/edit";
 import { DeleteForm } from "./_form/delete";
 import { Switch } from "./_form/switch";
 import { useQuery } from "@tanstack/react-query";
-import { Badge } from "@/src/components/ui/badge";
-
-type Category = {
-    id_category: number;
-    name: string;
-    is_active: boolean;
-}
+import { Category } from "@/src/types/Category";
 
 type TableDataProps = {
     page: number;
@@ -27,7 +21,6 @@ export default function TableData({ page, setPages }: TableDataProps){
             pages: number;
         } = await response.json();
         setPages(data.pages);
-        console.log(data);
         return data;
     }
     

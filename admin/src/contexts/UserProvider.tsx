@@ -2,14 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { useQueryClient , useMutation } from "@tanstack/react-query";
-
-type User = {
-    id_user: number;
-    username: string;
-    email: string;
-    id_role: number;
-    id_picture: number;
-};
+import { User } from '@/src/types/User';
 
 interface UserContextType {
     user: User | null;

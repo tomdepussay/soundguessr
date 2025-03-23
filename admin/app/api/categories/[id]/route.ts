@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { Category } from "@/src/types/Category";
 
 const prisma = new PrismaClient();
 
@@ -11,7 +12,7 @@ export async function PUT(
     const { name, is_active } = await req.json();
 
     try {
-        const updatedCategory = await prisma.categories.update({
+        const updatedCategory: Category = await prisma.categories.update({
             where: { 
                 id_category: Number(id) 
             },

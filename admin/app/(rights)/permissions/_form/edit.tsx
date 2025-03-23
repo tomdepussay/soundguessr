@@ -9,12 +9,7 @@ import { useQueryClient , useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { useState } from "react";
 import { Id, toast } from "react-toastify";
-
-type Permission = {
-    id_permission: number;
-    name: string;
-    description: string | null;
-}
+import { Permission } from "@/src/types/Permission";
 
 let idToast: Id;
 

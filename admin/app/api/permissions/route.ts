@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { Permission } from "@/src/types/Permission";
 
 const prisma = new PrismaClient();
 
@@ -13,7 +14,7 @@ export async function GET(
 
     try {
 
-        const permissions = await prisma.permissions.findMany({
+        const permissions: Permission[] = await prisma.permissions.findMany({
             select: {
                 id_permission: true,
                 name: true,
@@ -44,7 +45,7 @@ export async function POST(
     const { name, description } = await req.json();
 
     try {
-        const newPermission = await prisma.permissions.create({
+        const newPermission: Permission = await prisma.permissions.create({
             data: { 
                 name,
                 description

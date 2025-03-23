@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { Permission } from "@/src/types/Permission";
 
 const prisma = new PrismaClient();
 
@@ -11,7 +12,7 @@ export async function PUT(
     const { name, description } = await req.json();
 
     try {
-        const updatedPermission = await prisma.permissions.update({
+        const updatedPermission: Permission = await prisma.permissions.update({
             where: { 
                 id_permission: Number(id) 
             },

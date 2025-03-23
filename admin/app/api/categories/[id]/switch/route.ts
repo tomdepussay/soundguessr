@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { Category } from "@/src/types/Category";
 
 const prisma = new PrismaClient();
 
@@ -11,7 +12,7 @@ export async function PUT(
 
     try {
 
-        const category = await prisma.categories.findUnique({
+        const category: Category | null = await prisma.categories.findUnique({
             where: { id_category: Number(id) }
         });
 

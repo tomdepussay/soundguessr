@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { Role } from "@/src/types/Role";
 
 const prisma = new PrismaClient();
 
@@ -11,7 +12,7 @@ export async function PUT(
     const { name } = await req.json();
 
     try {
-        const updatedRole = await prisma.roles.update({
+        const updatedRole: Role = await prisma.roles.update({
             where: { 
                 id_role: Number(id) 
             },

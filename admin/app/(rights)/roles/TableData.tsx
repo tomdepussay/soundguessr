@@ -5,11 +5,7 @@ import { EditForm } from "./_form/edit";
 import { DeleteForm } from "./_form/delete";
 import { AssignForm } from "./_form/assign";
 import { useQuery } from "@tanstack/react-query";
-
-type Role = {
-    id_role: number;
-    name: string;
-}
+import { Role } from "@/src/types/Role";
 
 async function fetchRoles(){
     const response = await fetch("/api/roles");
