@@ -10,7 +10,7 @@ services:
       - "5432:5432"
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
-      - ./data/migrations:/docker-entrypoint-initdb.d
+      # - ./data/migrations:/docker-entrypoint-initdb.d
 
   pgadmin:
     image: elestio/pgadmin
@@ -23,21 +23,20 @@ services:
     depends_on:
       - db
 
-  client:
-    build:
-      context: ./client
-    container_name: client
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=development
-      - WATCHPACK_POLLING=true
-    volumes:
-      - ./client:/app
+  # client:
+  #   build:
+  #     context: ./client
+  #   container_name: client
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - NODE_ENV=development
+  #     - WATCHPACK_POLLING=true
+  #   volumes:
+  #     - ./client:/app
 
   admin: 
-    build:
-      context: ./admin
+    image: node:23-alpine3.20
     container_name: admin
     ports:
       - "3001:3000"
@@ -48,3 +47,4 @@ services:
       JWT_SECRET: ${JWT_SECRET}
     volumes:
       - ./admin:/app
+    command: sh -c "cd /app && npm install && npx prisma migrate dev --name init && npm run dev"
