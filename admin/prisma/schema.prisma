@@ -7,195 +7,231 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model animes {
-  id_anime   Int       @id @default(autoincrement())
-  created_at DateTime  @default(now()) @db.Timestamp(6)
-  updated_at DateTime  @default(now()) @db.Timestamp(6)
-  is_active  Boolean   @default(true)
-  title      String    @db.VarChar(255)
-  top100     Boolean   @default(false)
-  id_image   Int
-  images     images    @relation(fields: [id_image], references: [id_image], onDelete: NoAction, onUpdate: NoAction)
-  ending     ending[]
-  opening    opening[]
+model Role {
+    id Int @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    name String @unique
+
+    users User[] @relation(name: "roleUsers")
+
+    permissions Permission[] @relation(name: "RolePermissions")
+
+    @@map("role")
 }
 
-model categories {
-  id_category Int      @id @default(autoincrement())
-  created_at  DateTime @default(now()) @db.Timestamp(6)
-  updated_at  DateTime @default(now()) @db.Timestamp(6)
-  is_active   Boolean  @default(true)
-  name        String   @db.VarChar(255)
-  sounds      sounds[]
+model User {
+    id Int @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    username String @unique
+    email String @unique
+    password String
+
+    roleId Int
+    role Role @relation(name: "roleUsers", fields: [roleId], references: [id])
+
+    pictures Picture[] @relation(name: "UserPictures")
+    activePictureId Int? @unique
+    activePicture Picture? @relation(name: "UserActivePicture", fields: [activePictureId], references: [id])
+    
+    networks Network[] @relation(name: "UserNetworks")
+
+    @@index([username, email])
+    @@map("user")
 }
 
-model ending {
-  id_ending  Int      @id @default(autoincrement())
-  created_at DateTime @default(now()) @db.Timestamp(6)
-  updated_at DateTime @default(now()) @db.Timestamp(6)
-  is_active  Boolean  @default(true)
-  name       String   @db.VarChar(255)
-  number     Int
-  year       Int
-  id_anime   Int
-  id_sound   Int
-  id_season  Int
-  animes     animes   @relation(fields: [id_anime], references: [id_anime], onDelete: NoAction, onUpdate: NoAction)
-  seasons    seasons  @relation(fields: [id_season], references: [id_season], onDelete: NoAction, onUpdate: NoAction)
-  sounds     sounds   @relation(fields: [id_sound], references: [id_sound], onDelete: NoAction, onUpdate: NoAction)
+model Picture {
+    id Int @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    link String @unique
+    extension String
+    size Int
+
+    userId Int
+    user User @relation(name: "UserPictures", fields: [userId], references: [id])
+    
+    activePicture User? @relation(name: "UserActivePicture")
+
+    @@index([link])
+    @@map("picture")
 }
 
-model images {
-  id_image   Int      @id @default(autoincrement())
-  created_at DateTime @default(now()) @db.Timestamp(6)
-  updated_at DateTime @default(now()) @db.Timestamp(6)
-  link       String   @db.VarChar(255)
-  extension  String   @db.VarChar(5)
-  size       Int
-  animes     animes[]
+model Permission {
+    id Int @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    name String @unique
+    description String
+
+    roles Role[] @relation(name: "RolePermissions")
+
+    @@index([name])
+    @@map("permission")
 }
 
-model networks {
-  id_network     Int              @id @default(autoincrement())
-  created_at     DateTime         @default(now()) @db.Timestamp(6)
-  updated_at     DateTime         @default(now()) @db.Timestamp(6)
-  is_active      Boolean          @default(true)
-  name           String           @db.VarChar(255)
-  extension      String           @db.VarChar(5)
-  size           Int
-  users_networks users_networks[]
+model Network {
+    id Int @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    isActive Boolean @default(true)
+    name String @unique
+    link String @unique
+    extension String
+    size Int
+
+    users User[] @relation(name: "UserNetworks")
+
+    @@index([name, link])
+    @@map("network")
 }
 
-model opening {
-  id_opening Int      @id @default(autoincrement())
-  created_at DateTime @default(now()) @db.Timestamp(6)
-  updated_at DateTime @default(now()) @db.Timestamp(6)
-  is_active  Boolean  @default(true)
-  name       String   @db.VarChar(255)
-  number     Int
-  year       Int
-  id_anime   Int
-  id_sound   Int
-  id_season  Int
-  animes     animes   @relation(fields: [id_anime], references: [id_anime], onDelete: NoAction, onUpdate: NoAction)
-  seasons    seasons  @relation(fields: [id_season], references: [id_season], onDelete: NoAction, onUpdate: NoAction)
-  sounds     sounds   @relation(fields: [id_sound], references: [id_sound], onDelete: NoAction, onUpdate: NoAction)
+model Category {
+    id Int @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    isActive Boolean @default(true)
+    name String @unique
+
+    sounds Sound[] @relation(name: "CategorySounds")
+
+    @@index([name])
+    @@map("category")
 }
 
-model permissions {
-  id_permission     Int                 @id @default(autoincrement())
-  created_at        DateTime            @default(now()) @db.Timestamp(6)
-  updated_at        DateTime            @default(now()) @db.Timestamp(6)
-  name              String              @db.VarChar(255)
-  description       String?
-  roles_permissions roles_permissions[]
-  users_permissions users_permissions[]
+model Sound {
+    id Int @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    link String @unique
+    extension String
+    size Int
+    url String
+
+    categoryId Int
+    category Category @relation(name: "CategorySounds", fields: [categoryId], references: [id])
+
+    opening Opening? @relation(name: "OpeningSound")
+
+    ending Ending? @relation(name: "EndingSound")
+
+    @@index([link])
+    @@map("sound")
 }
 
-model pictures {
-  id_picture                       Int      @id @default(autoincrement())
-  created_at                       DateTime @default(now()) @db.Timestamp(6)
-  link                             String   @db.VarChar(255)
-  extension                        String   @db.VarChar(5)
-  size                             Int
-  id_user                          Int
-  users_pictures_id_userTousers    users    @relation("pictures_id_userTousers", fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction)
-  users_users_id_pictureTopictures users[]  @relation("users_id_pictureTopictures")
+model Image {
+    id Int @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    link String @unique
+    extension String
+    size Int
+
+    anime Anime? @relation(name: "AnimeImage")
+
+    @@index([link])
+    @@map("image")
 }
 
-model questions_ending {
-  id_question_ending Int      @id @default(autoincrement())
-  created_at         DateTime @default(now()) @db.Timestamp(6)
-  updated_at         DateTime @default(now()) @db.Timestamp(6)
-  is_active          Boolean  @default(true)
-  question           String   @db.VarChar(255)
-  number             Int
+model Anime {
+    id Int @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    isActive Boolean @default(true)
+    title String @unique
+    top100 Boolean @default(false)
+    description String
+
+    openings Opening[] @relation(name: "AnimeOpening")
+
+    endings Ending[] @relation(name: "AnimeEnding")
+
+    imageId Int? @unique
+    image Image? @relation(name: "AnimeImage", fields: [imageId], references: [id])
+
+    @@index([title])
+    @@map("anime")
 }
 
-model questions_opening {
-  id_question_opening Int      @id @default(autoincrement())
-  created_at          DateTime @default(now()) @db.Timestamp(6)
-  updated_at          DateTime @default(now()) @db.Timestamp(6)
-  is_active           Boolean  @default(true)
-  question            String   @db.VarChar(255)
-  number              Int
+model Season {
+    id Int @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    name String @unique
+
+    openings Opening[] @relation(name: "SeasonOpening")
+
+    endings Ending[] @relation(name: "SeasonEnding")
+
+    @@index([name])
+    @@map("season")
 }
 
-model roles {
-  id_role           Int                 @id @default(autoincrement())
-  created_at        DateTime            @default(now()) @db.Timestamp(6)
-  updated_at        DateTime            @default(now()) @db.Timestamp(6)
-  name              String              @db.VarChar(255)
-  roles_permissions roles_permissions[]
-  users             users[]
+model Opening {
+    id Int @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    isActive Boolean @default(true)
+    name String
+    number Int
+    year Int
+
+    animeId Int
+    anime Anime @relation(name: "AnimeOpening", fields: [animeId], references: [id])
+
+    seasonId Int
+    season Season @relation(name: "SeasonOpening", fields: [seasonId], references: [id])
+
+    soundId Int @unique
+    sound Sound @relation(name: "OpeningSound", fields: [soundId], references: [id])
+
+    @@index([name])
+    @@map("opening")
 }
 
-model roles_permissions {
-  id_role       Int
-  id_permission Int
-  permissions   permissions @relation(fields: [id_permission], references: [id_permission], onDelete: NoAction, onUpdate: NoAction)
-  roles         roles       @relation(fields: [id_role], references: [id_role], onDelete: NoAction, onUpdate: NoAction)
+model Ending {
+    id Int @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    isActive Boolean @default(true)
+    name String
+    number Int
+    year Int
 
-  @@id([id_role, id_permission])
+    animeId Int
+    anime Anime @relation(name: "AnimeEnding", fields: [animeId], references: [id])
+
+    seasonId Int
+    season Season @relation(name: "SeasonEnding", fields: [seasonId], references: [id])
+
+    soundId Int @unique
+    sound Sound @relation(name: "EndingSound", fields: [soundId], references: [id])
+
+    @@index([name])
+    @@map("ending")
 }
 
-model seasons {
-  id_season  Int       @id @default(autoincrement())
-  created_at DateTime  @default(now()) @db.Timestamp(6)
-  updated_at DateTime  @default(now()) @db.Timestamp(6)
-  name       String    @db.VarChar(255)
-  ending     ending[]
-  opening    opening[]
+model Question_Opening {
+    id Int @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    isActive Boolean @default(true)
+    question String
+    number Int 
+
+    @@index([question])
+    @@map("question_opening")
 }
 
-model sounds {
-  id_sound    Int        @id @default(autoincrement())
-  created_at  DateTime   @default(now()) @db.Timestamp(6)
-  updated_at  DateTime   @default(now()) @db.Timestamp(6)
-  link        String     @db.VarChar(255)
-  extension   String     @db.VarChar(5)
-  size        Int
-  url         String?    @db.VarChar(255)
-  id_category Int
-  ending      ending[]
-  opening     opening[]
-  categories  categories @relation(fields: [id_category], references: [id_category], onDelete: NoAction, onUpdate: NoAction)
-}
+model Question_Ending {
+    id Int @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now())
+    isActive Boolean @default(true)
+    question String
+    number Int
 
-model users {
-  id_user                             Int                 @id @default(autoincrement())
-  created_at                          DateTime            @default(now()) @db.Timestamp(6)
-  updated_at                          DateTime            @default(now()) @db.Timestamp(6)
-  username                            String              @db.VarChar(255)
-  email                               String              @unique @db.VarChar(255)
-  password                            String              @db.VarChar(255)
-  bio                                 String?
-  id_role                             Int                 @default(4)
-  id_picture                          Int?
-  pictures_pictures_id_userTousers    pictures[]          @relation("pictures_id_userTousers")
-  pictures_users_id_pictureTopictures pictures?           @relation("users_id_pictureTopictures", fields: [id_picture], references: [id_picture], onDelete: NoAction, onUpdate: NoAction)
-  roles                               roles               @relation(fields: [id_role], references: [id_role], onDelete: NoAction, onUpdate: NoAction)
-  users_networks                      users_networks[]
-  users_permissions                   users_permissions[]
-}
-
-model users_networks {
-  id_user    Int
-  id_network Int
-  created_at DateTime @default(now()) @db.Timestamp(6)
-  updated_at DateTime @default(now()) @db.Timestamp(6)
-  value      String   @db.VarChar(255)
-  networks   networks @relation(fields: [id_network], references: [id_network], onDelete: NoAction, onUpdate: NoAction)
-  users      users    @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction)
-
-  @@id([id_user, id_network])
-}
-
-model users_permissions {
-  id_user       Int
-  id_permission Int
-  permissions   permissions @relation(fields: [id_permission], references: [id_permission], onDelete: NoAction, onUpdate: NoAction)
-  users         users       @relation(fields: [id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction)
-
-  @@id([id_user, id_permission])
+    @@index([question]) 
+    @@map("question_ending")
 }
