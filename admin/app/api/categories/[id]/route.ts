@@ -9,16 +9,16 @@ export async function PUT(
     { params } : { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
-    const { name, is_active } = await req.json();
+    const { name, isActive } = await req.json();
 
     try {
-        const updatedCategory: Category = await prisma.categories.update({
+        const updatedCategory: Category = await prisma.category.update({
             where: { 
-                id_category: Number(id) 
+                id: Number(id) 
             },
             data: { 
                 name,
-                is_active
+                isActive
             },
         });
         return NextResponse.json(updatedCategory);
@@ -34,9 +34,9 @@ export async function DELETE(
     const { id } = await params;
 
     try {
-        await prisma.categories.delete({
+        await prisma.category.delete({
             where: { 
-                id_category: Number(id) 
+                id: Number(id) 
             }
         });
         return NextResponse.json({ success: true });

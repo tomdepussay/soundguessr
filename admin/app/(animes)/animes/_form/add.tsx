@@ -13,18 +13,18 @@ import { Id, toast } from "react-toastify";
 
 const CategorySchema = z.object({
     name: z.string().min(3, "Le nom doit faire au moins 3 caractères."),
-    is_active: z.boolean()
+    isActive: z.boolean()
 })
 
 let idToast: Id;
 
-const addCategory = async ({ name, is_active }: { name: string, is_active: boolean }) => {
+const addCategory = async ({ name, isActive }: { name: string, isActive: boolean }) => {
     const res = await fetch(`/api/categories`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
             name,
-            is_active
+            isActive
         }),
     });
     if (!res.ok) throw new Error("Échec de l'ajout");
@@ -36,7 +36,7 @@ export function AddForm() {
 
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
-    const [errors, setErrors] = useState<{ name: string[], is_active: string[] }>({ name: [], is_active: [] });
+    const [errors, setErrors] = useState<{ name: string[], isActive: string[] }>({ name: [], isActive: [] });
 
     const { mutate, isPending } = useMutation({
         mutationFn: addCategory,
@@ -58,23 +58,23 @@ export function AddForm() {
 
         const formData = new FormData(e.target as HTMLFormElement);
         const name = formData.get("name") as string;
-        const is_active = formData.get("is_active") === "1" ? true : false;
+        const isActive = formData.get("isActive") === "1" ? true : false;
 
-        const validationResult = CategorySchema.safeParse({ name, is_active });
+        const validationResult = CategorySchema.safeParse({ name, isActive });
 
         if (!validationResult.success) {
             setErrors({
                 name: validationResult.error.flatten().fieldErrors.name || [],
-                is_active: validationResult.error.flatten().fieldErrors.is_active || []
+                isActive: validationResult.error.flatten().fieldErrors.isActive || []
             });
             return;
         }
 
-        setErrors({ name: [], is_active: [] });
+        setErrors({ name: [], isActive: [] });
 
         mutate({ 
             name: validationResult.data.name, 
-            is_active: validationResult.data.is_active 
+            isActive: validationResult.data.isActive 
         });
     }
 
@@ -99,10 +99,10 @@ export function AddForm() {
                         )}
                     </div>
                     <div className="flex flex-col gap-2">
-                        <Label htmlFor="is_active">Actif :</Label>
-                        <Boolean name="is_active" id="is_active" defaultValue={true} disabled={isPending} />
-                        {errors.is_active.length > 0 && (
-                            <p className="text-red-500 text-sm">{errors.is_active.join(", ")}</p>
+                        <Label htmlFor="isActive">Actif :</Label>
+                        <Boolean name="isActive" id="isActive" defaultValue={true} disabled={isPending} />
+                        {errors.isActive.length > 0 && (
+                            <p className="text-red-500 text-sm">{errors.isActive.join(", ")}</p>
                         )}
                     </div>
                     <DialogFooter>

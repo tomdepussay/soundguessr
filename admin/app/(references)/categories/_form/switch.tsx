@@ -8,8 +8,8 @@ type SwitchProps = {
     category: Category;
 }
 
-const switchCategory = async ({ id_category }: { id_category: number }) => {
-    const res = await fetch(`/api/categories/${id_category}/switch`, {
+const switchCategory = async ({ id }: { id: number }) => {
+    const res = await fetch(`/api/categories/${id}/switch`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
     });
@@ -37,13 +37,13 @@ export function Switch({ category }: SwitchProps) {
     });
 
     const handleClick = async () => {
-        await mutate({ id_category: category.id_category });
+        await mutate({ id: category.id });
     }
 
     return (
-        <Button variant={category.is_active ? "default" : "destructive"} disabled={isPending} onClick={handleClick}>
+        <Button variant={category.isActive ? "default" : "destructive"} disabled={isPending} onClick={handleClick}>
             {
-                category.is_active ? 
+                category.isActive ? 
                 <ToggleRight /> :
                 <ToggleLeft />
             }

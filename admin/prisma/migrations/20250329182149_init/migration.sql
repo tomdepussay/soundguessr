@@ -16,7 +16,7 @@ CREATE TABLE "user" (
     "username" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "roleId" INTEGER NOT NULL,
+    "roleId" INTEGER NOT NULL DEFAULT 4,
     "activePictureId" INTEGER,
 
     CONSTRAINT "user_pkey" PRIMARY KEY ("id")

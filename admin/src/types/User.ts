@@ -1,11 +1,16 @@
+import { Role } from "./Role";
+import { Picture } from "./Picture";
+
 export type User = {
-    id_user: number;
-    created_at?: Date;
-    updated_at?: Date;
+    id: number;
+    createdAt?: Date;
+    updatedAt?: Date;
     username: string;
     email: string;
     password?: string;
     bio?: string
-    id_role: number;
-    id_picture: number | null;
+    roleId: number;
+    role: Role;
+    pictureId?: number;
+    picture?: Picture;
 };

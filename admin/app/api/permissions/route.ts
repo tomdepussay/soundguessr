@@ -14,20 +14,20 @@ export async function GET(
 
     try {
 
-        const permissions: Permission[] = await prisma.permissions.findMany({
+        const permissions: Permission[] = await prisma.permission.findMany({
             select: {
-                id_permission: true,
+                id: true,
                 name: true,
                 description: true
             },
             orderBy: {
-                id_permission: "asc"
+                id: "asc"
             },
             skip: (page - 1) * max,
             take: max,
         });
 
-        const total = await prisma.permissions.count();
+        const total = await prisma.permission.count();
         const pages = Math.ceil(total / max);
 
         return NextResponse.json({
@@ -45,14 +45,15 @@ export async function POST(
     const { name, description } = await req.json();
 
     try {
-        const newPermission: Permission = await prisma.permissions.create({
+        const newPermission: Permission = await prisma.permission.create({
             data: { 
                 name,
                 description
-            },
+            }
         });
         return NextResponse.json(newPermission);
     } catch (error) {
+        console.log(error);
         return NextResponse.json({ error: "Erreur de l'ajout" }, { status: 500 });
     }
 }

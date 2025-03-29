@@ -14,20 +14,20 @@ export async function GET(
 
     try {
 
-        const categories: Category[] = await prisma.categories.findMany({
+        const categories: Category[] = await prisma.category.findMany({
             select: {
-                id_category: true,
-                is_active: true,
+                id: true,
+                isActive: true,
                 name: true,
             },
             orderBy: {
-                id_category: "asc"
+                id: "asc"
             },
             skip: (page - 1) * max,
             take: max,
         });
 
-        const total = await prisma.categories.count();
+        const total = await prisma.category.count();
         const pages = Math.ceil(total / max);
 
         return NextResponse.json({
@@ -42,13 +42,13 @@ export async function GET(
 export async function POST(
     req: Request
 ){
-    const { name, is_active } = await req.json();
+    const { name, isActive } = await req.json();
 
     try {
-        const newCategory: Category = await prisma.categories.create({
+        const newCategory: Category = await prisma.category.create({
             data: { 
                 name,
-                is_active
+                isActive
             },
         });
         return NextResponse.json(newCategory);

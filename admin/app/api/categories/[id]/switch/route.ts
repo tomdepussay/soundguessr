@@ -12,20 +12,20 @@ export async function PUT(
 
     try {
 
-        const category: Category | null = await prisma.categories.findUnique({
-            where: { id_category: Number(id) }
+        const category: Category | null = await prisma.category.findUnique({
+            where: { id: Number(id) }
         });
 
         if(!category){
             return NextResponse.json({ error: "Catégorie introuvable" }, { status: 404 });
         }
 
-        const updatedCategory = await prisma.categories.update({
+        const updatedCategory = await prisma.category.update({
             where: { 
-                id_category: Number(id) 
+                id: Number(id) 
             },
             data: {
-                is_active: !category.is_active
+                isActive: !category.isActive
             }
         });
         return NextResponse.json(updatedCategory);

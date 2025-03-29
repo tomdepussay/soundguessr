@@ -18,8 +18,8 @@ const PermissionSchema = z.object({
     description: z.string().optional()
 })
 
-const updatePermission = async ({ id_permission, name, description }: { id_permission: number, name: string, description: string | undefined }) => {
-    const res = await fetch(`/api/permissions/${id_permission}`, {
+const updatePermission = async ({ id, name, description }: { id: number, name: string, description: string | undefined }) => {
+    const res = await fetch(`/api/permissions/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
@@ -73,7 +73,7 @@ export function EditForm({ permission }: { permission: Permission }) {
         setErrors({ name: [], description: [] });
 
         mutate({ 
-            id_permission: permission.id_permission, 
+            id: permission.id, 
             name: validationResult.data.name,
             description: validationResult.data.description
         });

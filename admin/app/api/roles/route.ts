@@ -7,13 +7,13 @@ const prisma = new PrismaClient();
 export async function GET() {
     try {
 
-        const roles: Role[] = await prisma.roles.findMany({
+        const roles: Role[] = await prisma.role.findMany({
             select: {
-                id_role: true,
+                id: true,
                 name: true
             },
             orderBy: {
-                id_role: "asc"
+                id: "asc"
             }
         });
 
@@ -29,7 +29,7 @@ export async function POST(
     const { name } = await req.json();
 
     try {
-        const newRole: Role = await prisma.roles.create({
+        const newRole: Role = await prisma.role.create({
             data: { 
                 name 
             },

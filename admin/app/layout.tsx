@@ -94,7 +94,7 @@ export default async function Layout({
 
     const session = await verifySession()
     
-    if(!session?.id_user) {
+    if(!session?.id) {
         return (
             <html lang="fr" className="h-full w-full">
                 <body className="h-full w-full flex flex-col items-center justify-center">
@@ -113,8 +113,10 @@ export default async function Layout({
                             <header>
                                 <Nav navItems={navItems} />
                             </header>
-                            <main className="h-full w-full">
-                                {children}
+                            <main className="h-full w-full md:p-2 bg-sidebar">
+                                <div className="h-full w-full bg-background rounded overflow-y-auto">
+                                    {children}
+                                </div>
                             </main>
                         </Body>
                     </Providers>

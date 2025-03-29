@@ -28,7 +28,7 @@ model User {
     email String @unique
     password String
 
-    roleId Int
+    roleId Int @default(4)
     role Role @relation(name: "roleUsers", fields: [roleId], references: [id])
 
     pictures Picture[] @relation(name: "UserPictures")

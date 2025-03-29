@@ -14,20 +14,32 @@ export async function GET(
         return NextResponse.redirect("/login");
     }
 
-    const { id_user } = session;
+    const { id } = session;
 
     try {
 
-        const user: User | null = await prisma.users.findUnique({
+        const user: User | null = await prisma.user.findUnique({
             select: {
-                id_user: true,
+                id: true,
                 email: true,
                 username: true,
-                id_role: true,
-                id_picture: true
+                roleId: true,
+                role: {
+                    select: {
+                        id: true,
+                        name: true,
+                    } 
+                },
+                activePictureId: true,
+                activePicture: {
+                    select: {
+                        id: true,
+                        link: true,
+                    } 
+                }
             },
             where: {
-                id_user: id_user 
+                id: id 
             }
         });
 

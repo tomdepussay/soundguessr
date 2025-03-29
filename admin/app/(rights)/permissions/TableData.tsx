@@ -46,8 +46,8 @@ export default function TableData({ page, setPages }: TableDataProps){
                 <TableBody>
                     {
                         data.permissions.map(permission => (
-                            <TableRow key={permission.id_permission}>
-                                <TableCell>{permission.id_permission}</TableCell>
+                            <TableRow key={permission.id}>
+                                <TableCell>{permission.id}</TableCell>
                                 <TableCell>{permission.name}</TableCell>
                                 <TableCell className="hidden md:table-cell">{permission.description ? permission.description : "Aucune description"}</TableCell>
                                 <TableCell className="whitespace-nowrap flex gap-1">

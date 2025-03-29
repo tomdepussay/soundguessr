@@ -1,6 +1,6 @@
 export type Role = {
-    id_role: number;
-    created_at?: Date;
-    updated_at?: Date;
+    id: number;
+    createdAt?: Date;
+    updatedAt?: Date;
     name: string;
 }

@@ -17,8 +17,8 @@ const RoleSchema = z.object({
     name: z.string().min(3, "Le nom doit faire au moins 3 caractères.")
 })
 
-const updateRole = async ({ id_role, name }: { id_role: number, name: string }) => {
-    const res = await fetch(`/api/roles/${id_role}`, {
+const updateRole = async ({ id, name }: { id: number, name: string }) => {
+    const res = await fetch(`/api/roles/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
@@ -68,7 +68,7 @@ export function EditForm({ role }: { role: Role }) {
 
         setErrors({ name: [] });
 
-        mutate({ id_role: role.id_role, name: validationResult.data.name });
+        mutate({ id: role.id, name: validationResult.data.name });
     }
 
     return (

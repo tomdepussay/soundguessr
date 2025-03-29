@@ -10,8 +10,8 @@ import { Permission } from "@/src/types/Permission";
 
 let idToast: Id;
 
-const deletePermission = async ({ id_permission }: { id_permission: number }) => {
-    const res = await fetch(`/api/permissions/${id_permission}`, {
+const deletePermission = async ({ id }: { id: number }) => {
+    const res = await fetch(`/api/permissions/${id}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
     });
@@ -43,7 +43,7 @@ export function DeleteForm({ permission }: { permission: Permission }) {
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        mutate({ id_permission: permission.id_permission });
+        mutate({ id: permission.id });
     }
 
     return (

@@ -48,7 +48,7 @@ export async function signup(state: any, formData: { get: (arg0: string) => any 
 
     const { username, email, password } = validationResult.data;
 
-    const user = await prisma.users.findFirst({
+    const user = await prisma.user.findFirst({
         where: {
             OR: [
                 { username },
@@ -74,14 +74,15 @@ export async function signup(state: any, formData: { get: (arg0: string) => any 
 
     const hash = await bcrypt.hash(password, 12);
 
-    const newUser = await prisma.users.create({
+    const newUser = await prisma.user.create({
         data: {
             username: username,
             email: email,
-            password: hash
+            password: hash,
+            roleId: 4
         }
     });
 
-    await createSession(newUser.id_user);
+    await createSession(newUser.id);
 
 }

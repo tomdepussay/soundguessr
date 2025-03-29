@@ -30,6 +30,8 @@ async function main(){
         })
     }
 
+    await reloadSequence("role");
+
     const users = [
         {
             id: 1,
@@ -47,6 +49,8 @@ async function main(){
             create: user
         }) 
     }
+
+    await reloadSequence("user");
 
     const permissions = [
         {
@@ -124,6 +128,8 @@ async function main(){
         }) 
     }
 
+    await reloadSequence("permission");
+
     const categories = [
         {
             id: 1,
@@ -142,6 +148,8 @@ async function main(){
             create: category
         }) 
     }
+
+    await reloadSequence("category");
 
     const questions_opening = [
         {
@@ -169,6 +177,8 @@ async function main(){
         })
     }
 
+    await reloadSequence("question_Opening");
+
     const questions_ending = [
         {
             id: 1,
@@ -189,6 +199,14 @@ async function main(){
             create: question
         }) 
     }
+
+    await reloadSequence("question_Ending");
+}
+
+async function reloadSequence(table: string){
+    await prisma.$executeRawUnsafe(`
+        SELECT setval(pg_get_serial_sequence('${table}', 'id'), (SELECT MAX(id) FROM "${table}"));
+    `);
 }
 
 main()

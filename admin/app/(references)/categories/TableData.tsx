@@ -47,8 +47,8 @@ export default function TableData({ page, setPages }: TableDataProps){
                 <TableBody>
                     {
                         data.categories.map(category => (
-                            <TableRow key={category.id_category}>
-                                <TableCell>{category.id_category}</TableCell>
+                            <TableRow key={category.id}>
+                                <TableCell>{category.id}</TableCell>
                                 <TableCell>{category.name}</TableCell>
                                 <TableCell>
                                     <Switch category={category} />

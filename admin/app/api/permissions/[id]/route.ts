@@ -12,9 +12,9 @@ export async function PUT(
     const { name, description } = await req.json();
 
     try {
-        const updatedPermission: Permission = await prisma.permissions.update({
+        const updatedPermission: Permission = await prisma.permission.update({
             where: { 
-                id_permission: Number(id) 
+                id: Number(id) 
             },
             data: { 
                 name,
@@ -34,9 +34,9 @@ export async function DELETE(
     const { id } = await params;
 
     try {
-        await prisma.permissions.delete({
+        await prisma.permission.delete({
             where: { 
-                id_permission: Number(id) 
+                id: Number(id) 
             }
         });
         return NextResponse.json({ success: true });

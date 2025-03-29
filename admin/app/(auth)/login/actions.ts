@@ -27,7 +27,7 @@ export async function login(state: any, formData: { get: (arg0: string) => any }
 
     const { email, password } = validationResult.data;
 
-    const user = await prisma.users.findFirst({
+    const user = await prisma.user.findFirst({
         where: { email }
     });
 
@@ -44,5 +44,5 @@ export async function login(state: any, formData: { get: (arg0: string) => any }
         }
     }
 
-    await createSession(user.id_user)
+    await createSession(user.id)
 }

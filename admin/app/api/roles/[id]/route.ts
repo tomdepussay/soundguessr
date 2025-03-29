@@ -12,9 +12,9 @@ export async function PUT(
     const { name } = await req.json();
 
     try {
-        const updatedRole: Role = await prisma.roles.update({
+        const updatedRole: Role = await prisma.role.update({
             where: { 
-                id_role: Number(id) 
+                id: Number(id) 
             },
             data: { 
                 name 
@@ -33,9 +33,9 @@ export async function DELETE(
     const { id } = await params;
 
     try {
-        await prisma.roles.delete({
+        await prisma.role.delete({
             where: { 
-                id_role: Number(id) 
+                id: Number(id) 
             }
         });
         return NextResponse.json({ success: true });

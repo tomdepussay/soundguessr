@@ -10,8 +10,8 @@ import { Category } from "@/src/types/Category";
 
 let idToast: Id;
 
-const deleteCategory = async ({ id_category }: { id_category: number }) => {
-    const res = await fetch(`/api/categories/${id_category}`, {
+const deleteCategory = async ({ id }: { id: number }) => {
+    const res = await fetch(`/api/categories/${id}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
     });
@@ -43,7 +43,7 @@ export function DeleteForm({ category }: { category: Category }) {
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        mutate({ id_category: category.id_category });
+        mutate({ id: category.id });
     }
 
     return (

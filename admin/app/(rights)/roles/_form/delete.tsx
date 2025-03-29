@@ -10,8 +10,8 @@ import { Role } from "@/src/types/Role";
 
 let idToast: Id;
 
-const deleteRole = async ({ id_role }: { id_role: number }) => {
-    const res = await fetch(`/api/roles/${id_role}`, {
+const deleteRole = async ({ id }: { id: number }) => {
+    const res = await fetch(`/api/roles/${id}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
     });
@@ -43,7 +43,7 @@ export function DeleteForm({ role }: { role: Role }) {
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        mutate({ id_role: role.id_role });
+        mutate({ id: role.id });
     }
 
     return (

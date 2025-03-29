@@ -117,7 +117,7 @@ export default function Nav({ navItems = [] }: NavProps) {
             </Sidebar>
             {
                 isMobile && (
-                    <div className="flex items-center justify-between h-12 w-full bg-sidebar border-b">
+                    <div className="flex items-center justify-between h-12 w-full bg-sidebar border-b p-2">
                         <SidebarTrigger className="p-2 rounded-md" />
                         <h1 className="text-2xl font-semibold">Soundguessr</h1>
                         <SidebarTrigger className="p-2 rounded-md opacity-0" />

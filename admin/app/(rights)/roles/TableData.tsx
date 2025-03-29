@@ -33,8 +33,8 @@ export default function TableData(){
             <TableBody>
                 {
                     roles.map(role => (
-                        <TableRow key={role.id_role}>
-                            <TableCell>{role.id_role}</TableCell>
+                        <TableRow key={role.id}>
+                            <TableCell>{role.id}</TableCell>
                             <TableCell>{role.name}</TableCell>
                             <TableCell className="whitespace-nowrap flex gap-1">
                                 <AssignForm role={role} />
