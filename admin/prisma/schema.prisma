@@ -217,7 +217,7 @@ model Question_Opening {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
     isActive Boolean @default(true)
-    question String
+    question String @unique
     number Int 
 
     @@index([question])
@@ -227,9 +227,9 @@ model Question_Opening {
 model Question_Ending {
     id Int @id @default(autoincrement())
     createdAt DateTime @default(now())
-    updatedAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
     isActive Boolean @default(true)
-    question String
+    question String @unique
     number Int
 
     @@index([question]) 

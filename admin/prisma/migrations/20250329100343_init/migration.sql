@@ -169,7 +169,7 @@ CREATE TABLE "question_opening" (
 CREATE TABLE "question_ending" (
     "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "question" TEXT NOT NULL,
     "number" INTEGER NOT NULL,
@@ -275,7 +275,13 @@ CREATE UNIQUE INDEX "ending_soundId_key" ON "ending"("soundId");
 CREATE INDEX "ending_name_idx" ON "ending"("name");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "question_opening_question_key" ON "question_opening"("question");
+
+-- CreateIndex
 CREATE INDEX "question_opening_question_idx" ON "question_opening"("question");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "question_ending_question_key" ON "question_ending"("question");
 
 -- CreateIndex
 CREATE INDEX "question_ending_question_idx" ON "question_ending"("question");
