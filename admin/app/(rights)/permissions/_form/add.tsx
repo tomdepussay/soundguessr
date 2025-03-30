@@ -9,6 +9,7 @@ import { useQueryClient , useMutation } from "@tanstack/react-query";
 import { z } from "zod";
 import { useState } from "react";
 import { Id, toast } from "react-toastify";
+import { MultiSelect } from "@/src/components/ui/multi-select";
 
 let idToast: Id;
 
@@ -16,6 +17,13 @@ const PermissionSchema = z.object({
     name: z.string().min(3, "Le nom doit faire au moins 3 caractères."),
     description: z.string().optional()
 })
+
+const roles = [
+    { value: "1", label: "Administrateur" },
+    { value: "2", label: "Modérateur" },
+    { value: "3", label: "Observateur" },
+    { value: "4", label: "Utilisateur" },
+];
 
 const addPermission = async ({ name, description }: { name: string, description: string | undefined }) => {
     const res = await fetch(`/api/permissions`, {
@@ -35,6 +43,7 @@ export function AddForm() {
 
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
+    const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
     const [errors, setErrors] = useState<{ name: string[], description: string[] }>({ name: [], description: [] });
 
     const { mutate, isPending } = useMutation({
@@ -85,7 +94,7 @@ export function AddForm() {
                     Ajouter une permission
                 </Button>
             </DialogTrigger>
-            <DialogContent aria-describedby={undefined}>
+            <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Ajouter une permission</DialogTitle>
                 </DialogHeader>
@@ -103,6 +112,17 @@ export function AddForm() {
                         {errors.description.length > 0 && (
                             <p className="text-red-500 text-sm">{errors.description.join(", ")}</p>
                         )}
+                    </div>
+                    <div className="flex flex-col gap-3">
+                        <Label htmlFor="roles">Rôles :</Label>
+                        <MultiSelect
+                            options={roles}
+                            onValueChange={setSelectedRoles}
+                            defaultValue={selectedRoles}
+                            placeholder="Sélectionnez les rôles"
+                            variant="inverted"
+                            maxCount={2}
+                        />
                     </div>
                     <DialogFooter>
                         <Button type="submit">{ isPending ? "Chargement..." : "Ajouter" }</Button>
