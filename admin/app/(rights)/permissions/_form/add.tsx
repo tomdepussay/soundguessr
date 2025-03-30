@@ -85,7 +85,7 @@ export function AddForm() {
                     Ajouter une permission
                 </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent aria-describedby={undefined}>
                 <DialogHeader>
                     <DialogTitle>Ajouter une permission</DialogTitle>
                 </DialogHeader>

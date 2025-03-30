@@ -86,7 +86,7 @@ export function AddForm() {
                     Ajouter une catégorie
                 </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent aria-describedby={undefined}>
                 <DialogHeader>
                     <DialogTitle>Ajouter une catégorie</DialogTitle>
                 </DialogHeader>

@@ -28,7 +28,6 @@ const addRole = async ({ name }: { name: string }) => {
     return res.json();
 }
 
-
 export function AddForm() {
 
     const queryClient = useQueryClient();
@@ -78,7 +77,7 @@ export function AddForm() {
                     Ajouter un rôle
                 </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent aria-describedby={undefined}>
                 <DialogHeader>
                     <DialogTitle>Ajouter un rôle</DialogTitle>
                 </DialogHeader>
