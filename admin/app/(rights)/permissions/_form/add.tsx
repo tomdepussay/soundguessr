@@ -18,13 +18,6 @@ const PermissionSchema = z.object({
     description: z.string().optional()
 })
 
-const roles = [
-    { value: "1", label: "Administrateur" },
-    { value: "2", label: "Modérateur" },
-    { value: "3", label: "Observateur" },
-    { value: "4", label: "Utilisateur" },
-];
-
 const addPermission = async ({ name, description }: { name: string, description: string | undefined }) => {
     const res = await fetch(`/api/permissions`, {
         method: "POST",
@@ -116,12 +109,15 @@ export function AddForm() {
                     <div className="flex flex-col gap-3">
                         <Label htmlFor="roles">Rôles :</Label>
                         <MultiSelect
-                            options={roles}
-                            onValueChange={setSelectedRoles}
-                            defaultValue={selectedRoles}
-                            placeholder="Sélectionnez les rôles"
-                            variant="inverted"
-                            maxCount={2}
+                            options={[
+                                { value: "1", label: "Administrateur" },
+                                { value: "2", label: "Modérateur" },
+                                { value: "3", label: "Observateur" },
+                                { value: "4", label: "Utilisateur" },
+                            ]}
+                            selected={selectedRoles}
+                            onChange={setSelectedRoles}
+                            placeholder="Sélectionner des rôles"
                         />
                     </div>
                     <DialogFooter>
