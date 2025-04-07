@@ -18,7 +18,16 @@ export async function GET(
             select: {
                 id: true,
                 name: true,
-                description: true
+                description: true,
+                roles: {
+                    select: {
+                        id: true,
+                        name: true,
+                    },
+                    orderBy: {
+                        id: "asc" 
+                    }
+                }
             },
             orderBy: {
                 id: "asc"
@@ -42,13 +51,16 @@ export async function GET(
 export async function POST(
     req: Request
 ){
-    const { name, description } = await req.json();
+    const { name, description, roles } = await req.json();
 
     try {
         const newPermission: Permission = await prisma.permission.create({
             data: { 
                 name,
-                description
+                description,
+                roles: {
+                    connect: roles.map((roleId: string | number) => ({ id: Number(roleId) }))
+                }
             }
         });
         return NextResponse.json(newPermission);

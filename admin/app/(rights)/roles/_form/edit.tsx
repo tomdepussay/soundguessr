@@ -29,7 +29,6 @@ const updateRole = async ({ id, name }: { id: number, name: string }) => {
     return res.json();
 }
 
-
 export function EditForm({ role }: { role: Role }) {
 
     const queryClient = useQueryClient();

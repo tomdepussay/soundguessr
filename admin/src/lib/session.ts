@@ -2,6 +2,10 @@ import 'server-only'
 import { JWTPayload, SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { PrismaClient } from "@prisma/client";
+import { NextResponse } from 'next/server';
+
+const prisma = new PrismaClient();
 
 const key = new TextEncoder().encode(process.env.JWT_SECRET)
 
@@ -54,4 +58,49 @@ export async function deleteSession(){
     const cookieStore = await cookies();
     cookieStore.set(cookie.name, "", {...cookie.options, expires: new Date(0)})
     redirect("/login")
+}
+
+export async function hasAccess(permission: string){
+    const session = await verifySession()
+    
+    if(!session) return redirect("/login")
+
+    const { id } = session;
+
+    const user = await prisma.user.findUnique({
+        where: { id },
+        select: {
+            roleId: true, 
+        }
+    })
+
+    if(!user) return redirect("/login")
+
+    // Vérification si le rôle possède la permission
+    const roleHasPermission = await prisma.role.findFirst({
+        where: {
+            id: user.roleId,
+            permissions: {
+                some: {
+                    name: permission
+                }
+            }
+        }
+    })
+
+    if(roleHasPermission) return true;
+
+    return false;
+
+}
+
+export async function hasAccessApi(permission: string){
+    const access = await hasAccess(permission);
+
+    if (!access) {
+        throw NextResponse.json(
+            { error: "Vous n'avez pas la permission de faire cette action" },
+            { status: 401 }
+        );
+    }
 }

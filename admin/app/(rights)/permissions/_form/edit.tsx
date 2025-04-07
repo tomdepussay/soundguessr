@@ -5,38 +5,59 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { Edit } from "lucide-react";
-import { useQueryClient , useMutation } from "@tanstack/react-query";
+import { useQueryClient , useMutation, useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { useState } from "react";
 import { Id, toast } from "react-toastify";
 import { Permission } from "@/src/types/Permission";
+import { Role } from "@/src/types/Role";
+import { MultiSelect } from "@/src/components/ui/multi-select";
 
 let idToast: Id;
 
 const PermissionSchema = z.object({
     name: z.string().min(3, "Le nom doit faire au moins 3 caractères."),
-    description: z.string().optional()
+    description: z.string().optional(),
+    roles: z.array(z.string()).optional()
 })
 
-const updatePermission = async ({ id, name, description }: { id: number, name: string, description: string | undefined }) => {
+const updatePermission = async ({ id, name, description, roles }: { id: number, name: string, description: string | undefined, roles: string[] | undefined }) => {
     const res = await fetch(`/api/permissions/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
             name,
-            description
+            description,
+            roles
         }),
     });
     if (!res.ok) throw new Error("Échec de la mise à jour");
     return res.json();
 }
 
+const fetchPermissionsRoles = async () => {
+    const res = await fetch("/api/permissions/roles", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    });
+    if (!res.ok) throw new Error("Échec de la récupération des rôles");
+    const data: Role[] = await res.json();
+    return data;
+}
 
 export function EditForm({ permission }: { permission: Permission }) {
 
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
-    const [errors, setErrors] = useState<{ name: string[], description: string[] }>({ name: [], description: [] });
+    const [selectedRoles, setSelectedRoles] = useState<string[]>(
+        permission.roles?.map((role) => String(role.id)) || []
+    );
+    const [errors, setErrors] = useState<{ name: string[], description: string[], roles: string[] }>({ name: [], description: [], roles: [] });
+
+    const { data: roles, isLoading, error } = useQuery({
+        queryFn: fetchPermissionsRoles,
+        queryKey: ["permissionsRoles"]
+    });
 
     const { mutate, isPending } = useMutation({
         mutationFn: updatePermission,
@@ -59,23 +80,26 @@ export function EditForm({ permission }: { permission: Permission }) {
         const formData = new FormData(e.target as HTMLFormElement);
         const name = formData.get("name") as string;
         const description = formData.get("description") as string;
+        const roles = selectedRoles;
 
-        const validationResult = PermissionSchema.safeParse({ name, description });
+        const validationResult = PermissionSchema.safeParse({ name, description, roles });
 
         if (!validationResult.success) {
             setErrors({
                 name: validationResult.error.flatten().fieldErrors.name || [],
-                description: validationResult.error.flatten().fieldErrors.description || []
+                description: validationResult.error.flatten().fieldErrors.description || [],
+                roles: validationResult.error.flatten().fieldErrors.roles || [] 
             });
             return;
         }
 
-        setErrors({ name: [], description: [] });
+        setErrors({ name: [], description: [], roles: [] });
 
         mutate({ 
             id: permission.id, 
             name: validationResult.data.name,
-            description: validationResult.data.description
+            description: validationResult.data.description,
+            roles: validationResult.data.roles
         });
     }
 
@@ -106,6 +130,20 @@ export function EditForm({ permission }: { permission: Permission }) {
                             <p className="text-red-500 text-sm">{errors.description.join(", ")}</p>
                         )}
                     </div>
+                    {!isLoading && roles && (
+                        <div className="flex flex-col gap-3">
+                            <Label htmlFor="roles">Rôles (optionnel) :</Label>
+                            <MultiSelect
+                                options={roles.map((role) => ({ value: String(role.id), label: role.name }))}
+                                selected={selectedRoles}
+                                onChange={setSelectedRoles}
+                                placeholder="Sélectionner des rôles"
+                            />
+                            {errors.roles.length > 0 && (
+                                <p className="text-red-500 text-sm">{errors.roles.join(", ")}</p>
+                            )}
+                        </div>
+                    )}
                     <DialogFooter>
                         <Button type="submit">{ isPending ? "Chargement..." : "Enregistrer" }</Button>
                         <DialogClose asChild>

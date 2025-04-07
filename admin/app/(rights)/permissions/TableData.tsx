@@ -5,6 +5,8 @@ import { EditForm } from "./_form/edit";
 import { DeleteForm } from "./_form/delete";
 import { useQuery } from "@tanstack/react-query";
 import { Permission } from "@/src/types/Permission";
+import { Badge } from "@/src/components/ui/badge";
+import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/ui/popover";
 
 type TableDataProps = {
     page: number;
@@ -40,6 +42,7 @@ export default function TableData({ page, setPages }: TableDataProps){
                         <TableHead>#</TableHead>
                         <TableHead>Nom</TableHead>
                         <TableHead className="hidden md:table-cell">Description</TableHead>
+                        <TableHead className="hidden md:table-cell">Rôles</TableHead>
                         <TableHead className="whitespace-nowrap w-1"></TableHead>
                     </TableRow>
                 </TableHeader>
@@ -50,6 +53,24 @@ export default function TableData({ page, setPages }: TableDataProps){
                                 <TableCell>{permission.id}</TableCell>
                                 <TableCell>{permission.name}</TableCell>
                                 <TableCell className="hidden md:table-cell">{permission.description ? permission.description : "Aucune description"}</TableCell>
+                                <TableCell className="hidden md:table-cell">
+                                    {permission.roles.length > 0 ? (
+                                        <Popover>
+                                            <PopoverTrigger>
+                                                <Badge>
+                                                    {permission.roles.length} rôle{permission.roles.length > 1 ? "s" : ""}
+                                                </Badge>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-fit">
+                                                <span className="text-nowrap">
+                                                    {permission.roles.map((role) => role.name).join(", ")}
+                                                </span>
+                                            </PopoverContent>
+                                        </Popover>
+                                    ) : (
+                                        <p>Aucun rôle</p>
+                                    )} 
+                                </TableCell>
                                 <TableCell className="whitespace-nowrap flex gap-1">
                                     <EditForm permission={permission} />
                                     <DeleteForm permission={permission} />

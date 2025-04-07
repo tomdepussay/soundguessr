@@ -9,7 +9,7 @@ export async function PUT(
     { params } : { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
-    const { name, description } = await req.json();
+    const { name, description, roles } = await req.json();
 
     try {
         const updatedPermission: Permission = await prisma.permission.update({
@@ -18,7 +18,10 @@ export async function PUT(
             },
             data: { 
                 name,
-                description
+                description,
+                roles: {
+                    set: roles.map((roleId: string | number) => ({ id: Number(roleId) }))
+                }
             },
         });
         return NextResponse.json(updatedPermission);

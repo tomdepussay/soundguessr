@@ -1,11 +1,14 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { Role } from "@/src/types/Role";
+import { hasAccessApi } from "@/src/lib/session";
 
 const prisma = new PrismaClient();
 
 export async function GET() {
+
     try {
+        await hasAccessApi("admin.rights.roles");
 
         const roles: Role[] = await prisma.role.findMany({
             select: {
@@ -16,6 +19,9 @@ export async function GET() {
                         id: true,
                         name: true,
                         description: true
+                    },
+                    orderBy: {
+                        id: "asc"
                     }
                 }
             },
@@ -26,7 +32,12 @@ export async function GET() {
 
         return NextResponse.json(roles);
     } catch (error) {
-        return NextResponse.json({ error: "Erreur lors de la récupération" }, { status: 500 });
+        if (error instanceof NextResponse) return error;
+
+        return NextResponse.json(
+            { error: "Erreur lors de la récupération" },
+            { status: 500 }
+        );
     }
 }
 
