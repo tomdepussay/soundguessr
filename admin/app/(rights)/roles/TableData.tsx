@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Role } from "@/src/types/Role";
 import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/ui/popover";
 import { Badge } from "@/src/components/ui/badge";
+import { usePermissions } from "@/src/hooks/use-permissions";
 
 async function fetchRoles(){
     const response = await fetch("/api/roles");
@@ -21,25 +22,10 @@ async function fetchRoles(){
     return data;
 }
 
-interface TableDataProps{
-    EditAccess: boolean
-    DeleteAccess: boolean
-    AssignAccess: boolean
-    IDAccess: boolean
-    NameAccess: boolean
-    PermissionsAccess: boolean 
-}
-
-export default function TableData({ 
-    EditAccess,
-    DeleteAccess,
-    AssignAccess,
-    IDAccess,
-    NameAccess,
-    PermissionsAccess
-}: TableDataProps){
+export default function TableData(){
 
     const { data: roles, isLoading, error } = useQuery({ queryKey: ["roles"], queryFn: fetchRoles, retry: false });
+    const { hasPermission, hasPermissions, hasAnyPermission } = usePermissions();
 
     if(isLoading) return <p>Chargement...</p>
     if(error) return <p>{error.message}</p>
@@ -49,47 +35,70 @@ export default function TableData({
         <Table>
             <TableHeader>
                 <TableRow>
-                    {IDAccess && <TableHead>#</TableHead>}
-                    {NameAccess && <TableHead>Nom</TableHead>}
-                    {PermissionsAccess && <TableHead className="hidden md:table-cell">Permissions</TableHead>}
-                    <TableHead className="whitespace-nowrap w-1"></TableHead>
+                    {hasPermission("admin.rights.roles.id") && (
+                        <TableHead>#</TableHead>
+                    )}
+                    {hasPermission("admin.rights.roles.name") && (
+                        <TableHead>Nom</TableHead>
+                    )}
+                    {hasPermission("admin.rights.roles.permissions") && (
+                        <TableHead className="hidden md:table-cell">Permissions</TableHead>
+                    )}
+                    {(hasAnyPermission(["admin.rights.roles.assign", "admin.rights.roles.edit", "admin.rights.roles.delete"]) || true) && (
+                        <TableHead className="whitespace-nowrap w-1"></TableHead>
+                    )}
                 </TableRow>
             </TableHeader>
             <TableBody>
                 {
                     roles.map(role => (
                         <TableRow key={role.id}>
-                            {IDAccess && <TableCell>{role.id}</TableCell>}
-                            {NameAccess && <TableCell>{role.name}</TableCell>}
-                            {PermissionsAccess && <TableCell className="hidden md:table-cell">
-                                {role.permissions && role.permissions.length > 0 ? (
-                                    <Popover>
-                                        <PopoverTrigger>
-                                            <Badge>
-                                                {role.permissions.length} permission{role.permissions.length > 1 ? "s" : ""}
-                                            </Badge>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-80">
-                                            <ul>
-                                                {role.permissions.map((permission) => (
-                                                    <li key={permission.id}>
-                                                        {permission.name}
-                                                    </li> 
-                                                ))}
-                                            </ul>
-                                        </PopoverContent>
-                                    </Popover>
-                                ) : (
-                                    <Badge variant="destructive">
-                                        Aucune permission
-                                    </Badge>
-                                )}
-                            </TableCell>}
-                            {(AssignAccess || EditAccess || DeleteAccess) && <TableCell className="whitespace-nowrap flex gap-1">
-                                {AssignAccess && <AssignForm role={role} />}
-                                {EditAccess && <EditForm role={role} />}
-                                {DeleteAccess && <DeleteForm role={role} />}
-                            </TableCell>}
+                            {hasPermission("admin.rights.roles.id") && (
+                                <TableCell>{role.id}</TableCell>
+                            )}
+                            {hasPermission("admin.rights.roles.name") && (
+                                <TableCell>{role.name}</TableCell>
+                            )}
+                            {hasPermission("admin.rights.roles.permissions") && (
+                                <TableCell className="hidden md:table-cell">
+                                    {role.permissions && role.permissions.length > 0? (
+                                        <Popover>
+                                            <PopoverTrigger>
+                                                <Badge>
+                                                    {role.permissions.length} permission{role.permissions.length > 1? "s" : ""}
+                                                </Badge>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-80">
+                                                <ul>
+                                                    {role.permissions.map((permission) => (
+                                                        <li key={permission.id}>
+                                                            {permission.name}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </PopoverContent>
+                                        </Popover>  
+                                    ) : (
+                                        <Badge variant="destructive">
+                                            Aucune permission
+                                        </Badge> 
+                                    )}
+                                </TableCell>
+                            )}
+                            {(hasAnyPermission(["admin.rights.roles.assign", "admin.rights.roles.edit", "admin.rights.roles.delete"]) || true) && (
+                                <TableCell className="whitespace-nowrap flex gap-1">
+                                    {hasPermission("admin.rights.roles.assign") && (
+                                        <AssignForm role={role} /> 
+                                    )}
+                                    {hasPermission("admin.rights.roles.edit") && (
+                                        <EditForm role={role} /> 
+                                    )}
+                                    <EditForm role={role} /> 
+                                    {hasPermission("admin.rights.roles.delete") && (
+                                        <DeleteForm role={role} /> 
+                                    )}
+                                </TableCell>
+                            )}
                         </TableRow>
                     ))
                 }

@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/src/lib/prisma"
 import { Role } from "@/src/types/Role";
-
-const prisma = new PrismaClient();
+import { hasAccessApi } from "@/src/lib/session";
 
 export async function PUT(
     req: Request,
@@ -12,6 +11,8 @@ export async function PUT(
     const { name } = await req.json();
 
     try {
+        await hasAccessApi("admin.rights.roles.edit");
+
         const updatedRole: Role = await prisma.role.update({
             where: { 
                 id: Number(id) 
@@ -22,7 +23,12 @@ export async function PUT(
         });
         return NextResponse.json(updatedRole);
     } catch (error) {
-        return NextResponse.json({ error: "Erreur de mise à jour" }, { status: 500 });
+        if (error instanceof NextResponse) return error;
+
+        return NextResponse.json(
+            { error: "Erreur de mise à jour" },
+            { status: 500 }
+        );
     }
 }
 

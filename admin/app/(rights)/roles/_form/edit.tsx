@@ -25,8 +25,9 @@ const updateRole = async ({ id, name }: { id: number, name: string }) => {
             name
         }),
     });
-    if (!res.ok) throw new Error("Échec de la mise à jour");
-    return res.json();
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
+    return data;
 }
 
 export function EditForm({ role }: { role: Role }) {
@@ -41,7 +42,7 @@ export function EditForm({ role }: { role: Role }) {
             idToast = toast.loading("Mise à jour en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: "Échec de la mise à jour", type: "error", isLoading: false, autoClose: 2000 });
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
         },
         onSuccess: () => {
             setOpen(false);

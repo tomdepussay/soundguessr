@@ -2,10 +2,8 @@ import 'server-only'
 import { JWTPayload, SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/src/lib/prisma"
 import { NextResponse } from 'next/server';
-
-const prisma = new PrismaClient();
 
 const key = new TextEncoder().encode(process.env.JWT_SECRET)
 

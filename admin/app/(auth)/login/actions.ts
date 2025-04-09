@@ -1,11 +1,9 @@
 'use server'
 
 import { z } from "zod"
-import { PrismaClient } from "@prisma/client"
+import prisma from "@/src/lib/prisma"
 import bcrypt from 'bcrypt'
 import { createSession } from "@/src/lib/session"
-
-const prisma = new PrismaClient()
 
 const LoginSchema = z.object({
     email: z.string().email("L'email doit être valide."),

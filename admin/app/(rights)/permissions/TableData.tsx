@@ -54,7 +54,7 @@ export default function TableData({ page, setPages }: TableDataProps){
                                 <TableCell>{permission.name}</TableCell>
                                 <TableCell className="hidden md:table-cell">{permission.description ? permission.description : "Aucune description"}</TableCell>
                                 <TableCell className="hidden md:table-cell">
-                                    {permission.roles.length > 0 ? (
+                                    {permission.roles && permission.roles.length > 0 ? (
                                         <Popover>
                                             <PopoverTrigger>
                                                 <Badge>
