@@ -4,6 +4,8 @@ import { useQueryClient , useMutation } from "@tanstack/react-query";
 import { Id, toast } from "react-toastify";
 import { Category } from "@/src/types/Category";
 
+let idToast: Id;
+
 type SwitchProps = {
     category: Category;
 }
@@ -13,11 +15,10 @@ const switchCategory = async ({ id }: { id: number }) => {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
     });
-    if (!res.ok) throw new Error("Échec de la mise à jour");
-    return res.json();
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
+    return data;
 }
-
-let idToast: Id;
 
 export function Switch({ category }: SwitchProps) {
 
@@ -27,8 +28,8 @@ export function Switch({ category }: SwitchProps) {
         onMutate: () => {
             idToast = toast.loading("Mise à jour en cours...", { type: "info", autoClose: false });
         },
-        onError: () => {
-            toast.update(idToast, { render: "Échec de la mise à jour", type: "error", autoClose: 2000, isLoading: false });
+        onError: (error) => {
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["categories"] });
@@ -37,15 +38,17 @@ export function Switch({ category }: SwitchProps) {
     });
 
     const handleClick = async () => {
-        await mutate({ id: category.id });
+        mutate({ id: category.id });
     }
 
     return (
         <Button variant={category.isActive ? "default" : "destructive"} disabled={isPending} onClick={handleClick}>
             {
-                category.isActive ? 
-                <ToggleRight /> :
-                <ToggleLeft />
+                category.isActive ? (
+                    <ToggleRight />
+                ) : (
+                    <ToggleLeft />
+                )
             }
         </Button>
     )

@@ -15,10 +15,10 @@ const deleteRole = async ({ id }: { id: number }) => {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
     });
-    if (!res.ok) throw new Error("Échec de la suppression");
-    return res.json();
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
+    return data;
 }
-
 
 export function DeleteForm({ role }: { role: Role }) {
 
@@ -31,7 +31,7 @@ export function DeleteForm({ role }: { role: Role }) {
             idToast = toast.loading("Suppression en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: "Échec de la suppression", type: "error", isLoading: false, autoClose: 2000 });
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
         },
         onSuccess: () => {
             setOpen(false);

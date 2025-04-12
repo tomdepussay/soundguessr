@@ -24,8 +24,9 @@ const addRole = async ({ name }: { name: string }) => {
             name
         }),
     });
-    if (!res.ok) throw new Error("Échec de l'ajout");
-    return res.json();
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
+    return data;
 }
 
 export function AddForm() {
@@ -40,7 +41,7 @@ export function AddForm() {
             idToast = toast.loading("Ajout en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: "Échec de l'ajout", type: "error", isLoading: false, autoClose: 2000 });
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
         },
         onSuccess: () => {
             setOpen(false);

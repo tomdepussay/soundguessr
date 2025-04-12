@@ -11,21 +11,21 @@ import { Badge } from "@/src/components/ui/badge";
 import { usePermissions } from "@/src/hooks/use-permissions";
 
 async function fetchRoles(){
-    const response = await fetch("/api/roles");
+    const res = await fetch("/api/roles");
 
-    if (!response.ok) {
-        const errorData = await response.json();
+    if (!res.ok) {
+        const errorData = await res.json();
         throw new Error(errorData.error || "Erreur inconnue");
     }
 
-    const data: Role[] = await response.json();
+    const data: Role[] = await res.json();
     return data;
 }
 
 export default function TableData(){
 
     const { data: roles, isLoading, error } = useQuery({ queryKey: ["roles"], queryFn: fetchRoles, retry: false });
-    const { hasPermission, hasPermissions, hasAnyPermission } = usePermissions();
+    const { hasPermission, hasAnyPermission } = usePermissions();
 
     if(isLoading) return <p>Chargement...</p>
     if(error) return <p>{error.message}</p>
@@ -44,7 +44,7 @@ export default function TableData(){
                     {hasPermission("admin.rights.roles.permissions") && (
                         <TableHead className="hidden md:table-cell">Permissions</TableHead>
                     )}
-                    {(hasAnyPermission(["admin.rights.roles.assign", "admin.rights.roles.edit", "admin.rights.roles.delete"]) || true) && (
+                    {hasAnyPermission(["admin.rights.roles.assign", "admin.rights.roles.edit", "admin.rights.roles.delete"]) && (
                         <TableHead className="whitespace-nowrap w-1"></TableHead>
                     )}
                 </TableRow>
@@ -93,7 +93,6 @@ export default function TableData(){
                                     {hasPermission("admin.rights.roles.edit") && (
                                         <EditForm role={role} /> 
                                     )}
-                                    <EditForm role={role} /> 
                                     {hasPermission("admin.rights.roles.delete") && (
                                         <DeleteForm role={role} /> 
                                     )}

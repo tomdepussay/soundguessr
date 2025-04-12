@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
 import { Category } from "@/src/types/Category";
+import { hasAccessApi } from "@/src/lib/session";
 
 export async function GET(
     req: Request
@@ -11,6 +12,7 @@ export async function GET(
     const max = 10;
 
     try {
+        await hasAccessApi("admin.references.categories");
 
         const categories: Category[] = await prisma.category.findMany({
             select: {
@@ -28,12 +30,10 @@ export async function GET(
         const total = await prisma.category.count();
         const pages = Math.ceil(total / max);
 
-        return NextResponse.json({
-            categories,
-            pages
-        });
+        return NextResponse.json({ categories, pages });
     } catch (error) {
-        return NextResponse.json({ error: "Erreur de la récupération" }, { status: 500 });
+        if (error instanceof NextResponse) return error;
+        return NextResponse.json({ error: "Erreur lors de la récupération" }, { status: 500 });
     }
 }
 
@@ -43,14 +43,18 @@ export async function POST(
     const { name, isActive } = await req.json();
 
     try {
+        await hasAccessApi("admin.references.categories.add");
+
         const newCategory: Category = await prisma.category.create({
             data: { 
                 name,
                 isActive
             },
         });
+
         return NextResponse.json(newCategory);
     } catch (error) {
-        return NextResponse.json({ error: "Erreur de l'ajout" }, { status: 500 });
+        if (error instanceof NextResponse) return error;
+        return NextResponse.json({ error: "Erreur lors de la création" }, { status: 500 });
     }
 }

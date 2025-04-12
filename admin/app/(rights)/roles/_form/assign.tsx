@@ -29,17 +29,16 @@ async function fetchAssignRole(roleId: number) {
 }
 
 async function assign({ roleId, permissionIds }: { roleId: number, permissionIds: number[] }){
-    const response = await fetch(`/api/roles/${roleId}/assign`, {
+    const res = await fetch(`/api/roles/${roleId}/assign`, {
         method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json"},
         body: JSON.stringify({
             permissionIds
         })
-    })
-    if (!response.ok) throw new Error("Échec de la mise à jour");
-    return response.json();
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
+    return data;
 }
 
 export function AssignForm({ role }: AssignFormProps){
@@ -59,8 +58,8 @@ export function AssignForm({ role }: AssignFormProps){
         onMutate: () => {
             idToast = toast.loading("Mise à jour en cours...", { type: "info" });
         },
-        onError: () => {
-            toast.update(idToast, { render: "Échec de la mise à jour", type: "error", isLoading: false, autoClose: 2000 });
+        onError: (error) => {
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
         },
         onSuccess: () => {
             setOpen(false);

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import prisma from "@/src/lib/prisma"
-import { Role } from "@/src/types/Role";
+import prisma from "@/src/lib/prisma";
+import { Category } from "@/src/types/Category";
 import { hasAccessApi } from "@/src/lib/session";
 
 export async function PUT(
@@ -8,27 +8,25 @@ export async function PUT(
     { params } : { params: Promise<{ id: string }> }
 ) {
     const { id } = await params;
-    const { name } = await req.json();
+    const { name, isActive } = await req.json();
 
     try {
-        await hasAccessApi("admin.rights.roles.edit");
+        await hasAccessApi("admin.references.categories.edit");
 
-        const updatedRole: Role = await prisma.role.update({
+        const updatedCategory: Category = await prisma.category.update({
             where: { 
                 id: Number(id) 
             },
             data: { 
-                name 
+                name,
+                isActive
             },
         });
-        return NextResponse.json(updatedRole);
+
+        return NextResponse.json(updatedCategory);
     } catch (error) {
         if (error instanceof NextResponse) return error;
-
-        return NextResponse.json(
-            { error: "Erreur de mise à jour" },
-            { status: 500 }
-        );
+        return NextResponse.json({ error: "Erreur de mise à jour" }, { status: 500 });
     }
 }
 
@@ -39,13 +37,17 @@ export async function DELETE(
     const { id } = await params;
 
     try {
-        await prisma.role.delete({
+        await hasAccessApi("admin.references.categories.delete");
+
+        await prisma.category.delete({
             where: { 
                 id: Number(id) 
             }
         });
+
         return NextResponse.json({ success: true });
     } catch (error) {
+        if (error instanceof NextResponse) return error;
         return NextResponse.json({ error: "Erreur de suppression" }, { status: 500 });
     }
 }

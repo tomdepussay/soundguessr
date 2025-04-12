@@ -28,8 +28,9 @@ const updateCategory = async ({ id, name, isActive }: { id: number, name: string
             isActive
         }),
     });
-    if (!res.ok) throw new Error("Échec de la mise à jour");
-    return res.json();
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
+    return data;
 }
 
 export function EditForm({ category }: { category: Category }) {
@@ -43,8 +44,8 @@ export function EditForm({ category }: { category: Category }) {
         onMutate: () => {
             idToast = toast.loading("Mise à jour en cours...", { type: "info" });
         },
-        onError: () => {
-            toast.update(idToast, { render: "Échec de la mise à jour", type: "error", isLoading: false, autoClose: 2000 });
+        onError: (error) => {
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
         },
         onSuccess: () => {
             setOpen(false);

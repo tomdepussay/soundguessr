@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
 import { Permission } from "@/src/types/Permission";
+import { hasAccessApi } from "@/src/lib/session";
 
 export async function GET(
     req: Request
@@ -11,6 +12,7 @@ export async function GET(
     const max = 10;
 
     try {
+        await hasAccessApi("admin.rights.permissions");
 
         const permissions: Permission[] = await prisma.permission.findMany({
             select: {
@@ -37,12 +39,10 @@ export async function GET(
         const total = await prisma.permission.count();
         const pages = Math.ceil(total / max);
 
-        return NextResponse.json({
-            permissions,
-            pages
-        });
+        return NextResponse.json({ permissions, pages });
     } catch (error) {
-        return NextResponse.json({ error: "Erreur de la récupération" }, { status: 500 });
+        if (error instanceof NextResponse) return error;
+        return NextResponse.json({ error: "Erreur lors de la récupération" }, { status: 500 });
     }
 }
 
@@ -52,6 +52,8 @@ export async function POST(
     const { name, description, roles } = await req.json();
 
     try {
+        await hasAccessApi("admin.rights.permissions.add");
+
         const newPermission: Permission = await prisma.permission.create({
             data: { 
                 name,
@@ -61,9 +63,10 @@ export async function POST(
                 }
             }
         });
+
         return NextResponse.json(newPermission);
     } catch (error) {
-        console.log(error);
-        return NextResponse.json({ error: "Erreur de l'ajout" }, { status: 500 });
+        if (error instanceof NextResponse) return error;
+        return NextResponse.json({ error: "Erreur lors de la création" }, { status: 500 });
     }
 }

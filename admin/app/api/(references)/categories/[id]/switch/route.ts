@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
 import { Category } from "@/src/types/Category";
+import { hasAccessApi } from "@/src/lib/session";
 
 export async function PUT(
     req: Request,
@@ -9,13 +10,14 @@ export async function PUT(
     const { id } = await params;
 
     try {
+        await hasAccessApi("admin.references.categories.active");
 
         const category: Category | null = await prisma.category.findUnique({
             where: { id: Number(id) }
         });
 
         if(!category){
-            return NextResponse.json({ error: "Catégorie introuvable" }, { status: 404 });
+            throw new NextResponse("Catégorie non trouvée", { status: 404 });
         }
 
         const updatedCategory = await prisma.category.update({
@@ -26,8 +28,10 @@ export async function PUT(
                 isActive: !category.isActive
             }
         });
+
         return NextResponse.json(updatedCategory);
     } catch (error) {
-        return NextResponse.json({ error: "Erreur de mise à jour" }, { status: 500 });
+        if (error instanceof NextResponse) return error;
+        return NextResponse.json({ error: "Erreur de suppression" }, { status: 500 });
     }
 }

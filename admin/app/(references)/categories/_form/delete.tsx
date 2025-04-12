@@ -15,10 +15,10 @@ const deleteCategory = async ({ id }: { id: number }) => {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
     });
-    if (!res.ok) throw new Error("Échec de la suppression");
-    return res.json();
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
+    return data;
 }
-
 
 export function DeleteForm({ category }: { category: Category }) {
 
@@ -30,8 +30,8 @@ export function DeleteForm({ category }: { category: Category }) {
         onMutate: () => {
             idToast = toast.loading("Suppression en cours...", { type: "info" });
         },
-        onError: () => {
-            toast.update(idToast, { render: "Échec de la suppression", type: "error", isLoading: false, autoClose: 2000 });
+        onError: (error) => {
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
         },
         onSuccess: () => {
             setOpen(false);

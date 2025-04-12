@@ -31,11 +31,7 @@ export async function GET() {
         return NextResponse.json(roles);
     } catch (error) {
         if (error instanceof NextResponse) return error;
-
-        return NextResponse.json(
-            { error: "Erreur lors de la récupération" },
-            { status: 500 }
-        );
+        return NextResponse.json({ error: "Erreur lors de la récupération" }, { status: 500 });
     }
 }
 
@@ -45,13 +41,17 @@ export async function POST(
     const { name } = await req.json();
 
     try {
+        await hasAccessApi("admin.rights.roles.add");
+
         const newRole: Role = await prisma.role.create({
             data: { 
                 name 
             },
         });
+
         return NextResponse.json(newRole);
     } catch (error) {
+        if (error instanceof NextResponse) return error;
         return NextResponse.json({ error: "Erreur lors de la création" }, { status: 500 });
     }
 }

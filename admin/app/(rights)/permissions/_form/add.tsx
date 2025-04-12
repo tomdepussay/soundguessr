@@ -28,10 +28,11 @@ const addPermission = async ({ name, description, roles }: { name: string, descr
             name,
             description,
             roles
-        }),
+        })
     });
-    if (!res.ok) throw new Error("Échec de l'ajout");
-    return res.json();
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
+    return data;
 }
 
 const fetchPermissionsRoles = async () => {
@@ -39,7 +40,11 @@ const fetchPermissionsRoles = async () => {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     });
-    if (!res.ok) throw new Error("Échec de la récupération des rôles");
+    if(!res.ok){
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Erreur inconnue");
+    }
+
     const data: Role[] = await res.json();
     return data;
 }
@@ -62,7 +67,7 @@ export function AddForm() {
             idToast = toast.loading("Ajout en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: "Échec de l'ajout", type: "error", isLoading: false, autoClose: 2000 });
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
         },
         onSuccess: () => {
             setOpen(false);

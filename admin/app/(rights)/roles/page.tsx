@@ -5,9 +5,8 @@ import { hasAccess } from "@/src/lib/session";
 
 export default async function Page(){
 
-    // const access = await hasAccess("admin.rights.roles");
-
-    // if(!access) return redirect("/");
+    const access = await hasAccess("admin.rights.roles");
+    if(!access) return redirect("/");
 
     return (
         <div>

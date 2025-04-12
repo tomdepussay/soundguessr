@@ -31,8 +31,9 @@ const updatePermission = async ({ id, name, description, roles }: { id: number, 
             roles
         }),
     });
-    if (!res.ok) throw new Error("Échec de la mise à jour");
-    return res.json();
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
+    return data;
 }
 
 const fetchPermissionsRoles = async () => {
@@ -40,7 +41,12 @@ const fetchPermissionsRoles = async () => {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     });
-    if (!res.ok) throw new Error("Échec de la récupération des rôles");
+    
+    if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Une erreur est survenue."); 
+    }
+
     const data: Role[] = await res.json();
     return data;
 }
@@ -65,7 +71,7 @@ export function EditForm({ permission }: { permission: Permission }) {
             idToast = toast.loading("Mise à jour en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: "Échec de la mise à jour", type: "error", isLoading: false, autoClose: 2000 });
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
         },
         onSuccess: () => {
             setOpen(false);

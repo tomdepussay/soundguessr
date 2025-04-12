@@ -11,12 +11,12 @@ import { useState } from "react";
 import { Boolean } from "@/src/components/ui/boolean";
 import { Id, toast } from "react-toastify";
 
+let idToast: Id;
+
 const CategorySchema = z.object({
     name: z.string().min(3, "Le nom doit faire au moins 3 caractères."),
     isActive: z.boolean()
 })
-
-let idToast: Id;
 
 const addCategory = async ({ name, isActive }: { name: string, isActive: boolean }) => {
     const res = await fetch(`/api/categories`, {
@@ -27,10 +27,10 @@ const addCategory = async ({ name, isActive }: { name: string, isActive: boolean
             isActive
         }),
     });
-    if (!res.ok) throw new Error("Échec de l'ajout");
-    return res.json();
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
+    return data;
 }
-
 
 export function AddForm() {
 
@@ -44,7 +44,7 @@ export function AddForm() {
             idToast = toast.loading("Ajout en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: "Échec de l'ajout", type: "error", isLoading: false, autoClose: 2000 });
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
         },
         onSuccess: () => {
             setOpen(false);
