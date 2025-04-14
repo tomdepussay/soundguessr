@@ -3,88 +3,14 @@ import "./globals.css";
 import Body from "@/src/components/Body";
 import Providers from "@/src/components/Providers";
 import Nav from "@/src/components/Nav";
-import { Book, Monitor, Shield, Users, Zap, Gamepad } from "lucide-react";
 import { verifySession } from "@/src/lib/session";
+import { navItems } from "@/src/lib/nav";
 import { ToastContainer } from "react-toastify";
 
 export const metadata: Metadata = {
     title: "Admin - Soundguessr",
     description: "Administration de Soundguessr",
 };
-
-const navItems = [
-    {
-        title: "Dashboard",
-        url: "/",
-        icon: <Monitor />,
-    },
-    {
-        title: "Droits",
-        url: "#",
-        permission: "admin.rights",
-        icon: <Shield />,
-        items: [
-            {
-                title: "Roles",
-                permission: 'admin.rights.roles',
-                url: "/roles"
-            },
-            {
-                title: "Permissions",
-                permission: 'admin.rights.permissions',
-                url: "/permissions"
-            }
-        ]
-    },
-    {
-        title: "Référentiels",
-        url: "#",
-        icon: <Book />,
-        items: [
-            {
-                title: "Catégories",
-                url: "/categories"
-            },
-            {
-                title: "Networks",
-                url: "/networks"
-            }
-        ]
-    },
-    {
-        title: "Animes",
-        url: "#",
-        icon: <Zap />,
-        items: [
-            {
-                title: "Animes",
-                url: "/animes"
-            },
-            {
-                title: "Saisons",
-                url: "/seasons"
-            },
-            {
-                title: "Opening",
-                url: "/openings"
-            },
-            {
-                title: "Ending",
-                url: "/endings"
-            }
-        ]
-    },
-    {
-        title: "Utilisateurs",
-        url: "/users",
-        icon: <Users />
-    },
-    {
-        title: "Parties",
-        url: "/games",
-        icon: <Gamepad />
-    }
-];
 
 export default async function Layout({
     children,
@@ -105,6 +31,7 @@ export default async function Layout({
             </html>
         )
     } else {
+
         return (
             <>
                 <html lang="fr" className="h-full w-full">

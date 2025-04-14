@@ -8,10 +8,12 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader, Si
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/src/components/ui/collapsible";
 import Link from "next/link";
 import LogoutAction from "./logout-action";
+import { usePermissions } from "../hooks/use-permissions";
     
 interface NavItem {
     title: string;
     url: string;
+    permission: string;
     icon?: JSX.Element;
     items?: NavItem[];
 }
@@ -23,7 +25,8 @@ interface NavProps {
 export default function Nav({ navItems = [] }: NavProps) {
 
     const { theme, toggleTheme } = useContext(ThemeContext);
-    const isMobile = useIsMobile()    
+    const { hasPermission, hasAnyPermission } = usePermissions();
+    const isMobile = useIsMobile()
 
     const handleLogout = async () => {
         await LogoutAction()
@@ -46,6 +49,7 @@ export default function Nav({ navItems = [] }: NavProps) {
                         <SidebarMenu>
                             {
                                 navItems.map((item, index) => {
+                                    if(!hasPermission(item.permission)) return null
                                     return <Collapsible
                                         key={index}
                                         asChild
@@ -66,6 +70,7 @@ export default function Nav({ navItems = [] }: NavProps) {
                                                         <SidebarMenuSub>
                                                             {
                                                                 item.items.map((subItem, index) => {
+                                                                    if(!hasPermission(subItem.permission)) return null
                                                                     return <SidebarMenuSubItem key={index}>
                                                                         <SidebarMenuSubButton className="cursor-pointer" asChild>
                                                                             <Link href={subItem.url}>

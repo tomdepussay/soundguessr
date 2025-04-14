@@ -58,35 +58,38 @@ export async function deleteSession(){
     redirect("/login")
 }
 
-export async function hasAccess(permission: string){
+async function getPermissions(){
     const session = await verifySession()
     
     if(!session) return redirect("/login")
 
     const { id } = session;
 
-    const user = await prisma.user.findUnique({
-        where: { id },
-        select: {
-            roleId: true, 
-        }
-    })
-
-    if(!user) return redirect("/login")
-
-    // Vérification si le rôle possède la permission
-    const roleHasPermission = await prisma.role.findFirst({
+    const permissionsResponse = await prisma.permission.findMany({
         where: {
-            id: user.roleId,
-            permissions: {
+            roles: {
                 some: {
-                    name: permission
+                    users: {
+                        some: {
+                            id: id
+                        }
+                    }
                 }
             }
+        },
+        select: {
+            name: true
         }
     })
 
-    if(roleHasPermission) return true;
+    return permissionsResponse.map((permission) => permission.name)
+}
+
+export async function hasAccess(permission: string){
+
+    const permissions = await getPermissions();
+
+    if (permissions.includes(permission)) return true
 
     return false;
 
