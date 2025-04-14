@@ -48,4 +48,4 @@ services:
       JWT_SECRET: ${JWT_SECRET}
     volumes:
       - ./admin:/app
-    command: "/bin/sh entrypoint.sh ${POSTGRES_HOST} ${POSTGRES_PORT}"
+    command: ["/bin/sh", "entrypoint.sh", "${POSTGRES_HOST}", "${POSTGRES_PORT}"]

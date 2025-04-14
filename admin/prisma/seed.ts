@@ -270,7 +270,7 @@ async function main(){
             create: question
         })
     }
-    await reloadSequence("question_Opening");
+    await reloadSequence("question_opening");
 
     
 
@@ -281,7 +281,7 @@ async function main(){
             create: question
         }) 
     }
-    await reloadSequence("question_Ending");
+    await reloadSequence("question_ending");
 }
 
 async function reloadSequence(table: string){

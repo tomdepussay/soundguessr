@@ -1,7 +1,9 @@
 #!/bin/bash
-cd /app
 
-# Get the first argument
+set -e
+
+cd /app || { echo "/app directory not found"; exit 1; }
+
 host="$1"
 port="$2"
 
@@ -14,9 +16,10 @@ if [ -z "$port" ]; then
 fi
 
 while ! nc -z "$host" "$port"; do
-  echo "Waiting for database..."
-  sleep 1
+    echo "Waiting for database at $host:$port..."
+    sleep 1
 done
+
 echo "Database is ready!"
 
 npm install
