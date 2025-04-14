@@ -35,6 +35,21 @@ services:
       - ./client:/app
     command: "/bin/sh entrypoint.sh"
 
+  media:
+    image: node:23-alpine3.20
+    container_name: media
+    working_dir: /app
+    ports: 
+      - "3002:3000"
+    environment:
+      NODE_ENV: development
+      WATCHPACK_POLLING: true
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+      JWT_SECRET: ${JWT_SECRET}
+    volumes:
+      - ./media:/app
+    command: ["/bin/sh", "entrypoint.sh"]
+
   admin: 
     image: node:23-alpine3.20
     container_name: admin

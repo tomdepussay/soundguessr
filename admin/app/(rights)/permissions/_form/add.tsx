@@ -49,11 +49,13 @@ const fetchPermissionsRoles = async () => {
     return data;
 }
 
+const defaultValues = ["1"];
+
 export function AddForm() {
 
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
-    const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+    const [selectedRoles, setSelectedRoles] = useState<string[]>(defaultValues);
     const [errors, setErrors] = useState<{ name: string[], description: string[], roles: string[] }>({ name: [], description: [], roles: []  });
     
     const { data: roles, isLoading, error } = useQuery({
@@ -95,7 +97,7 @@ export function AddForm() {
             return;
         }
 
-        setSelectedRoles([]);
+        setSelectedRoles(defaultValues);
 
         setErrors({ name: [], description: [], roles: []  });
 

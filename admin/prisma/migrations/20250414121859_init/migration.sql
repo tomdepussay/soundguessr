@@ -105,7 +105,6 @@ CREATE TABLE "anime" (
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "title" TEXT NOT NULL,
     "top100" BOOLEAN NOT NULL DEFAULT false,
-    "description" TEXT NOT NULL,
     "imageId" INTEGER,
 
     CONSTRAINT "anime_pkey" PRIMARY KEY ("id")

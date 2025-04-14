@@ -11,45 +11,53 @@ import { useState } from "react";
 import { Boolean } from "@/src/components/ui/boolean";
 import { Id, toast } from "react-toastify";
 
-const CategorySchema = z.object({
-    name: z.string().min(3, "Le nom doit faire au moins 3 caractères."),
-    isActive: z.boolean()
-})
-
 let idToast: Id;
 
-const addCategory = async ({ name, isActive }: { name: string, isActive: boolean }) => {
-    const res = await fetch(`/api/categories`, {
+const AnimeSchema = z.object({
+    isActive: z.boolean(),
+    title: z.string().min(3, "Le titre doit faire au moins 3 caractères."),
+    top100: z.boolean(),
+    image: z.instanceof(File).optional(),
+})
+
+const addAnime = async ({ title, isActive, top100, image }: { title: string, isActive: boolean, top100: boolean, image: File | undefined }) => {
+    const res = await fetch(`/api/animes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-            name,
-            isActive
+            title,
+            isActive,
+            top100,
+            image: image ? await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.readAsDataURL(image);
+            }) : null,
         }),
     });
-    if (!res.ok) throw new Error("Échec de l'ajout");
-    return res.json();
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
+    return data;
 }
-
 
 export function AddForm() {
 
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
-    const [errors, setErrors] = useState<{ name: string[], isActive: string[] }>({ name: [], isActive: [] });
+    const [errors, setErrors] = useState<{ title: string[], isActive: string[], top100: string[], image: string[] }>({ title: [], isActive: [], top100: [], image: [] });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: addCategory,
+        mutationFn: addAnime,
         onMutate: () => {
             idToast = toast.loading("Ajout en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: "Échec de l'ajout", type: "error", isLoading: false, autoClose: 2000 });
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
         },
         onSuccess: () => {
             setOpen(false);
-            toast.update(idToast, { render: "Catégorie ajoutée", type: "success", isLoading: false, autoClose: 2000 });
-            queryClient.invalidateQueries({ queryKey: ["categories"] });
+            toast.update(idToast, { render: "Anime ajouté", type: "success", isLoading: false, autoClose: 2000 });
+            queryClient.invalidateQueries({ queryKey: ["animes"] });
         },
     });
 
@@ -57,24 +65,30 @@ export function AddForm() {
         e.preventDefault();
 
         const formData = new FormData(e.target as HTMLFormElement);
-        const name = formData.get("name") as string;
+        const title = formData.get("title") as string;
         const isActive = formData.get("isActive") === "1" ? true : false;
+        const top100 = formData.get("top100") === "1" ? true : false;
+        const image = formData.get("image") as File | null;
 
-        const validationResult = CategorySchema.safeParse({ name, isActive });
+        const validationResult = AnimeSchema.safeParse({ title, isActive, top100, image });
 
         if (!validationResult.success) {
             setErrors({
-                name: validationResult.error.flatten().fieldErrors.name || [],
-                isActive: validationResult.error.flatten().fieldErrors.isActive || []
+                title: validationResult.error.flatten().fieldErrors.title || [],
+                isActive: validationResult.error.flatten().fieldErrors.isActive || [],
+                top100: validationResult.error.flatten().fieldErrors.top100 || [],
+                image: validationResult.error.flatten().fieldErrors.image || [],
             });
             return;
         }
 
-        setErrors({ name: [], isActive: [] });
+        setErrors({ title: [], isActive: [], top100: [], image: [] });
 
         mutate({ 
-            name: validationResult.data.name, 
-            isActive: validationResult.data.isActive 
+            title: validationResult.data.title,
+            isActive: validationResult.data.isActive,
+            top100: validationResult.data.top100,
+            image: validationResult.data.image 
         });
     }
 
@@ -83,19 +97,19 @@ export function AddForm() {
             <DialogTrigger asChild>
                 <Button onClick={() => setOpen(true)}>
                     <Plus />
-                    Ajouter une catégorie
+                    Ajouter un anime
                 </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent aria-describedby={undefined}>
                 <DialogHeader>
-                    <DialogTitle>Ajouter une catégorie</DialogTitle>
+                    <DialogTitle>Ajouter un anime</DialogTitle>
                 </DialogHeader>
                 <form className="flex flex-col gap-3" action="#" onSubmit={submit}>
                     <div className="flex flex-col gap-2">
-                        <Label htmlFor="name">Nom :</Label>
-                        <Input type="text" name="name" id="name" required disabled={isPending} />
-                        {errors.name.length > 0 && (
-                            <p className="text-red-500 text-sm">{errors.name.join(", ")}</p>
+                        <Label htmlFor="title">Titre :</Label>
+                        <Input type="text" name="title" id="title" required disabled={isPending} />
+                        {errors.title.length > 0 && (
+                            <p className="text-red-500 text-sm">{errors.title.join(", ")}</p>
                         )}
                     </div>
                     <div className="flex flex-col gap-2">
@@ -103,6 +117,20 @@ export function AddForm() {
                         <Boolean name="isActive" id="isActive" defaultValue={true} disabled={isPending} />
                         {errors.isActive.length > 0 && (
                             <p className="text-red-500 text-sm">{errors.isActive.join(", ")}</p>
+                        )}
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <Label htmlFor="top100">Top 100 :</Label>
+                        <Boolean name="top100" id="top100" defaultValue={false} disabled={isPending} />
+                        {errors.top100.length > 0 && (
+                            <p className="text-red-500 text-sm">{errors.top100.join(", ")}</p>
+                        )}
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <Label htmlFor="image">Image :</Label>
+                        <Input type="file" name="image" id="image" accept="image/*" disabled={isPending} />
+                        {errors.image.length > 0 && (
+                            <p className="text-red-500 text-sm">{errors.image.join(", ")}</p>
                         )}
                     </div>
                     <DialogFooter>

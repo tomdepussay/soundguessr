@@ -99,8 +99,8 @@ export function AddForm() {
                         )}
                     </div>
                     <div className="flex flex-col gap-2">
-                        <Label htmlFor="is_active">Actif :</Label>
-                        <Boolean name="is_active" id="is_active" defaultValue={true} disabled={isPending} />
+                        <Label htmlFor="isActive">Actif :</Label>
+                        <Boolean name="isActive" id="isActive" defaultValue={true} disabled={isPending} />
                         {errors.isActive.length > 0 && (
                             <p className="text-red-500 text-sm">{errors.isActive.join(", ")}</p>
                         )}

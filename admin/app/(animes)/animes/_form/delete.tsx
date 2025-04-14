@@ -6,44 +6,44 @@ import { useQueryClient , useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/src/components/ui/alert-dialog";
 import { Id, toast } from "react-toastify";
-import { Category } from "@/src/types/Category";
+import { Anime } from "@/src/types/Anime";
 
 let idToast: Id;
 
-const deleteCategory = async ({ id }: { id: number }) => {
-    const res = await fetch(`/api/categories/${id}`, {
+const deleteAnime = async ({ id }: { id: number }) => {
+    const res = await fetch(`/api/animes/${id}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
     });
-    if (!res.ok) throw new Error("Échec de la suppression");
-    return res.json();
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
+    return data;
 }
 
-
-export function DeleteForm({ category }: { category: Category }) {
+export function DeleteForm({ anime }: { anime: Anime }) {
 
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
 
     const { mutate, isPending } = useMutation({
-        mutationFn: deleteCategory,
+        mutationFn: deleteAnime,
         onMutate: () => {
             idToast = toast.loading("Suppression en cours...", { type: "info" });
         },
-        onError: () => {
-            toast.update(idToast, { render: "Échec de la suppression", type: "error", isLoading: false, autoClose: 2000 });
+        onError: (error) => {
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
         },
         onSuccess: () => {
             setOpen(false);
-            toast.update(idToast, { render: "Catégorie supprimée", type: "success", isLoading: false, autoClose: 2000 });
-            queryClient.invalidateQueries({ queryKey: ["categories"] });
+            toast.update(idToast, { render: "Anime supprimé", type: "success", isLoading: false, autoClose: 2000 });
+            queryClient.invalidateQueries({ queryKey: ["animes"] });
         },
     });
 
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        mutate({ id: category.id });
+        mutate({ id: anime.id });
     }
 
     return (
@@ -55,8 +55,8 @@ export function DeleteForm({ category }: { category: Category }) {
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Supprimer une catégorie</AlertDialogTitle>
-                    <AlertDialogDescription>Êtes-vous sûr de vouloir supprimer la catégorie {category.name} ?</AlertDialogDescription>
+                    <AlertDialogTitle>Supprimer un anime</AlertDialogTitle>
+                    <AlertDialogDescription>Êtes-vous sûr de vouloir supprimer l'anime {anime.title} ?</AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel asChild>

@@ -10,46 +10,49 @@ import { z } from "zod";
 import { useState } from "react";
 import { Boolean } from "@/src/components/ui/boolean";
 import { Id, toast } from "react-toastify";
-import { Category } from "@/src/types/Category";
+import { Anime } from "@/src/types/Anime";
 
 let idToast: Id;
 
-const CategorySchema = z.object({
-    name: z.string().min(3, "Le nom doit faire au moins 3 caractères."),
-    isActive: z.boolean()
+const AnimeSchema = z.object({
+    isActive: z.boolean(),
+    title: z.string().min(3, "Le titre doit faire au moins 3 caractères."),
+    top100: z.boolean(),
 })
 
-const updateCategory = async ({ id, name, isActive }: { id: number, name: string, isActive: boolean }) => {
-    const res = await fetch(`/api/categories/${id}`, {
+const updateAnime = async ({ id, title, isActive, top100 }: { id: number, title: string, isActive: boolean, top100: boolean }) => {
+    const res = await fetch(`/api/animes/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-            name,
-            isActive
+            title,
+            isActive,
+            top100
         }),
     });
-    if (!res.ok) throw new Error("Échec de la mise à jour");
-    return res.json();
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
+    return data;
 }
 
-export function EditForm({ category }: { category: Category }) {
+export function EditForm({ anime }: { anime: Anime }) {
 
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
-    const [errors, setErrors] = useState<{ name: string[], isActive: string[] }>({ name: [], isActive: [] });
+    const [errors, setErrors] = useState<{ title: string[], isActive: string[], top100: string[] }>({ title: [], isActive: [], top100: [] });
 
     const { mutate, isPending } = useMutation({
-        mutationFn: updateCategory,
+        mutationFn: updateAnime,
         onMutate: () => {
             idToast = toast.loading("Mise à jour en cours...", { type: "info" });
         },
-        onError: () => {
-            toast.update(idToast, { render: "Échec de la mise à jour", type: "error", isLoading: false, autoClose: 2000 });
+        onError: (error) => {
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
         },
         onSuccess: () => {
             setOpen(false);
-            toast.update(idToast, { render: "Catégorie mise à jour", type: "success", isLoading: false, autoClose: 2000 });
-            queryClient.invalidateQueries({ queryKey: ["categories"] });
+            toast.update(idToast, { render: "Anime mis à jour", type: "success", isLoading: false, autoClose: 2000 });
+            queryClient.invalidateQueries({ queryKey: ["animes"] });
         },
     });
 
@@ -57,25 +60,28 @@ export function EditForm({ category }: { category: Category }) {
         e.preventDefault();
 
         const formData = new FormData(e.target as HTMLFormElement);
-        const name = formData.get("name") as string;
+        const title = formData.get("title") as string;
         const isActive = formData.get("isActive") === "1" ? true : false;
+        const top100 = formData.get("top100") === "1" ? true : false;
 
-        const validationResult = CategorySchema.safeParse({ name, isActive });
+        const validationResult = AnimeSchema.safeParse({ title, isActive, top100 });
 
         if (!validationResult.success) {
             setErrors({
-                name: validationResult.error.flatten().fieldErrors.name || [],
-                isActive: validationResult.error.flatten().fieldErrors.isActive || []
+                title: validationResult.error.flatten().fieldErrors.title || [],
+                isActive: validationResult.error.flatten().fieldErrors.isActive || [],
+                top100: validationResult.error.flatten().fieldErrors.top100 || []
             });
             return;
         }
 
-        setErrors({ name: [], isActive: [] });
+        setErrors({ title: [], isActive: [], top100: [] });
 
         mutate({ 
-            id: category.id,
-            name: validationResult.data.name,
-            isActive: validationResult.data.isActive
+            id: anime.id,
+            title: validationResult.data.title,
+            isActive: validationResult.data.isActive,
+            top100: validationResult.data.top100, 
         });
     }
 
@@ -88,22 +94,29 @@ export function EditForm({ category }: { category: Category }) {
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Modifier une catégorie</DialogTitle>
-                    <DialogDescription>Modification de la catégorie {category.name}</DialogDescription>
+                    <DialogTitle>Modifier un anime</DialogTitle>
+                    <DialogDescription>Modification de l'anime {anime.title}</DialogDescription>
                 </DialogHeader>
                 <form className="flex flex-col gap-3" action="#" onSubmit={submit}>
                     <div className="flex flex-col gap-2">
-                        <Label htmlFor="name">Nom :</Label>
-                        <Input type="text" name="name" id="name" defaultValue={category.name} required disabled={isPending} />
-                        {errors.name.length > 0 && (
-                            <p className="text-red-500 text-sm">{errors.name.join(", ")}</p>
+                        <Label htmlFor="title">Titre :</Label>
+                        <Input type="text" name="title" id="title" defaultValue={anime.title} required disabled={isPending} />
+                        {errors.title.length > 0 && (
+                            <p className="text-red-500 text-sm">{errors.title.join(", ")}</p>
                         )}
                     </div>
                     <div className="flex flex-col gap-2">
                         <Label htmlFor="isActive">Actif :</Label>
-                        <Boolean name="isActive" id="isActive" defaultValue={category.isActive} disabled={isPending} />
+                        <Boolean name="isActive" id="isActive" defaultValue={anime.isActive} disabled={isPending} />
                         {errors.isActive.length > 0 && (
                             <p className="text-red-500 text-sm">{errors.isActive.join(", ")}</p>
+                        )}
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <Label htmlFor="top100">Top 100 :</Label>
+                        <Boolean name="top100" id="top100" defaultValue={anime.top100} disabled={isPending} />
+                        {errors.top100.length > 0 && (
+                            <p className="text-red-500 text-sm">{errors.top100.join(", ")}</p>
                         )}
                     </div>
                     <DialogFooter>

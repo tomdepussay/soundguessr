@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
-import { Category } from "@/src/types/Category";
+import { Anime } from "@/src/types/Anime";
 import { hasAccessApi } from "@/src/lib/session";
 
 export async function PUT(
@@ -10,26 +10,26 @@ export async function PUT(
     const { id } = await params;
 
     try {
-        await hasAccessApi("admin.references.categories.isActive");
+        await hasAccessApi("admin.animes.animes.isActive");
 
-        const category: Category | null = await prisma.category.findUnique({
+        const anime: Anime | null = await prisma.anime.findUnique({
             where: { id: Number(id) }
         });
 
-        if(!category){
-            throw new NextResponse("Catégorie non trouvée", { status: 404 });
+        if(!anime){
+            throw new NextResponse("Anime non trouvé", { status: 404 });
         }
 
-        const updatedCategory = await prisma.category.update({
+        const updatedAnime: Anime = await prisma.anime.update({
             where: { 
                 id: Number(id) 
             },
             data: {
-                isActive: !category.isActive
+                isActive: !anime.isActive
             }
         });
 
-        return NextResponse.json(updatedCategory);
+        return NextResponse.json(updatedAnime);
     } catch (error) {
         if (error instanceof NextResponse) return error;
         return NextResponse.json({ error: "Erreur lors de la modification" }, { status: 500 });

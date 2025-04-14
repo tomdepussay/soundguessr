@@ -2,50 +2,53 @@ import { Button } from "@/src/components/ui/button";
 import { ToggleLeft, ToggleRight } from "lucide-react";
 import { useQueryClient , useMutation } from "@tanstack/react-query";
 import { Id, toast } from "react-toastify";
-import { Category } from "@/src/types/Category";
-
-type SwitchProps = {
-    category: Category;
-}
-
-const switchCategory = async ({ id_category }: { id_category: number }) => {
-    const res = await fetch(`/api/categories/${id_category}/switch`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-    });
-    if (!res.ok) throw new Error("Échec de la mise à jour");
-    return res.json();
-}
+import { Anime } from "@/src/types/Anime";
 
 let idToast: Id;
 
-export function Switch({ category }: SwitchProps) {
+type SwitchProps = {
+    anime: Anime;
+}
+
+const switchAnime = async ({ id }: { id: number }) => {
+    const res = await fetch(`/api/animes/${id}/switch`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
+    return data;
+}
+
+export function Switch({ anime }: SwitchProps) {
 
     const queryClient = useQueryClient();
     const { mutate, isPending } = useMutation({
-        mutationFn: switchCategory,
+        mutationFn: switchAnime,
         onMutate: () => {
             idToast = toast.loading("Mise à jour en cours...", { type: "info", autoClose: false });
         },
-        onError: () => {
-            toast.update(idToast, { render: "Échec de la mise à jour", type: "error", autoClose: 2000, isLoading: false });
+        onError: (error) => {
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["categories"] });
+            queryClient.invalidateQueries({ queryKey: ["animes"] });
             toast.update(idToast, { render: "Mise à jour effectuée", type: "success", autoClose: 2000, isLoading: false });
         },
     });
 
     const handleClick = async () => {
-        await mutate({ id_category: category.id_category });
+        mutate({ id: anime.id });
     }
 
     return (
-        <Button variant={category.is_active ? "default" : "destructive"} disabled={isPending} onClick={handleClick}>
+        <Button variant={anime.isActive ? "default" : "destructive"} disabled={isPending} onClick={handleClick}>
             {
-                category.is_active ? 
-                <ToggleRight /> :
-                <ToggleLeft />
+                anime.isActive ? (
+                    <ToggleRight />
+                ) : (
+                    <ToggleLeft />
+                )
             }
         </Button>
     )

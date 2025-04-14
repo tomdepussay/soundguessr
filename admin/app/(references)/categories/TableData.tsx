@@ -54,7 +54,7 @@ export default function TableData({ page, setPages }: TableDataProps){
                         {hasPermission("admin.references.categories.name") && (
                             <TableHead>Nom</TableHead>
                         )}
-                        {hasPermission("admin.references.categories.active") && (
+                        {hasPermission("admin.references.categories.isActive") && (
                             <TableHead>Actif</TableHead>
                         )}
                         {hasAnyPermission(["admin.references.categories.edit", "admin.references.categories.delete"]) && (

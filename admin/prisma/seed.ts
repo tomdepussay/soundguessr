@@ -131,38 +131,93 @@ const permissions = [
     },
     {
         id: 19,
+        name: "admin.references",
+        description: "Accès à la gestion des références"
+    },
+    {
+        id: 20,
         name: "admin.references.categories",
         description: "Accès à la gestion des catégories"
     },
     {
-        id: 20,
+        id: 21,
         name: "admin.references.categories.id",
         description: "Voir l'id des catégories"
     },
     {
-        id: 21,
+        id: 22,
         name: "admin.references.categories.name",
         description: "Voir le nom des catégories"
     },
     {
-        id: 22,
+        id: 23,
         name: "admin.references.categories.isActive",
         description: "Voir l'état des catégories" 
     },
     {
-        id: 23,
+        id: 24,
         name: "admin.references.categories.add",
         description: "Ajouter une catégorie" 
     },
     {
-        id: 24,
+        id: 25,
         name: "admin.references.categories.edit",
         description: "Modifier une catégorie" 
     },
     {
-        id: 25,
+        id: 26,
         name: "admin.references.categories.delete",
         description: "Supprimer une catégorie" 
+    },
+    {
+        id: 27,
+        name: "admin.animes",
+        description: "Accès à la gestion de la catégorie 'Animes'"
+    },
+    {
+        id: 28,
+        name: "admin.animes.animes",
+        description: "Accès à la gestion des animes"
+    },
+    {
+        id: 29,
+        name: "admin.animes.animes.id",
+        description: "Voir l'id des animes"
+    },
+    {
+        id: 30,
+        name: "admin.animes.animes.isActive",
+        description: "Voir l'état des animes"
+    },
+    {
+        id: 31,
+        name: "admin.animes.animes.title",
+        description: "Voir le titre des animes"
+    },
+    {
+        id: 32,
+        name: "admin.animes.animes.top100",
+        description: "Voir le top 100 des animes"
+    },
+    {
+        id: 33,
+        name: "admin.animes.animes.image",
+        description: "Voir l'image des animes"
+    },
+    {
+        id: 34,
+        name: "admin.animes.animes.add",
+        description: "Ajouter un anime"
+    },
+    {
+        id: 35,
+        name: "admin.animes.animes.edit",
+        description: "Modifier un anime"
+    },
+    {
+        id: 36,
+        name: "admin.animes.animes.delete",
+        description: "Supprimer un anime"
     }
 ]
 
