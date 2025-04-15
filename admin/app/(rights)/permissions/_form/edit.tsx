@@ -140,6 +140,8 @@ export function EditForm({ permission }: { permission: Permission }) {
                         <div className="flex flex-col gap-3">
                             <Label htmlFor="roles">Rôles (optionnel) :</Label>
                             <MultiSelect
+                                id="roles"
+                                name="roles"
                                 options={roles.map((role) => ({ value: String(role.id), label: role.name }))}
                                 selected={selectedRoles}
                                 onChange={setSelectedRoles}

@@ -218,6 +218,31 @@ const permissions = [
         id: 36,
         name: "admin.animes.animes.delete",
         description: "Supprimer un anime"
+    },
+    {
+        id: 37,
+        name: "admin.images.add",
+        description: "Ajouter une image"
+    },
+    {
+        id: 38,
+        name: "admin.images",
+        description: "Accès à la gestion des images"
+    },
+    {
+        id: 39,
+        name: "admin.images.add",
+        description: "Ajouter une image"
+    },
+    {
+        id: 40,
+        name: "admin.images.edit",
+        description: "Modifier une image"
+    },
+    {
+        id: 39,
+        name: "admin.images.delete",
+        description: "Supprimer une image"
     }
 ]
 

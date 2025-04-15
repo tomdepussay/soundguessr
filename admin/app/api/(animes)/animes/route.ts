@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
 import { Anime } from "@/src/types/Anime";
 import { hasAccessApi } from "@/src/lib/session";
+import { uploadImage } from "@/src/lib/image";
 
 export async function GET(
     req: Request
@@ -20,7 +21,12 @@ export async function GET(
                 isActive: true,
                 title: true,
                 top100: true,
-                imageId: true,
+                image: {
+                    select: {
+                        id: true,
+                        link: true,
+                    }
+                }
             },
             orderBy: {
                 id: "asc"
@@ -43,15 +49,26 @@ export async function POST(
     req: Request
 ){
     const { title, isActive, top100, image } = await req.json();
+    let imageId = null;
 
     try {
         await hasAccessApi("admin.animes.animes.add");
+    
+        if(image !== 'data:application/octet-stream;base64,') {
+            const { newImage } = await uploadImage(image);
+
+            if(!newImage) {
+                throw new Error("Erreur lors de l'envoi de l'image");
+            }
+            imageId = newImage.id;
+        }
 
         const newAnime: Anime = await prisma.anime.create({
             data: { 
                 title,
                 isActive,
-                top100
+                top100,
+                imageId: imageId,
             },
         });
 

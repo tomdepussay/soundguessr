@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
 import { Anime } from "@/src/types/Anime";
 import { hasAccessApi } from "@/src/lib/session";
+import { deleteImage } from "@/src/lib/image";
 
 export async function PUT(
     req: Request,
@@ -39,6 +40,37 @@ export async function DELETE(
 
     try {
         await hasAccessApi("admin.animes.animes.delete");
+
+        const anime = await prisma.anime.findUnique({
+            where: { 
+                id: Number(id) 
+            },
+            select: {
+                image: {
+                    select: {
+                        id: true,
+                        link: true,
+                        extension: true,
+                    }
+                }
+            }
+        })
+
+        console.log(anime);
+
+        if(!anime) {
+            throw NextResponse.json({ error: "Anime not found" }, { status: 404 })
+        }
+
+        if(anime.image){
+
+            const { response } = await deleteImage(anime.image.link)
+
+            console.log(response);
+        }
+
+        console.log("continue");
+        return NextResponse.json({ message: "Image deleted" }, { status: 200 });
 
         await prisma.anime.delete({
             where: { 

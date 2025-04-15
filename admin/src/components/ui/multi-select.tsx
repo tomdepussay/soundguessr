@@ -8,6 +8,8 @@ import { cn } from "@/src/lib/utils";
 import { Checkbox } from "./checkbox";
 
 interface MultiSelectProps {
+    id: string;
+    name: string;
     options: Option[];
     selected: string[];
     onChange: (selected: string[]) => void;
@@ -20,7 +22,7 @@ type Option = {
     label: string;
 }
 
-export function MultiSelect({ options, selected, onChange, placeholder, max }: MultiSelectProps) {
+export function MultiSelect({ id, name, options, selected, onChange, placeholder, max }: MultiSelectProps) {
     const [open, setOpen] = useState<boolean>(false);
 
     const handleSelect = (optionValue: string) => {
@@ -37,7 +39,7 @@ export function MultiSelect({ options, selected, onChange, placeholder, max }: M
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
-                <Button variant="outline" role="combobox" className="w-full justify-between h-fit hover:bg-background">
+                <Button variant="outline" role="combobox" className="w-full justify-between h-fit hover:bg-background" name={name} id={id}>
                     {selected.length > 0 ? (
                         <div className="flex gap-1 flex-wrap items-center">
                             {visibleSelected.map((sel) => (

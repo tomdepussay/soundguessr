@@ -1,8 +1,7 @@
 import 'server-only'
 import { JWTPayload, SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
-// import { redirect } from 'next/navigation'
-// import prisma from "@/src/lib/prisma"
+import prisma from "@/src/lib/prisma"
 import { NextResponse } from 'next/server';
 
 const key = new TextEncoder().encode(process.env.JWT_SECRET)
@@ -42,50 +41,60 @@ export async function verifySession(){
     return { id: session.id }
 }
 
-// async function getPermissions(){
-//     const session = await verifySession()
-    
-//     if(!session) return redirect("/login")
+export async function verifyToken(token: string){
+    const session = await decrypt(token)
 
-//     const { id } = session;
+    if(!session || typeof session.id !== "number") return null
 
-//     const permissionsResponse = await prisma.permission.findMany({
-//         where: {
-//             roles: {
-//                 some: {
-//                     users: {
-//                         some: {
-//                             id: id
-//                         }
-//                     }
-//                 }
-//             }
-//         },
-//         select: {
-//             name: true
-//         }
-//     })
+    return { id: session.id }
+}
 
-//     return permissionsResponse.map((permission) => permission.name)
-// }
+async function getPermissions(){
+    const session = await verifySession()
+    console.log(session)
+    if(!session) return [];
 
-// export async function hasAccess(permission: string){
+    const { id } = session;
 
-//     const permissions = await getPermissions();
+    const permissionsResponse = await prisma.permission.findMany({
+        where: {
+            roles: {
+                some: {
+                    users: {
+                        some: {
+                            id: id
+                        }
+                    }
+                }
+            }
+        },
+        select: {
+            name: true
+        }
+    })
 
-//     if (permissions.includes(permission)) return true
+    return permissionsResponse.map((permission) => permission.name)
+}
 
-//     return false;
+export async function hasAccess(permission: string){
+    console.log("hasAccess", permission)
 
-// }
+    const permissions = await getPermissions();
 
-// export async function hasAccessApi(permission: string){
-//     const access = await hasAccess(permission);
+    if (permissions.includes(permission)) return true
 
-//     if (!access) {
-//         throw NextResponse.json(
-//             { error: "Vous n'avez pas la permission de faire cette action" },
-//             { status: 401 }
-//         );
-//     }
-// }
+    return false;
+
+}
+
+export async function hasAccessApi(permission: string){
+    console.log("hasAccessApi", permission)
+    const access = await hasAccess(permission);
+
+    if (!access) {
+        throw NextResponse.json(
+            { error: "Vous n'avez pas la permission de faire cette action" },
+            { status: 401 }
+        );
+    }
+}

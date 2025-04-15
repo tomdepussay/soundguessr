@@ -8,5 +8,5 @@ export type Anime = {
     title: string;
     top100: boolean;
     imageId?: number | null;
-    image?: Image;
+    image?: Image | null;
 }

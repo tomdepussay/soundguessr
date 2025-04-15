@@ -127,7 +127,7 @@ export function AddForm() {
                         )}
                     </div>
                     <div className="flex flex-col gap-2">
-                        <Label htmlFor="image">Image :</Label>
+                        <Label htmlFor="image">Image (optionnel) :</Label>
                         <Input type="file" name="image" id="image" accept="image/*" disabled={isPending} />
                         {errors.image.length > 0 && (
                             <p className="text-red-500 text-sm">{errors.image.join(", ")}</p>

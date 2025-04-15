@@ -7,8 +7,8 @@ import { Switch } from "./_form/switch";
 import { useQuery } from "@tanstack/react-query";
 import { Anime } from "@/src/types/Anime";
 import { usePermissions } from "@/src/hooks/use-permissions";
-import { Button } from "@/src/components/ui/button";
 import { Badge } from "@/src/components/ui/badge";
+import { ViewImage } from "./_form/view-image";
 
 type TableDataProps = {
     page: number;
@@ -92,9 +92,7 @@ export default function TableData({ page, setPages }: TableDataProps){
                                 {hasAnyPermission(["admin.animes.animes.edit", "admin.animes.animes.delete"]) && (
                                     <TableCell className="whitespace-nowrap flex gap-1">
                                         {hasPermission("admin.animes.animes.image") && (
-                                            <Button>
-                                                I
-                                            </Button>
+                                            <ViewImage anime={anime} />
                                         )}
                                         {hasPermission("admin.animes.animes.edit") && (
                                             <EditForm anime={anime} />
@@ -108,7 +106,7 @@ export default function TableData({ page, setPages }: TableDataProps){
                         ))
                     }
                 </TableBody>
-            </Table>   
+            </Table>
         )
     } 
 }
