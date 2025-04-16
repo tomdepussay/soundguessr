@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
 import { Permission } from "@/src/types/Permission";
 import { hasAccessApi } from "@/src/lib/session";
+import { PermissionSchema } from "@/src/validation/permission";
 
 export async function GET(
     req: Request
@@ -63,6 +64,12 @@ export async function POST(
 
     try {
         await hasAccessApi("admin.rights.permissions.add");
+
+        const { success } = PermissionSchema.safeParse({ name, description, roles });  
+
+        if (!success) {
+            throw NextResponse.json({ error: "Erreur de validation" }, { status: 422 });
+        }
 
         const newPermission: Permission = await prisma.permission.create({
             data: { 

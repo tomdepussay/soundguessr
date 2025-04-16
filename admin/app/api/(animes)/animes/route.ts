@@ -3,6 +3,7 @@ import prisma from "@/src/lib/prisma";
 import { Anime } from "@/src/types/Anime";
 import { hasAccessApi } from "@/src/lib/session";
 import { uploadImage } from "@/src/lib/image";
+import { AnimeSchema } from "@/src/validation/anime";
 
 export async function GET(
     req: Request
@@ -53,6 +54,12 @@ export async function POST(
 
     try {
         await hasAccessApi("admin.animes.animes.add");
+        
+        const { success } = AnimeSchema.safeParse({ title, isActive, top100 });  
+    
+        if (!success) {
+            throw NextResponse.json({ error: "Erreur de validation" }, { status: 422 });
+        }
     
         if(image !== 'data:application/octet-stream;base64,') {
             const { newImage } = await uploadImage(image);

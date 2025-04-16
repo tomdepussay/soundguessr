@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma";
 import { Category } from "@/src/types/Category";
 import { hasAccessApi } from "@/src/lib/session";
+import { CategorySchema } from "@/src/validation/category";
 
 export async function GET(
     req: Request
@@ -44,6 +45,12 @@ export async function POST(
 
     try {
         await hasAccessApi("admin.references.categories.add");
+        
+        const { success } = CategorySchema.safeParse({ name, isActive });  
+    
+        if (!success) {
+            throw NextResponse.json({ error: "Erreur de validation" }, { status: 422 });
+        }
 
         const newCategory: Category = await prisma.category.create({
             data: { 

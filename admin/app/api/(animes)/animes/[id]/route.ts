@@ -3,6 +3,7 @@ import prisma from "@/src/lib/prisma";
 import { Anime } from "@/src/types/Anime";
 import { hasAccessApi } from "@/src/lib/session";
 import { uploadImage, deleteImage } from "@/src/lib/image";
+import { AnimeSchema } from "@/src/validation/anime";
 
 export async function PUT(
     req: Request,
@@ -14,6 +15,12 @@ export async function PUT(
 
     try {
         await hasAccessApi("admin.animes.animes.edit");
+        
+        const { success } = AnimeSchema.safeParse({ title, isActive, top100 });  
+    
+        if (!success) {
+            throw NextResponse.json({ error: "Erreur de validation" }, { status: 422 });
+        }
 
         const anime = await prisma.anime.findUnique({
             where: { 

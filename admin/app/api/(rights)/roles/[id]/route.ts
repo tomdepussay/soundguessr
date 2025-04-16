@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma"
 import { Role } from "@/src/types/Role";
 import { hasAccessApi } from "@/src/lib/session";
+import { RoleSchema } from "@/src/validation/role";
 
 export async function PUT(
     req: Request,
@@ -12,6 +13,12 @@ export async function PUT(
 
     try {
         await hasAccessApi("admin.rights.roles.edit");
+        
+        const { success } = RoleSchema.safeParse({ name });  
+    
+        if (!success) {
+            throw NextResponse.json({ error: "Erreur de validation" }, { status: 422 });
+        }
 
         const updatedRole: Role = await prisma.role.update({
             where: { 
