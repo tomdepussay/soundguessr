@@ -1,14 +1,9 @@
 'use server'
 
-import { z } from "zod"
+import { LoginSchema } from "@/src/validation/login"
 import prisma from "@/src/lib/prisma"
 import bcrypt from 'bcrypt'
 import { createSession } from "@/src/lib/session"
-
-const LoginSchema = z.object({
-    email: z.string().email("L'email doit être valide."),
-    password: z.string()
-})
 
 export async function login(state: any, formData: { get: (arg0: string) => any }){
 

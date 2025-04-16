@@ -6,18 +6,13 @@ import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { Edit } from "lucide-react";
 import { useQueryClient , useMutation } from "@tanstack/react-query";
-import { z } from "zod";
+import { CategorySchema } from "@/src/validation/category";
 import { useState } from "react";
 import { Boolean } from "@/src/components/ui/boolean";
 import { Id, toast } from "react-toastify";
 import { Category } from "@/src/types/Category";
 
 let idToast: Id;
-
-const CategorySchema = z.object({
-    name: z.string().min(3, "Le nom doit faire au moins 3 caractères."),
-    isActive: z.boolean()
-})
 
 const updateCategory = async ({ id, name, isActive }: { id: number, name: string, isActive: boolean }) => {
     const res = await fetch(`/api/categories/${id}`, {

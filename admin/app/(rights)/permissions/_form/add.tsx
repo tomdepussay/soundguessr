@@ -6,19 +6,13 @@ import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { Plus } from "lucide-react";
 import { useQueryClient , useMutation, useQuery } from "@tanstack/react-query";
-import { z } from "zod";
+import { PermissionSchema } from "@/src/validation/permission";
 import { useState } from "react";
 import { Id, toast } from "react-toastify";
 import { MultiSelect } from "@/src/components/ui/multi-select";
 import { Role } from "@/src/types/Role";
 
 let idToast: Id;
-
-const PermissionSchema = z.object({
-    name: z.string().min(3, "Le nom doit faire au moins 3 caractères."),
-    description: z.string().optional(),
-    roles: z.array(z.string()).optional()
-})
 
 const addPermission = async ({ name, description, roles }: { name: string, description: string | undefined, roles: string[] | undefined }) => {
     const res = await fetch(`/api/permissions`, {

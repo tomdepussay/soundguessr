@@ -6,19 +6,12 @@ import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { Plus } from "lucide-react";
 import { useQueryClient , useMutation } from "@tanstack/react-query";
-import { z } from "zod";
+import { AnimeSchema } from "@/src/validation/anime";
 import { useState } from "react";
 import { Boolean } from "@/src/components/ui/boolean";
 import { Id, toast } from "react-toastify";
 
 let idToast: Id;
-
-const AnimeSchema = z.object({
-    isActive: z.boolean(),
-    title: z.string().min(3, "Le titre doit faire au moins 3 caractères."),
-    top100: z.boolean(),
-    image: z.instanceof(File).optional(),
-})
 
 const addAnime = async ({ title, isActive, top100, image }: { title: string, isActive: boolean, top100: boolean, image: File | undefined }) => {
     const res = await fetch(`/api/animes`, {
