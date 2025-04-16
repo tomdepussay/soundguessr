@@ -47,7 +47,7 @@ export const useAddRole = () => {
             idToast = toast.loading("Ajout en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false, autoClose: 2000 });
         },
         onSuccess: () => {
             toast.update(idToast, { render: "Rôle ajouté", type: "success", isLoading: false, autoClose: 2000 });
@@ -78,7 +78,7 @@ export const useEditRole = () => {
             idToast = toast.loading("Mise à jour en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false, autoClose: 2000 });
         },
         onSuccess: () => {
             toast.update(idToast, { render: "Rôle mis à jour", type: "success", isLoading: false, autoClose: 2000 });
@@ -106,7 +106,7 @@ export const useDeleteRole = () => {
             idToast = toast.loading("Suppression en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false, autoClose: 2000 });
         },
         onSuccess: () => {
             toast.update(idToast, { render: "Rôle supprimé", type: "success", isLoading: false, autoClose: 2000 });
@@ -137,7 +137,7 @@ export const useAssignRole = () => {
             idToast = toast.loading("Mise à jour en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false, autoClose: 2000 });
         },
         onSuccess: () => {
             toast.update(idToast, { render: "Rôle mis à jour", type: "success", isLoading: false, autoClose: 2000 });

@@ -46,7 +46,7 @@ export const useAddCategory = () => {
             idToast = toast.loading("Ajout en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false, autoClose: 2000 });
         },
         onSuccess: () => {
             toast.update(idToast, { render: "Catégorie ajoutée", type: "success", isLoading: false, autoClose: 2000 });
@@ -78,7 +78,7 @@ export const useEditCategory = () => {
             idToast = toast.loading("Modification en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false, autoClose: 2000 });
         },
         onSuccess: () => {
             toast.update(idToast, { render: "Catégorie modifiée", type: "success", isLoading: false, autoClose: 2000 });
@@ -106,7 +106,7 @@ export const useDeleteCategory = () => {
             idToast = toast.loading("Suppression en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false, autoClose: 2000 });
         },
         onSuccess: () => {
             toast.update(idToast, { render: "Catégorie supprimée", type: "success", isLoading: false, autoClose: 2000 });
@@ -134,7 +134,7 @@ export const useSwitchCategory = () => {
             idToast = toast.loading("Modification en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false, autoClose: 2000 });
         },
         onSuccess: () => {
             toast.update(idToast, { render: "Catégorie modifiée", type: "success", isLoading: false, autoClose: 2000 });

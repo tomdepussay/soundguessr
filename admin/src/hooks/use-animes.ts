@@ -52,7 +52,7 @@ export const useAddAnime = () => {
             idToast = toast.loading("Ajout en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false, autoClose: 2000 });
         },
         onSuccess: () => {
             toast.update(idToast, { render: "Anime ajouté", type: "success", isLoading: false, autoClose: 2000 });
@@ -90,7 +90,7 @@ export const useEditAnime = () => {
             idToast = toast.loading("Mise à jour en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false, autoClose: 2000 });
         },
         onSuccess: () => {
             toast.update(idToast, { render: "Anime mis à jour", type: "success", isLoading: false, autoClose: 2000 });
@@ -118,7 +118,7 @@ export const useDeleteAnime = () => {
             idToast = toast.loading("Suppression en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false, autoClose: 2000 });
         },
         onSuccess: () => {
             toast.update(idToast, { render: "Anime supprimé", type: "success", isLoading: false, autoClose: 2000 });
@@ -146,7 +146,7 @@ export const useSwitchAnime = () => {
             idToast = toast.loading("Mise à jour en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false, autoClose: 2000 });
         },
         onSuccess: () => {
             toast.update(idToast, { render: "Anime mis à jour", type: "success", isLoading: false, autoClose: 2000 });

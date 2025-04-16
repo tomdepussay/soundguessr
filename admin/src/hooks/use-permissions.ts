@@ -49,7 +49,7 @@ export const useAddPermission = () => {
             idToast = toast.loading("Ajout en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false, autoClose: 2000 });
         },
         onSuccess: () => {
             toast.update(idToast, { render: "Permission ajoutée", type: "success", isLoading: false, autoClose: 2000 });
@@ -82,7 +82,7 @@ export const useEditPermission = () => {
             idToast = toast.loading("Mise à jour en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false, autoClose: 2000 });
         },
         onSuccess: () => {
             toast.update(idToast, { render: "Permission mise à jour", type: "success", isLoading: false, autoClose: 2000 });
@@ -110,7 +110,7 @@ export const useDeletePermission = () => {
             idToast = toast.loading("Suppression en cours...", { type: "info" });
         },
         onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
+            toast.update(idToast, { render: error.message, type: "error", isLoading: false, autoClose: 2000 });
         },
         onSuccess: () => {
             toast.update(idToast, { render: "Permission supprimée", type: "success", isLoading: false, autoClose: 2000 });
