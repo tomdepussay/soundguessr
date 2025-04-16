@@ -5,74 +5,27 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { Edit } from "lucide-react";
-import { useQueryClient , useMutation, useQuery } from "@tanstack/react-query";
 import { PermissionSchema } from "@/src/validation/permission";
 import { useState } from "react";
-import { Id, toast } from "react-toastify";
 import { Permission } from "@/src/types/Permission";
 import { Role } from "@/src/types/Role";
 import { MultiSelect } from "@/src/components/ui/multi-select";
+import { useEditPermission } from "@/src/hooks/use-permissions";
 
-let idToast: Id;
-
-const updatePermission = async ({ id, name, description, roles }: { id: number, name: string, description: string | undefined, roles: string[] | undefined }) => {
-    const res = await fetch(`/api/permissions/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-            name,
-            description,
-            roles
-        }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
-    return data;
+interface EditFormProps {
+    permission: Permission;
+    roles: Role[];
 }
 
-const fetchPermissionsRoles = async () => {
-    const res = await fetch("/api/permissions/roles", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-    });
-    
-    if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || "Une erreur est survenue."); 
-    }
+export function EditForm({ permission, roles }: EditFormProps) {
 
-    const data: Role[] = await res.json();
-    return data;
-}
-
-export function EditForm({ permission }: { permission: Permission }) {
-
-    const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
     const [selectedRoles, setSelectedRoles] = useState<string[]>(
         permission.roles?.map((role) => String(role.id)) || []
     );
     const [errors, setErrors] = useState<{ name: string[], description: string[], roles: string[] }>({ name: [], description: [], roles: [] });
 
-    const { data: roles, isLoading, error } = useQuery({
-        queryFn: fetchPermissionsRoles,
-        queryKey: ["permissionsRoles"]
-    });
-
-    const { mutate, isPending } = useMutation({
-        mutationFn: updatePermission,
-        onMutate: () => {
-            idToast = toast.loading("Mise à jour en cours...", { type: "info" });
-        },
-        onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
-        },
-        onSuccess: () => {
-            setOpen(false);
-            toast.update(idToast, { render: "Permission mise à jour", type: "success", isLoading: false, autoClose: 2000 });
-            queryClient.invalidateQueries({ queryKey: ["permissions"] });
-        },
-    });
+    const { mutate, isPending } = useEditPermission();
 
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -100,6 +53,10 @@ export function EditForm({ permission }: { permission: Permission }) {
             name: validationResult.data.name,
             description: validationResult.data.description,
             roles: validationResult.data.roles
+        }, {
+            onSuccess: () => {
+                setOpen(false);
+            }
         });
     }
 
@@ -130,22 +87,20 @@ export function EditForm({ permission }: { permission: Permission }) {
                             <p className="text-red-500 text-sm">{errors.description.join(", ")}</p>
                         )}
                     </div>
-                    {!isLoading && roles && (
-                        <div className="flex flex-col gap-3">
-                            <Label htmlFor="roles">Rôles (optionnel) :</Label>
-                            <MultiSelect
-                                id="roles"
-                                name="roles"
-                                options={roles.map((role) => ({ value: String(role.id), label: role.name }))}
-                                selected={selectedRoles}
-                                onChange={setSelectedRoles}
-                                placeholder="Sélectionner des rôles"
-                            />
-                            {errors.roles.length > 0 && (
-                                <p className="text-red-500 text-sm">{errors.roles.join(", ")}</p>
-                            )}
-                        </div>
-                    )}
+                    <div className="flex flex-col gap-3">
+                        <Label htmlFor="roles">Rôles (optionnel) :</Label>
+                        <MultiSelect
+                            id="roles"
+                            name="roles"
+                            options={roles.map((role) => ({ value: String(role.id), label: role.name }))}
+                            selected={selectedRoles}
+                            onChange={setSelectedRoles}
+                            placeholder="Sélectionner des rôles"
+                        />
+                        {errors.roles.length > 0 && (
+                            <p className="text-red-500 text-sm">{errors.roles.join(", ")}</p>
+                        )}
+                    </div>
                     <DialogFooter>
                         <Button type="submit">{ isPending ? "Chargement..." : "Enregistrer" }</Button>
                         <DialogClose asChild>

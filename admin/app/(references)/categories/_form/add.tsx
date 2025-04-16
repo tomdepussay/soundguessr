@@ -5,48 +5,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { Plus } from "lucide-react";
-import { useQueryClient , useMutation } from "@tanstack/react-query";
 import { CategorySchema } from "@/src/validation/category";
 import { useState } from "react";
 import { Boolean } from "@/src/components/ui/boolean";
-import { Id, toast } from "react-toastify";
-
-let idToast: Id;
-
-const addCategory = async ({ name, isActive }: { name: string, isActive: boolean }) => {
-    const res = await fetch(`/api/categories`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-            name,
-            isActive
-        }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
-    return data;
-}
+import { useAddCategory } from "@/src/hooks/use-categories";
 
 export function AddForm() {
 
-    const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
     const [errors, setErrors] = useState<{ name: string[], isActive: string[] }>({ name: [], isActive: [] });
 
-    const { mutate, isPending } = useMutation({
-        mutationFn: addCategory,
-        onMutate: () => {
-            idToast = toast.loading("Ajout en cours...", { type: "info" });
-        },
-        onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
-        },
-        onSuccess: () => {
-            setOpen(false);
-            toast.update(idToast, { render: "Catégorie ajoutée", type: "success", isLoading: false, autoClose: 2000 });
-            queryClient.invalidateQueries({ queryKey: ["categories"] });
-        },
-    });
+    const { mutate, isPending } = useAddCategory();
 
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -70,6 +39,10 @@ export function AddForm() {
         mutate({ 
             name: validationResult.data.name, 
             isActive: validationResult.data.isActive 
+        }, {
+            onSuccess: () => {
+                setOpen(false);
+            }
         });
     }
 

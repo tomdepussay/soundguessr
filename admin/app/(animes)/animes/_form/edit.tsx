@@ -5,55 +5,18 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { Edit } from "lucide-react";
-import { useQueryClient , useMutation } from "@tanstack/react-query";
 import { AnimeSchema } from "@/src/validation/anime";
 import { useState } from "react";
 import { Boolean } from "@/src/components/ui/boolean";
-import { Id, toast } from "react-toastify";
 import { Anime } from "@/src/types/Anime";
-
-let idToast: Id;
-
-const updateAnime = async ({ id, title, isActive, top100, image }: { id: number, title: string, isActive: boolean, top100: boolean, image: File | undefined }) => {
-    const res = await fetch(`/api/animes/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-            title,
-            isActive,
-            top100,
-            image: image ? await new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result);
-                reader.readAsDataURL(image);
-            }) : null,
-        }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
-    return data;
-}
+import { useEditAnime } from "@/src/hooks/use-animes";
 
 export function EditForm({ anime }: { anime: Anime }) {
 
-    const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
     const [errors, setErrors] = useState<{ title: string[], isActive: string[], top100: string[], image: string[] }>({ title: [], isActive: [], top100: [], image: [] });
 
-    const { mutate, isPending } = useMutation({
-        mutationFn: updateAnime,
-        onMutate: () => {
-            idToast = toast.loading("Mise à jour en cours...", { type: "info" });
-        },
-        onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
-        },
-        onSuccess: () => {
-            setOpen(false);
-            toast.update(idToast, { render: "Anime mis à jour", type: "success", isLoading: false, autoClose: 2000 });
-            queryClient.invalidateQueries({ queryKey: ["animes"] });
-        },
-    });
+    const { mutate, isPending } = useEditAnime();
 
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -84,6 +47,10 @@ export function EditForm({ anime }: { anime: Anime }) {
             isActive: validationResult.data.isActive,
             top100: validationResult.data.top100, 
             image: validationResult.data.image
+        }, {
+            onSuccess: () => {
+                setOpen(false);
+            }
         });
     }
 

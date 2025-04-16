@@ -39,7 +39,17 @@ export async function GET(
         const total = await prisma.permission.count();
         const pages = Math.ceil(total / max);
 
-        return NextResponse.json({ permissions, pages });
+        const roles = await prisma.role.findMany({
+            select: {
+                id: true,
+                name: true,
+            },
+            orderBy: {
+                id: "asc"
+            }
+        });
+
+        return NextResponse.json({ permissions, roles, pages });
     } catch (error) {
         if (error instanceof NextResponse) return error;
         return NextResponse.json({ error: "Erreur lors de la récupération" }, { status: 500 });

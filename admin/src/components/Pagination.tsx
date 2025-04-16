@@ -6,10 +6,10 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 type PaginationProps = {
     page: number;
     setPage: (page: number) => void;
-    pages: number;
+    pages?: number;
 }
 
-export default function Pagination({ page, setPage, pages }: PaginationProps) {
+export default function Pagination({ page, setPage, pages = 1 }: PaginationProps) {
     return (
        <div className="flex gap-2 items-center">
            <Button onClick={() => setPage(page - 1)} disabled={page === 1} variant="outline">

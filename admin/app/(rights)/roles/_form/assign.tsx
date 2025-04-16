@@ -4,69 +4,24 @@ import { Label } from "@/src/components/ui/label";
 import { ArrowRightLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Role } from "@/src/types/Role";
-import { Permission } from "@/src/types/Permission";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/src/components/ui/card";
 import { Input } from "@/src/components/ui/input";
 import { Checkbox } from "@/src/components/ui/checkbox";
-import { Id, toast } from "react-toastify";
-
-let idToast: Id;
+import { useAssignRole } from "@/src/hooks/use-roles";
+import { Permission } from "@/src/types/Permission";
 
 type AssignFormProps = {
-    role: Role
+    role: Role,
+    permissions: Permission[]
 }
 
-async function fetchAssignRole(roleId: number) {
-    const response = await fetch(`/api/roles/${roleId}/assign`, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-        } 
-    })
-    const data: Permission[] = await response.json();
-    return data;
-}
+export function AssignForm({ role, permissions }: AssignFormProps){
 
-async function assign({ roleId, permissionIds }: { roleId: number, permissionIds: number[] }){
-    const res = await fetch(`/api/roles/${roleId}/assign`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json"},
-        body: JSON.stringify({
-            permissionIds
-        })
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
-    return data;
-}
-
-export function AssignForm({ role }: AssignFormProps){
-
-    const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState("");
     const [selected, setSelected] = useState<number[]>([]);
 
-    const { data: permissions, isLoading: fetchIsLoading, error: fetchError } = useQuery({ 
-        queryKey: [`fetchAssignRole`], 
-        queryFn: () => fetchAssignRole(role.id)
-    });
-
-    const { mutate, isPending } = useMutation({
-        mutationFn: assign,
-        onMutate: () => {
-            idToast = toast.loading("Mise à jour en cours...", { type: "info" });
-        },
-        onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
-        },
-        onSuccess: () => {
-            setOpen(false);
-            toast.update(idToast, { render: "Rôle mis à jour", type: "success", isLoading: false, autoClose: 2000 });
-            queryClient.invalidateQueries({ queryKey: ["roles"] });
-        },
-    })
+    const { mutate, isPending } = useAssignRole();
 
     const handleCheckboxChange = (permissionId: number) => {
         if(selected.includes(permissionId)){
@@ -79,7 +34,11 @@ export function AssignForm({ role }: AssignFormProps){
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
         
-        mutate({ roleId: role.id, permissionIds: selected });
+        mutate({ roleId: role.id, permissionIds: selected }, {
+            onSuccess: () => {
+                setOpen(false);
+            }
+        });
     }
 
     const deselectedAll = () => {
@@ -112,9 +71,7 @@ export function AssignForm({ role }: AssignFormProps){
                     />
                     <div className="flex flex-col gap-2 overflow-y-auto h-100">
                         {
-                            fetchIsLoading ? 
-                                <p>Chargement...</p> :
-                            permissions?.filter(
+                            permissions.filter(
                                 (permission) => permission.name.toLowerCase().includes(search.toLowerCase())
                             ).map((permission, index) => (
                                 <Card key={index} className="py-4">

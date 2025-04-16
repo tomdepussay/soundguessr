@@ -5,54 +5,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { Plus } from "lucide-react";
-import { useQueryClient , useMutation } from "@tanstack/react-query";
 import { AnimeSchema } from "@/src/validation/anime";
 import { useState } from "react";
 import { Boolean } from "@/src/components/ui/boolean";
-import { Id, toast } from "react-toastify";
-
-let idToast: Id;
-
-const addAnime = async ({ title, isActive, top100, image }: { title: string, isActive: boolean, top100: boolean, image: File | undefined }) => {
-    const res = await fetch(`/api/animes`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-            title,
-            isActive,
-            top100,
-            image: image ? await new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result);
-                reader.readAsDataURL(image);
-            }) : null,
-        }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
-    return data;
-}
+import { useAddAnime } from "@/src/hooks/use-animes";
 
 export function AddForm() {
 
-    const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
     const [errors, setErrors] = useState<{ title: string[], isActive: string[], top100: string[], image: string[] }>({ title: [], isActive: [], top100: [], image: [] });
 
-    const { mutate, isPending } = useMutation({
-        mutationFn: addAnime,
-        onMutate: () => {
-            idToast = toast.loading("Ajout en cours...", { type: "info" });
-        },
-        onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
-        },
-        onSuccess: () => {
-            setOpen(false);
-            toast.update(idToast, { render: "Anime ajouté", type: "success", isLoading: false, autoClose: 2000 });
-            queryClient.invalidateQueries({ queryKey: ["animes"] });
-        },
-    });
+    const { mutate, isPending } = useAddAnime();
 
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -82,6 +45,10 @@ export function AddForm() {
             isActive: validationResult.data.isActive,
             top100: validationResult.data.top100,
             image: validationResult.data.image 
+        }, {
+            onSuccess: () => {
+                setOpen(false);
+            }
         });
     }
 

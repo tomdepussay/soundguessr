@@ -5,47 +5,17 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { Edit } from "lucide-react";
-import { useQueryClient , useMutation } from "@tanstack/react-query";
 import { RoleSchema } from "@/src/validation/role";
 import { useState } from "react";
-import { Id, toast } from "react-toastify";
 import { Role } from "@/src/types/Role";
-
-let idToast: Id;
-
-const updateRole = async ({ id, name }: { id: number, name: string }) => {
-    const res = await fetch(`/api/roles/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-            name
-        }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
-    return data;
-}
+import { useEditRole } from "@/src/hooks/use-roles";
 
 export function EditForm({ role }: { role: Role }) {
 
-    const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
     const [errors, setErrors] = useState<{ name: string[] }>({ name: [] });
 
-    const { mutate, isPending } = useMutation({
-        mutationFn: updateRole,
-        onMutate: () => {
-            idToast = toast.loading("Mise à jour en cours...", { type: "info" });
-        },
-        onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
-        },
-        onSuccess: () => {
-            setOpen(false);
-            toast.update(idToast, { render: "Rôle mis à jour", type: "success", isLoading: false, autoClose: 2000 });
-            queryClient.invalidateQueries({ queryKey: ["roles"] });
-        },
-    });
+    const { mutate, isPending } = useEditRole();
 
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -64,7 +34,11 @@ export function EditForm({ role }: { role: Role }) {
 
         setErrors({ name: [] });
 
-        mutate({ id: role.id, name: validationResult.data.name });
+        mutate({ id: role.id, name: validationResult.data.name }, {
+            onSuccess: () => {
+                setOpen(false);
+            },
+        });
     }
 
     return (

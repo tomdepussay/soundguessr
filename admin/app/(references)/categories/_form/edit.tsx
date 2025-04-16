@@ -5,49 +5,18 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { Edit } from "lucide-react";
-import { useQueryClient , useMutation } from "@tanstack/react-query";
 import { CategorySchema } from "@/src/validation/category";
 import { useState } from "react";
 import { Boolean } from "@/src/components/ui/boolean";
-import { Id, toast } from "react-toastify";
 import { Category } from "@/src/types/Category";
-
-let idToast: Id;
-
-const updateCategory = async ({ id, name, isActive }: { id: number, name: string, isActive: boolean }) => {
-    const res = await fetch(`/api/categories/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-            name,
-            isActive
-        }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
-    return data;
-}
+import { useEditCategory } from "@/src/hooks/use-categories";
 
 export function EditForm({ category }: { category: Category }) {
 
-    const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
     const [errors, setErrors] = useState<{ name: string[], isActive: string[] }>({ name: [], isActive: [] });
 
-    const { mutate, isPending } = useMutation({
-        mutationFn: updateCategory,
-        onMutate: () => {
-            idToast = toast.loading("Mise à jour en cours...", { type: "info" });
-        },
-        onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
-        },
-        onSuccess: () => {
-            setOpen(false);
-            toast.update(idToast, { render: "Catégorie mise à jour", type: "success", isLoading: false, autoClose: 2000 });
-            queryClient.invalidateQueries({ queryKey: ["categories"] });
-        },
-    });
+    const { mutate, isPending } = useEditCategory();
 
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -72,6 +41,10 @@ export function EditForm({ category }: { category: Category }) {
             id: category.id,
             name: validationResult.data.name,
             isActive: validationResult.data.isActive
+        }, {
+            onSuccess: () => {
+                setOpen(false);
+            }
         });
     }
 

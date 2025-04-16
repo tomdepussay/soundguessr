@@ -3,18 +3,18 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/src/components/ui/table";
 import { EditForm } from "./_form/edit";
 import { DeleteForm } from "./_form/delete";
-import { useQuery } from "@tanstack/react-query";
 import { Permission } from "@/src/types/Permission";
+import { Role } from "@/src/types/Role";
 import { Badge } from "@/src/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/ui/popover";
 import { usePermission } from "@/src/hooks/use-permission";
-import { useState } from "react";
 
 interface TableDataProps {
     permissions: Permission[];
+    roles: Role[];
 }
 
-export default function TableData({ permissions }: TableDataProps){
+export default function TableData({ permissions, roles }: TableDataProps){
     
     const { hasPermission, hasAnyPermission } = usePermission();
 
@@ -75,7 +75,7 @@ export default function TableData({ permissions }: TableDataProps){
                             {hasAnyPermission(["admin.rights.permissions.edit", "admin.rights.permissions.delete"]) && (
                                 <TableCell className="whitespace-nowrap flex gap-1">
                                     {hasPermission("admin.rights.permissions.edit") && (
-                                        <EditForm permission={permission} />
+                                        <EditForm permission={permission} roles={roles} />
                                     )}
                                     {hasPermission("admin.rights.permissions.delete") && (
                                         <DeleteForm permission={permission} />

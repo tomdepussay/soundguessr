@@ -9,12 +9,14 @@ import { Role } from "@/src/types/Role";
 import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/ui/popover";
 import { Badge } from "@/src/components/ui/badge";
 import { usePermission } from "@/src/hooks/use-permission";
+import { Permission } from "@/src/types/Permission";
 
 interface TableDataProps {
     roles: Role[];
+    permissions: Permission[]
 }
 
-export default function TableData({ roles }: TableDataProps){
+export default function TableData({ roles, permissions }: TableDataProps){
 
     const { hasPermission, hasAnyPermission } = usePermission();
 
@@ -75,7 +77,7 @@ export default function TableData({ roles }: TableDataProps){
                             {(hasAnyPermission(["admin.rights.roles.assign", "admin.rights.roles.edit", "admin.rights.roles.delete"]) || true) && (
                                 <TableCell className="whitespace-nowrap flex gap-1">
                                     {hasPermission("admin.rights.roles.assign") && (
-                                        <AssignForm role={role} /> 
+                                        <AssignForm role={role} permissions={permissions} /> 
                                     )}
                                     {hasPermission("admin.rights.roles.edit") && (
                                         <EditForm role={role} /> 

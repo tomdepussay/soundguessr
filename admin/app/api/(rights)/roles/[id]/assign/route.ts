@@ -1,31 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/src/lib/prisma"
 import { Role } from "@/src/types/Role";
-import { Permission } from "@/src/types/Permission";
-
-export async function GET(
-    req: Request,
-    { params } : { params: Promise<{ id: string }> }
-) {
-    const { id } = await params;
-
-    try {
-        const permissions: Permission[] = await prisma.permission.findMany({
-            select: {
-                id: true,
-                name: true,
-                description: true
-            },
-            orderBy: {
-                id: "asc"
-            },
-        });
-
-        return NextResponse.json(permissions);
-    } catch (error) {
-        return NextResponse.json({ error: "Erreur de la récupération des permissions" }, { status: 500 });
-    }
-}
+import { hasAccessApi } from "@/src/lib/session";
 
 export async function PUT(
     req: Request,
@@ -35,6 +11,7 @@ export async function PUT(
     const { permissionIds } = await req.json();
 
     try {
+        await hasAccessApi("admin.rights.roles.assign")
 
         const role: Role | null = await prisma.role.findUnique({
             where: {

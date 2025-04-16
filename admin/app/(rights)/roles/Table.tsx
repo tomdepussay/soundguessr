@@ -17,21 +17,17 @@ export default function Table(){
         const params = `page=${page}`;
         router.push(`?${params}`, { scroll: false });
     }, [page]);
-   
-    if(!data) return (
-        <p>Erreur de chargement</p>
-    )
     
     return (
         <>
             <div className="flex justify-between items-center p-2">
-                <Pagination page={page} setPage={setPage} pages={data.pages} />
+                <Pagination page={page} setPage={setPage} pages={data?.pages} />
             </div>
             {isLoading && <p>Chargement...</p>}
             {error && <p>{error.message}</p>}
             {data && data.roles.length === 0 && <p>Aucun rôle trouvé</p>}
             {data && data.roles.length > 0 && (
-                <TableData roles={data.roles} />
+                <TableData roles={data.roles} permissions={data.permissions} />
             )}
         </>
     )

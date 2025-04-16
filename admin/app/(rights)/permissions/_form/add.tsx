@@ -5,72 +5,25 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { Plus } from "lucide-react";
-import { useQueryClient , useMutation, useQuery } from "@tanstack/react-query";
 import { PermissionSchema } from "@/src/validation/permission";
 import { useState } from "react";
-import { Id, toast } from "react-toastify";
 import { MultiSelect } from "@/src/components/ui/multi-select";
 import { Role } from "@/src/types/Role";
-
-let idToast: Id;
-
-const addPermission = async ({ name, description, roles }: { name: string, description: string | undefined, roles: string[] | undefined }) => {
-    const res = await fetch(`/api/permissions`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-            name,
-            description,
-            roles
-        })
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
-    return data;
-}
-
-const fetchPermissionsRoles = async () => {
-    const res = await fetch("/api/permissions/roles", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-    });
-    if(!res.ok){
-        const errorData = await res.json();
-        throw new Error(errorData.error || "Erreur inconnue");
-    }
-
-    const data: Role[] = await res.json();
-    return data;
-}
+import { useAddPermission } from "@/src/hooks/use-permissions";
 
 const defaultValues = ["1"];
 
-export function AddForm() {
+interface AddFormProps {
+    roles: Role[];
+}
 
-    const queryClient = useQueryClient();
+export function AddForm({ roles }: AddFormProps) {
+
     const [open, setOpen] = useState(false);
     const [selectedRoles, setSelectedRoles] = useState<string[]>(defaultValues);
     const [errors, setErrors] = useState<{ name: string[], description: string[], roles: string[] }>({ name: [], description: [], roles: []  });
     
-    const { data: roles, isLoading, error } = useQuery({
-        queryFn: fetchPermissionsRoles,
-        queryKey: ["permissionsRoles"]
-    });
-
-    const { mutate, isPending } = useMutation({
-        mutationFn: addPermission,
-        onMutate: () => {
-            idToast = toast.loading("Ajout en cours...", { type: "info" });
-        },
-        onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
-        },
-        onSuccess: () => {
-            setOpen(false);
-            toast.update(idToast, { render: "Permission ajoutée", type: "success", isLoading: false, autoClose: 2000 });
-            queryClient.invalidateQueries({ queryKey: ["permissions"] });
-        },
-    });
+    const { mutate, isPending } = useAddPermission();
 
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -99,6 +52,10 @@ export function AddForm() {
             name: validationResult.data.name, 
             description: validationResult.data.description,
             roles: validationResult.data.roles
+        }, {
+            onSuccess: () => {
+                setOpen(false);
+            }
         });
     }
 
@@ -129,22 +86,20 @@ export function AddForm() {
                             <p className="text-red-500 text-sm">{errors.description.join(", ")}</p>
                         )}
                     </div>
-                    {!isLoading && roles && (
-                        <div className="flex flex-col gap-3">
-                            <Label htmlFor="roles">Rôles (optionnel) :</Label>
-                            <MultiSelect
-                                id="roles"
-                                name="roles"
-                                options={roles.map((role) => ({ value: String(role.id), label: role.name }))}
-                                selected={selectedRoles}
-                                onChange={setSelectedRoles}
-                                placeholder="Sélectionner des rôles"
-                            />
-                            {errors.roles.length > 0 && (
-                                <p className="text-red-500 text-sm">{errors.roles.join(", ")}</p>
-                            )}
-                        </div>
-                    )}
+                    <div className="flex flex-col gap-3">
+                        <Label htmlFor="roles">Rôles (optionnel) :</Label>
+                        <MultiSelect
+                            id="roles"
+                            name="roles"
+                            options={roles.map((role) => ({ value: String(role.id), label: role.name }))}
+                            selected={selectedRoles}
+                            onChange={setSelectedRoles}
+                            placeholder="Sélectionner des rôles"
+                        />
+                        {errors.roles.length > 0 && (
+                            <p className="text-red-500 text-sm">{errors.roles.join(", ")}</p>
+                        )}
+                    </div>
                     <DialogFooter>
                         <Button type="submit">{ isPending ? "Chargement..." : "Ajouter" }</Button>
                         <DialogClose asChild>

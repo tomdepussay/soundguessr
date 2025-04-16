@@ -5,46 +5,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Input } from "@/src/components/ui/input"
 import { Label } from "@/src/components/ui/label"
 import { Plus } from "lucide-react";
-import { useQueryClient , useMutation } from "@tanstack/react-query";
 import { RoleSchema } from "@/src/validation/role";
 import { useState } from "react";
-import { Id, toast } from "react-toastify";
-
-let idToast: Id;
-
-const addRole = async ({ name }: { name: string }) => {
-    const res = await fetch(`/api/roles`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-            name
-        }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
-    return data;
-}
+import { useAddRole } from "@/src/hooks/use-roles";
 
 export function AddForm() {
 
-    const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
     const [errors, setErrors] = useState<{ name: string[] }>({ name: [] });
 
-    const { mutate, isPending } = useMutation({
-        mutationFn: addRole,
-        onMutate: () => {
-            idToast = toast.loading("Ajout en cours...", { type: "info" });
-        },
-        onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
-        },
-        onSuccess: () => {
-            setOpen(false);
-            toast.update(idToast, { render: "Rôle ajouté", type: "success", isLoading: false, autoClose: 2000 });
-            queryClient.invalidateQueries({ queryKey: ["roles"] });
-        },
-    });
+    const { mutate, isPending } = useAddRole();
 
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -63,7 +33,11 @@ export function AddForm() {
 
         setErrors({ name: [] });
 
-        mutate({ name: validationResult.data.name });
+        mutate({ name: validationResult.data.name }, {
+            onSuccess: () => {
+                setOpen(false);
+            },
+        });
     }
 
     return (

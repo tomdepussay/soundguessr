@@ -2,48 +2,25 @@
 
 import { Button } from "@/src/components/ui/button"
 import { Trash } from "lucide-react";
-import { useQueryClient , useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/src/components/ui/alert-dialog";
-import { Id, toast } from "react-toastify";
 import { Role } from "@/src/types/Role";
-
-let idToast: Id;
-
-const deleteRole = async ({ id }: { id: number }) => {
-    const res = await fetch(`/api/roles/${id}`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Une erreur est survenue.");
-    return data;
-}
+import { useDeleteRole } from "@/src/hooks/use-roles";
 
 export function DeleteForm({ role }: { role: Role }) {
 
-    const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
 
-    const { mutate, isPending } = useMutation({
-        mutationFn: deleteRole,
-        onMutate: () => {
-            idToast = toast.loading("Suppression en cours...", { type: "info" });
-        },
-        onError: (error) => {
-            toast.update(idToast, { render: error.message, type: "error", isLoading: false });
-        },
-        onSuccess: () => {
-            setOpen(false);
-            toast.update(idToast, { render: "Rôle supprimé", type: "success", isLoading: false, autoClose: 2000 });
-            queryClient.invalidateQueries({ queryKey: ["roles"] });
-        },
-    });
+    const { mutate, isPending } = useDeleteRole();
 
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        mutate({ id: role.id });
+        mutate({ id: role.id }, {
+            onSuccess: () => {
+                setOpen(false);
+            },
+        });
     }
 
     return (
