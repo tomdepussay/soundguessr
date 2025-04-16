@@ -24,16 +24,23 @@ export default function Pagination({ page, setPage, pages }: PaginationProps) {
                <SelectContent>
                    <SelectGroup>
                        {
-                           Array.from({ length: pages }, (_, i) => (
-                                <SelectItem value={String(i)} key={i} onClick={() => setPage(i + 1)}>
-                                    {i + 1}
+                            pages > 0 ? (
+ 
+                                Array.from({ length: pages }, (_, i) => (
+                                        <SelectItem value={String(i)} key={i} onClick={() => setPage(i + 1)}>
+                                            {i + 1}
+                                        </SelectItem>
+                                ))
+                            ) : (
+                                <SelectItem value="0" disabled>
+                                    1
                                 </SelectItem>
-                           ))
+                            )
                        }
                    </SelectGroup>
                </SelectContent>
            </Select>
-           <Button onClick={() => setPage(page + 1)} disabled={page === pages} variant="outline">
+           <Button onClick={() => setPage(page + 1)} disabled={page === pages || pages === 0} variant="outline">
                <ChevronRight />
            </Button>
        </div>

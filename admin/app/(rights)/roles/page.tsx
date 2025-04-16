@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import TableData from "./TableData";
+import Table from "./Table";
 import { AddForm } from "./_form/add";
 import { hasAccess } from "@/src/lib/session";
 
@@ -16,7 +16,7 @@ export default async function Page(){
             </div>
 
             <div className="p-4">
-                {await hasAccess("admin.rights.roles") && <TableData />}
+                {await hasAccess("admin.rights.roles") && <Table />}
             </div>
         </div>
     );

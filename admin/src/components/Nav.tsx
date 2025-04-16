@@ -8,7 +8,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarHeader, Si
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/src/components/ui/collapsible";
 import Link from "next/link";
 import LogoutAction from "./logout-action";
-import { usePermissions } from "../hooks/use-permissions";
+import { usePermission } from "../hooks/use-permission";
     
 interface NavItem {
     title: string;
@@ -25,7 +25,7 @@ interface NavProps {
 export default function Nav({ navItems = [] }: NavProps) {
 
     const { theme, toggleTheme } = useContext(ThemeContext);
-    const { hasPermission, hasAnyPermission } = usePermissions();
+    const { hasPermission, hasAnyPermission } = usePermission();
     const isMobile = useIsMobile()
 
     const handleLogout = async () => {

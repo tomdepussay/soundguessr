@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-export const usePermissions = () => {
+export const usePermission = () => {
     const { data: permissions } = useQuery({
         queryKey: ["permissions"],
         staleTime: 5 * 60 * 1000, // les permissions sont valides pendant 5 minutes

@@ -8,30 +8,17 @@ import { useQuery } from "@tanstack/react-query";
 import { Role } from "@/src/types/Role";
 import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/ui/popover";
 import { Badge } from "@/src/components/ui/badge";
-import { usePermissions } from "@/src/hooks/use-permissions";
+import { usePermission } from "@/src/hooks/use-permission";
 
-async function fetchRoles(){
-    const res = await fetch("/api/roles");
-
-    if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.error || "Erreur inconnue");
-    }
-
-    const data: Role[] = await res.json();
-    return data;
+interface TableDataProps {
+    roles: Role[];
 }
 
-export default function TableData(){
+export default function TableData({ roles }: TableDataProps){
 
-    const { data: roles, isLoading, error } = useQuery({ queryKey: ["roles"], queryFn: fetchRoles, retry: false });
-    const { hasPermission, hasAnyPermission } = usePermissions();
+    const { hasPermission, hasAnyPermission } = usePermission();
 
-    if(isLoading) return <p>Chargement...</p>
-    if(error) return <p>{error.message}</p>
-    if(roles && roles.length === 0) return <p>Aucun rôle trouvé</p>
-
-    if(roles) return (
+    return (
         <Table>
             <TableHeader>
                 <TableRow>
