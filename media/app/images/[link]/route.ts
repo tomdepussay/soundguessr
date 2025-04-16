@@ -1,17 +1,17 @@
 import fs from 'fs'
 import path from 'path'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/src/lib/prisma'
 import { hasAccessApi } from '@/src/lib/session'
 
 export async function GET(
-    req: Request,
+    req: NextRequest,
     { params } : { params: Promise<{ link: string }> }
 ) {
     const { link } = await params
 
     try {
-        await hasAccessApi("admin.images")
+        await hasAccessApi("admin.images", req)
 
         const image = await prisma.image.findUnique({
             where: {
@@ -71,13 +71,13 @@ export async function GET(
 }
 
 export async function DELETE(
-    req: Request,
+    req: NextRequest,
     { params } : { params: Promise<{ link: string }> }
 ) {
     const { link } = await params
 
     try {
-        await hasAccessApi("admin.images.delete")
+        await hasAccessApi("admin.images.delete", req)
 
         const image = await prisma.image.findUnique({
             where: {
@@ -89,7 +89,7 @@ export async function DELETE(
                 extension: true,
             }
         })
-    
+
         if(!image) {
             throw NextResponse.json({ error: "Image not found" }, { status: 404 })
         }
@@ -104,7 +104,13 @@ export async function DELETE(
             fs.unlinkSync(filePath)
         }
 
-        return NextResponse.json({ message: "Image deleted" }, { status: 200 });
+        await prisma.image.delete({
+            where: {
+                link: link,
+            }
+        })
+
+        return NextResponse.json({ ok: true, message: "Image deleted" }, { status: 200 });
     } catch (error) {
         if (error instanceof NextResponse) return error;
         return NextResponse.json({ error: "Erreur lors de la création" }, { status: 500 });

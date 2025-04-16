@@ -18,16 +18,22 @@ const AnimeSchema = z.object({
     isActive: z.boolean(),
     title: z.string().min(3, "Le titre doit faire au moins 3 caractères."),
     top100: z.boolean(),
+    image: z.instanceof(File).optional(),
 })
 
-const updateAnime = async ({ id, title, isActive, top100 }: { id: number, title: string, isActive: boolean, top100: boolean }) => {
+const updateAnime = async ({ id, title, isActive, top100, image }: { id: number, title: string, isActive: boolean, top100: boolean, image: File | undefined }) => {
     const res = await fetch(`/api/animes/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
             title,
             isActive,
-            top100
+            top100,
+            image: image ? await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.readAsDataURL(image);
+            }) : null,
         }),
     });
     const data = await res.json();
@@ -39,7 +45,7 @@ export function EditForm({ anime }: { anime: Anime }) {
 
     const queryClient = useQueryClient();
     const [open, setOpen] = useState(false);
-    const [errors, setErrors] = useState<{ title: string[], isActive: string[], top100: string[] }>({ title: [], isActive: [], top100: [] });
+    const [errors, setErrors] = useState<{ title: string[], isActive: string[], top100: string[], image: string[] }>({ title: [], isActive: [], top100: [], image: [] });
 
     const { mutate, isPending } = useMutation({
         mutationFn: updateAnime,
@@ -63,25 +69,28 @@ export function EditForm({ anime }: { anime: Anime }) {
         const title = formData.get("title") as string;
         const isActive = formData.get("isActive") === "1" ? true : false;
         const top100 = formData.get("top100") === "1" ? true : false;
+        const image = formData.get("image") as File | null;
 
-        const validationResult = AnimeSchema.safeParse({ title, isActive, top100 });
+        const validationResult = AnimeSchema.safeParse({ title, isActive, top100, image });
 
         if (!validationResult.success) {
             setErrors({
                 title: validationResult.error.flatten().fieldErrors.title || [],
                 isActive: validationResult.error.flatten().fieldErrors.isActive || [],
-                top100: validationResult.error.flatten().fieldErrors.top100 || []
+                top100: validationResult.error.flatten().fieldErrors.top100 || [],
+                image: validationResult.error.flatten().fieldErrors.image || []
             });
             return;
         }
 
-        setErrors({ title: [], isActive: [], top100: [] });
+        setErrors({ title: [], isActive: [], top100: [], image: [] });
 
         mutate({ 
             id: anime.id,
             title: validationResult.data.title,
             isActive: validationResult.data.isActive,
             top100: validationResult.data.top100, 
+            image: validationResult.data.image
         });
     }
 
@@ -117,6 +126,13 @@ export function EditForm({ anime }: { anime: Anime }) {
                         <Boolean name="top100" id="top100" defaultValue={anime.top100} disabled={isPending} />
                         {errors.top100.length > 0 && (
                             <p className="text-red-500 text-sm">{errors.top100.join(", ")}</p>
+                        )}
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <Label htmlFor="image">Image (optionnel) :</Label>
+                        <Input type="file" name="image" id="image" accept="image/*" disabled={isPending} />
+                        {errors.image.length > 0 && (
+                            <p className="text-red-500 text-sm">{errors.image.join(", ")}</p>
                         )}
                     </div>
                     <DialogFooter>

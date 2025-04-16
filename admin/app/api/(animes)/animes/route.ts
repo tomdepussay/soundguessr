@@ -74,6 +74,7 @@ export async function POST(
 
         return NextResponse.json(newAnime);
     } catch (error) {
+        console.log(error);
         if (error instanceof NextResponse) return error;
         return NextResponse.json({ error: "Erreur lors de la création" }, { status: 500 });
     }

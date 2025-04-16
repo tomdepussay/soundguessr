@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import { getInfoFile } from "@/src/lib/infoFile";
 import path from "path";
@@ -7,15 +7,15 @@ import prisma from "@/src/lib/prisma";
 import { hasAccessApi } from "@/src/lib/session";
 
 export async function POST(
-    req: Request
+    req: NextRequest
 ){
     const { image } = await req.json();
 
     const filePath = path.join(process.cwd(), 'public', 'images')
 
     try {
-        await hasAccessApi("admin.images.add");
-
+        await hasAccessApi("admin.images.add", req);
+        
         let existingImage;
         let link;
 
