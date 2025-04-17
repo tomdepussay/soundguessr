@@ -4,12 +4,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { EditForm } from "./_form/edit";
 import { DeleteForm } from "./_form/delete";
 import { AssignForm } from "./_form/assign";
-import { useQuery } from "@tanstack/react-query";
 import { Role } from "@/src/types/Role";
-import { Popover, PopoverContent, PopoverTrigger } from "@/src/components/ui/popover";
-import { Badge } from "@/src/components/ui/badge";
 import { usePermission } from "@/src/hooks/use-permission";
 import { Permission } from "@/src/types/Permission";
+import { Permissions } from "./_components/permissions";
 
 interface TableDataProps {
     roles: Role[];
@@ -50,28 +48,7 @@ export default function TableData({ roles, permissions }: TableDataProps){
                             )}
                             {hasPermission("admin.rights.roles.permissions") && (
                                 <TableCell className="hidden md:table-cell">
-                                    {role.permissions && role.permissions.length > 0? (
-                                        <Popover>
-                                            <PopoverTrigger>
-                                                <Badge>
-                                                    {role.permissions.length} permission{role.permissions.length > 1? "s" : ""}
-                                                </Badge>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-80">
-                                                <ul>
-                                                    {role.permissions.map((permission) => (
-                                                        <li key={permission.id}>
-                                                            {permission.name}
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                            </PopoverContent>
-                                        </Popover>  
-                                    ) : (
-                                        <Badge variant="destructive">
-                                            Aucune permission
-                                        </Badge> 
-                                    )}
+                                    <Permissions role={role} />
                                 </TableCell>
                             )}
                             {(hasAnyPermission(["admin.rights.roles.assign", "admin.rights.roles.edit", "admin.rights.roles.delete"]) || true) && (
