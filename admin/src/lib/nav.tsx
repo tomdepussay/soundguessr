@@ -1,5 +1,4 @@
 import { Book, Monitor, Shield, Users, Zap, Gamepad } from "lucide-react";
-import { permission } from "process";
 
 export const navItems = [
     {

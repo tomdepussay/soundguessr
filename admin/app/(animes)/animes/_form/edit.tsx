@@ -11,7 +11,11 @@ import { Boolean } from "@/src/components/ui/boolean";
 import { Anime } from "@/src/types/Anime";
 import { useEditAnime } from "@/src/hooks/use-animes";
 
-export function EditForm({ anime }: { anime: Anime }) {
+interface EditFormProps {
+    anime: Anime;
+}
+
+export function EditForm({ anime }: EditFormProps) {
 
     const [open, setOpen] = useState(false);
     const [errors, setErrors] = useState<{ title: string[], isActive: string[], top100: string[], image: string[] }>({ title: [], isActive: [], top100: [], image: [] });

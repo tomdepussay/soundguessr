@@ -238,6 +238,36 @@ const permissions = [
         id: 40,
         name: "admin.images.delete",
         description: "Supprimer une image"
+    },
+    {
+        id: 41,
+        name: "admin.animes.seasons",
+        description: "Accès à la gestion des saisons"
+    },
+    {
+        id: 42,
+        name: "admin.animes.seasons.id",
+        description: "Voir l'id des saisons"
+    },
+    {
+        id: 43,
+        name: "admin.animes.seasons.name",
+        description: "Voir le nom des saisons"
+    },
+    {
+        id: 44,
+        name: "admin.animes.seasons.add",
+        description: "Ajouter une saison"
+    },
+    {
+        id: 45,
+        name: "admin.animes.seasons.edit",
+        description: "Modifier une saison"
+    },
+    {
+        id: 46,
+        name: "admin.animes.seasons.delete",
+        description: "Supprimer une saison"
     }
 ]
 
@@ -280,6 +310,25 @@ const questions_ending = [
         id: 2,
         question: "Quel est le numéro de cet ending?",
         number: 2
+    }
+]
+
+const seasons = [
+    {
+        id: 1,
+        name: "Été"
+    },
+    {
+        id: 2,
+        name: "Automne"
+    },
+    {
+        id: 3,
+        name: "Hiver"
+    },
+    {
+        id: 4,
+        name: "Printemps"
     }
 ]
 
@@ -357,6 +406,15 @@ async function main(){
         }) 
     }
     await reloadSequence("question_ending");
+
+    for(const season of seasons){
+        await prisma.season.upsert({
+            where: { id: season.id },
+            update: {},
+            create: season
+        }) 
+    }
+    await reloadSequence("season");
 }
 
 async function reloadSequence(table: string){

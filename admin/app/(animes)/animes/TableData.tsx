@@ -60,7 +60,7 @@ export default function TableData({ animes }: TableDataProps){
                                     <Switch anime={anime} />
                                 </TableCell>
                             )}
-                            {hasAnyPermission(["admin.animes.animes.edit", "admin.animes.animes.delete"]) && (
+                            {hasAnyPermission(["admin.animes.animes.image", "admin.animes.animes.edit", "admin.animes.animes.delete"]) && (
                                 <TableCell className="whitespace-nowrap flex gap-1">
                                     {hasPermission("admin.animes.animes.image") && (
                                         <ViewImage anime={anime} />

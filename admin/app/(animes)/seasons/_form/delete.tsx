@@ -4,23 +4,23 @@ import { Button } from "@/src/components/ui/button"
 import { Trash } from "lucide-react";
 import { useState } from "react";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/src/components/ui/alert-dialog";
-import { Anime } from "@/src/types/Anime";
-import { useDeleteAnime } from "@/src/hooks/use-animes";
+import { Season } from "@/src/types/Season";
+import { useDeleteSeason } from "@/src/hooks/use-seasons";
 
 interface DeleteFormProps {
-    anime: Anime;
+    season: Season;
 }
 
-export function DeleteForm({ anime }: DeleteFormProps) {
+export function DeleteForm({ season }: DeleteFormProps) {
 
     const [open, setOpen] = useState(false);
 
-    const { mutate, isPending } = useDeleteAnime();
+    const { mutate, isPending } = useDeleteSeason();
 
     const submit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        mutate({ id: anime.id }, {
+        mutate({ id: season.id }, {
             onSuccess: () => {
                 setOpen(false);
             }
@@ -36,8 +36,8 @@ export function DeleteForm({ anime }: DeleteFormProps) {
             </AlertDialogTrigger>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Supprimer un anime</AlertDialogTitle>
-                    <AlertDialogDescription>Êtes-vous sûr de vouloir supprimer l'anime {anime.title} ?</AlertDialogDescription>
+                    <AlertDialogTitle>Supprimer une saison</AlertDialogTitle>
+                    <AlertDialogDescription>Êtes-vous sûr de vouloir supprimer la saison {season.name} ?</AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel asChild>
