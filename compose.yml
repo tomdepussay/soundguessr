@@ -22,18 +22,18 @@ services:
     depends_on:
       - db
 
-  client:
-    image: node:23-alpine3.20
-    container_name: client
-    working_dir: /app
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=development
-      - WATCHPACK_POLLING=true
-    volumes:
-      - ./client:/app
-    command: "/bin/sh entrypoint.sh"
+  # client:
+  #   image: node:23-alpine3.20
+  #   container_name: client
+  #   working_dir: /app
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - NODE_ENV=development
+  #     - WATCHPACK_POLLING=true
+  #   volumes:
+  #     - ./client:/app
+  #   command: "/bin/sh entrypoint.sh"
 
   media:
     image: node:23-alpine3.20

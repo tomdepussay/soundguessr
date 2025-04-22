@@ -43,7 +43,7 @@ export default function TableData({ categories }: TableDataProps){
                             {hasPermission("admin.references.categories.name") && (
                                 <TableCell>{category.name}</TableCell> 
                             )}
-                            {hasPermission("admin.references.categories.active") && (
+                            {hasPermission("admin.references.categories.isActive") && (
                                 <TableCell>
                                     <Switch category={category} />
                                 </TableCell>
